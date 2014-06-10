@@ -1,4 +1,4 @@
-Copyright (c) 2014, Dougal J. Sutherland (dsutherl@cs.cmu.edu).
+Copyright (c) 2013-2014, Dougal J. Sutherland (dsutherl@cs.cmu.edu).
 All rights reserved.
 
 Redistribution and use in source and binary forms, with or without
