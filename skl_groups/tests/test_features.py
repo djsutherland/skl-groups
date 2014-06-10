@@ -104,6 +104,27 @@ def test_features_basic():
         assert len(w) == 1
 
 
+def test_copy_constructor():
+    bags = [np.random.normal(size=(np.random.uniform(10, 100), 10))
+            for _ in xrange(20)]
+    unstacked = Features(bags, label=np.arange(20))
+
+    oth_unstacked = Features(unstacked)
+    assert oth_unstacked.label is unstacked.label
+    assert oth_unstacked.features[0] is unstacked.features[0]
+    assert oth_unstacked == unstacked
+
+    oth_unstacked_copy = Features(unstacked, copy=True)
+    assert oth_unstacked_copy == unstacked
+    assert not np.may_share_memory(oth_unstacked_copy.features[0],
+                                   unstacked.features[0])
+
+    stacked = unstacked.copy()
+    stacked.make_stacked()
+    oth_stacked = Features(stacked)
+    assert oth_stacked == stacked
+
+
 def test_copying():
     bags = [np.random.normal(size=(np.random.uniform(10, 100), 10))
             for _ in xrange(20)]

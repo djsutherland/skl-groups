@@ -89,6 +89,22 @@ class Features(object):
     '''
 
     def __init__(self, bags, n_pts=None, stack=False, copy=False, **meta):
+        if isinstance(bags, Features):
+            if n_pts is not None:
+                raise TypeError("can't pass n_pts if copying a Features object")
+            if meta:
+                raise TypeError("can't pass meta if copying a Features object")
+
+            oth = bags
+            if oth.stacked:
+                bags = oth.stacked_features
+                n_pts = oth.n_pts
+            else:
+                bags = oth.features
+                n_pts = None
+            meta = oth.meta
+
+
         if isinstance(bags, np.ndarray) and bags.ndim == 2:
             if n_pts is None:
                 raise TypeError("must pass n_pts if passing stacked array of "
