@@ -17,10 +17,22 @@ if __name__ == '__main__':
     sys.path.insert(0, os.path.dirname(os.path.dirname(_this_dir)))
 
 from skl_groups import Features
-from skl_groups.summaries import BagOfWords
+from skl_groups.summaries import BagOfWords, BagMean
 
 
 ################################################################################
+
+def test_mean():
+    dim = 5
+    n_bags = 50
+    np.random.seed(42)
+    bags = [np.random.randn(np.random.randint(30, 100), dim)
+            for _ in xrange(n_bags)]
+
+    meaned = BagMean().fit_transform(bags)
+    assert meaned.shape == (n_bags, dim)
+    assert np.allclose(meaned[3], np.mean(bags[3], axis=0))
+
 
 def test_bagofwords_basic():
     n_codewords = 10

@@ -79,6 +79,7 @@ class BagOfWords(BaseEstimator, TransformerMixin):
         X = self._check_inputs(X)
         self.kmeans_fit_.fit(X.stacked_features) 
         self.codewords_ = self.kmeans_fit_.cluster_centers_
+        return self
 
     def transform(self, X):
         '''
