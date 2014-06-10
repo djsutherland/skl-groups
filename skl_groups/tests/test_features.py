@@ -24,7 +24,7 @@ wrong_type = partial(assert_raises, TypeError)
 ################################################################################
 
 def test_features_basic():
-    bags = [np.random.normal(size=(np.random.uniform(10, 100), 10))
+    bags = [np.random.normal(size=(np.random.randint(10, 100), 10))
             for _ in xrange(20)]
 
     assert repr(Features([[[8, 9], [12, 12]]]))
@@ -105,7 +105,7 @@ def test_features_basic():
 
 
 def test_copy_constructor():
-    bags = [np.random.normal(size=(np.random.uniform(10, 100), 10))
+    bags = [np.random.normal(size=(np.random.randint(10, 100), 10))
             for _ in xrange(20)]
     unstacked = Features(bags, label=np.arange(20))
 
@@ -126,7 +126,7 @@ def test_copy_constructor():
 
 
 def test_copying():
-    bags = [np.random.normal(size=(np.random.uniform(10, 100), 10))
+    bags = [np.random.normal(size=(np.random.randint(10, 100), 10))
             for _ in xrange(20)]
 
     unstacked = Features(bags, copy=False, stack=False, label=np.arange(20))
@@ -172,7 +172,7 @@ def test_copying():
 
 
 def test_feats_add():
-    bags = [np.random.normal(size=(np.random.uniform(10, 100), 10))
+    bags = [np.random.normal(size=(np.random.randint(10, 100), 10))
             for _ in xrange(20)]
     labels = np.arange(20)
 
