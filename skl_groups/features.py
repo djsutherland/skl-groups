@@ -69,7 +69,6 @@ class Features(object):
 
     Attributes
     ----------
-
     features : list of arrays of shape ``[n_pts[i], dim]``
         A list of the contained features. If ``stacked``, each array is a
         slice of `stacked_features`.
@@ -85,7 +84,6 @@ class Features(object):
 
     meta : dictionary mapping strings to arrays of shape ``[len(self)]``
         The stored metadata. ``meta['foo']`` is also accessible as ``self.foo``.
-
     '''
 
     def __init__(self, bags, n_pts=None, stack=False, copy=False, **meta):

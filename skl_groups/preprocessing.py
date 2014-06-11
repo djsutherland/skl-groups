@@ -13,8 +13,8 @@ class BagPreprocesser(BaseEstimator, TransformerMixin):
     Applies a preprocessing estimator to each column of the bags, independently.
     This is a reasonable thing to do for some cases
     (especially :class:`sklearn.preprocessing.StandardScaler`,
-     :class:`sklearn.preprocessing.MinMaxScaler`,
-     :class:`sklearn.decomposition.PCA`).
+    :class:`sklearn.preprocessing.MinMaxScaler`,
+    :class:`sklearn.decomposition.PCA`).
     It's not a reasonable thing to do for things that rely on interactions
     between points, or that change the number of output points. (Changing
     the dimension is okay.)

@@ -3,14 +3,27 @@
    You can adapt this file completely to your liking, but it should at least
    contain the root `toctree` directive.
 
-Welcome to skl-groups's documentation!
-======================================
+Documentation for skl-groups
+============================
 
 Contents:
 
 .. toctree::
    :maxdepth: 2
 
+.. currentmodule:: skl_groups
+
+.. autosummary::
+   :toctree: skl_groups
+
+   Features
+   summaries.BagMean
+   summaries.BagOfWords
+   preprocessing.BagMinMaxScaler
+   preprocessing.BagNormalizer
+   preprocessing.BagPCA
+   preprocessing.BagPreprocesser
+   preprocessing.BagStandardizer
 
 
 Indices and tables

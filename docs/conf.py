@@ -30,6 +30,7 @@ sys.path.insert(0, os.path.dirname(os.path.abspath('.')))
 # ones.
 extensions = [
     'sphinx.ext.autodoc',
+    'sphinx.ext.autosummary',
     'sphinx.ext.intersphinx',
     'sphinx.ext.todo',
     'sphinx.ext.mathjax',
@@ -265,3 +266,5 @@ texinfo_documents = [
 #texinfo_no_detailmenu = False
 
 numpydoc_show_class_members = False
+
+autosummary_generate = True

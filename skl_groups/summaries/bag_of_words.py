@@ -13,8 +13,9 @@ class BagOfWords(BaseEstimator, TransformerMixin):
     '''
     Transforms a list of bags of features (e.g. a :class:`Features` instance)
     into the bag of words representation:
-     1. Run k-means on the set of all points from all bags, to get codewords.
-     2. Represent each bag by the count of points assigned to each codeword.
+
+    1. Run k-means on the set of all points from all bags, to get codewords.
+    2. Represent each bag by the count of points assigned to each codeword.
 
     Parameters
     ----------
