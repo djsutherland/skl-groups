@@ -71,7 +71,6 @@ def test_pca():
     pcaed2 = pca2.fit_transform(bags)
     orig = pca2.inverse_transform(pcaed2)
     orig.make_stacked()
-    print np.abs(feats.stacked_features - orig.stacked_features).mean()
     assert np.allclose(feats.stacked_features, orig.stacked_features)
 
     assert BagPCA(k=5, randomize=True).fit_transform(bags).dim == 5

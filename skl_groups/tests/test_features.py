@@ -99,7 +99,7 @@ def test_features_basic():
 
     assert_raises(ValueError, fs(bags, labels=np.arange(3)))
 
-    with warnings.catch_warnings(True) as w:
+    with warnings.catch_warnings(record=True) as w:
         Features(bags, total_points=[1, 2])
         assert len(w) == 1
 

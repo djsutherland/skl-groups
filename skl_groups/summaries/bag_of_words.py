@@ -2,6 +2,7 @@ from copy import copy
 
 import numpy as np
 from sklearn.base import BaseEstimator, TransformerMixin
+from sklearn.externals.six.moves import xrange
 
 from ..features import Features
 

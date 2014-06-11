@@ -39,7 +39,6 @@ def test_type_utils():
         ValueError, lambda: utils.as_integer_type(tests['float32'][0] + .2))
 
     assert utils.is_integer(5)
-    assert utils.is_integer(5L)
     assert utils.is_categorical(False)
     assert utils.is_categorical(True)
 
