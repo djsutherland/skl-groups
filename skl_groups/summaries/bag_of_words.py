@@ -43,10 +43,12 @@ class BagOfWords(BaseEstimator, TransformerMixin):
 
     @property
     def n_codewords(self):
+        "The number of codewords used."
         return self.kmeans.n_clusters
 
     @property
-    def codewords(self):
+    def codewords_(self):
+        "The selected codewords."
         self._check_fitted()
         return self.kmeans_fit_.cluster_centers_
 
@@ -79,7 +81,6 @@ class BagOfWords(BaseEstimator, TransformerMixin):
         self.kmeans_fit_ = copy(self.kmeans)
         X = self._check_inputs(X)
         self.kmeans_fit_.fit(X.stacked_features) 
-        self.codewords_ = self.kmeans_fit_.cluster_centers_
         return self
 
     def transform(self, X):
@@ -120,5 +121,4 @@ class BagOfWords(BaseEstimator, TransformerMixin):
         X = self._check_inputs(X)
         self.kmeans_fit_ = copy(self.kmeans)
         assignments = self.kmeans_fit_.fit_predict(X.stacked_features) 
-        self.codewords_ = self.kmeans_fit_.cluster_centers_
         return self._group_assignments(X, assignments)

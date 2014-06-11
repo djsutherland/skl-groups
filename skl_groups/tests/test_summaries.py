@@ -47,14 +47,14 @@ def test_bagofwords_basic():
 
     bowed = bow.fit_transform(bags)
     assert bowed.shape == (len(bags), n_codewords)
-    assert bow.codewords.shape == (n_codewords, dim)
+    assert bow.codewords_.shape == (n_codewords, dim)
     assert np.all(bowed >= 0)
     assert np.all(np.sum(bowed, 1) == [b.shape[0] for b in bags])
 
     bow.fit(Features(bags))
     bowed2 = bow.transform(bags)
     assert np.all(bowed == bowed2)
-    assert bow.codewords.shape == (n_codewords, dim)
+    assert bow.codewords_.shape == (n_codewords, dim)
 
     minikmeans = MiniBatchKMeans(n_clusters=n_codewords, max_iter=100,
                                  random_state=47)
