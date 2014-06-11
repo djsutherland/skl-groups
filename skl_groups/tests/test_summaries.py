@@ -7,6 +7,7 @@ import sys
 import warnings
 
 import numpy as np
+from sklearn.pipeline import Pipeline
 from sklearn.cluster import KMeans, MiniBatchKMeans
 from sklearn.externals.six.moves import xrange, cPickle as pickle
 from nose.tools import assert_raises
@@ -17,7 +18,8 @@ if __name__ == '__main__':
     sys.path.insert(0, os.path.dirname(os.path.dirname(_this_dir)))
 
 from skl_groups import Features
-from skl_groups.summaries import BagOfWords, BagMean
+from skl_groups.preprocessing import BagMinMaxScaler
+from skl_groups.summaries import BagOfWords, BagMean, L2DensityTransformer
 
 
 ################################################################################
@@ -64,6 +66,36 @@ def test_bagofwords_basic():
     assert minibowed.shape == bowed.shape
     assert np.all(bowed >= 0)
     assert np.all(np.sum(bowed, 1) == [b.shape[0] for b in bags])
+
+
+def test_l2density_basic():
+    dim = 3
+    bags = [np.random.randn(np.random.randint(30, 100), dim)
+            for _ in xrange(50)]
+    pipe = Pipeline([
+        ('scale', BagMinMaxScaler([0, 1])),
+        ('density', L2DensityTransformer(15)),
+    ])
+    l2ed = pipe.fit_transform(bags)
+
+    assert np.all(np.isfinite(l2ed))
+    # ||x - y||^2 = <x, x> - 2 <x, y> + <y, y>
+    K = l2ed.dot(l2ed.T)
+    row_norms_sq = np.diagonal(K)
+    l2_dist_sq = row_norms_sq[:, None] - 2 * K + row_norms_sq[None, :]
+    assert np.min(row_norms_sq) > 0
+    assert np.min(l2_dist_sq) >= 0
+
+    assert_raises(ValueError, lambda: L2DensityTransformer(10, basis='foo'))
+
+    t = L2DensityTransformer(10)
+    assert_raises(AttributeError, lambda: t.transform(bags))
+    t.fit(dim)
+    tl2 = t.transform(BagMinMaxScaler([0, 1]).fit_transform(bags))
+    assert_raises(ValueError, lambda: t.transform([b[:, :2] for b in bags]))
+    assert_raises(ValueError, lambda: t.transform(bags))
+    t.basis = 'haha snuck my way in'
+    assert_raises(ValueError, lambda: t.transform(bags))
 
 
 ################################################################################

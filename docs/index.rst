@@ -19,6 +19,7 @@ Contents:
    Features
    summaries.BagMean
    summaries.BagOfWords
+   summaries.L2DensityTransformer
    preprocessing.BagMinMaxScaler
    preprocessing.BagNormalizer
    preprocessing.BagPCA
