@@ -7,7 +7,7 @@ import numpy as np
 from sklearn.externals.six import iteritems, string_types
 from sklearn.externals.six.moves import xrange
 
-from .utils import is_integer_type, as_integer_type
+from .utils import as_integer_type
 
 
 class Features(object):
@@ -328,7 +328,7 @@ class Features(object):
     def __getitem__(self, key):
         if (isinstance(key, string_types) or
                 (isinstance(key, tuple) and
-                 any(isinstance(x, str_types) for x in key))):
+                 any(isinstance(x, string_types) for x in key))):
             msg = "Features indexing only subsets rows, but got {!r}"
             raise TypeError(msg.format(key))
 
