@@ -47,6 +47,7 @@ setup(
     download_url=DOWNLOAD_URL,
     license=LICENSE,
     classifiers=CLASSIFIERS,
+    packages=['skl_groups', 'skl_groups.summaries', 'skl_groups.tests'],
     install_requires=[
         'scikit-learn >= 0.13',
     ],
