@@ -41,13 +41,14 @@ class Features(object):
 
     Parameters
     ----------
-    bags : list of numpy arrays, or single array
+    bags : list of numpy arrays, single array, or Features object
         The feature data. If a list of numpy arrays, should be one array per 
         bag, each of shape [n_pts, dim], where dim is consistent between bags
         but n_pts need not be (though it cannot ever be 0). If a single numpy
         array, it should be of shape [sum(n_pts), dim] and contain the features
         from the first bag, then the next bag, .... In this case you must also
-        pass n_pts.
+        pass n_pts. If a Features object, "copies" it (but only actually copies
+        any data if ``copy=True``).
 
     n_pts : array-like of positive integers, only if bags is a single array
         If bags is passed as a single array, a list of positive integers
@@ -62,9 +63,15 @@ class Features(object):
         don't modify the original arrays. If false, make a copy only if
         necessary (i.e. stack=True for an unstacked argument).
 
+    bare : boolean, optional, default False
+        If true, and ``bags`` is a Features instance, don't include its
+        metadata.
+
     any other keyword argument : array-like with first dimension num_bags
         Metadata for each bag. Just stored along with the features, nothing
-        in particular done with it.
+        in particular done with it. (If ``bags`` is a Features instance, its
+        metadata is merged with any keyword arguments, with keywords taking
+        precedence.)
 
 
     Attributes
@@ -86,12 +93,11 @@ class Features(object):
         The stored metadata. ``meta['foo']`` is also accessible as ``self.foo``.
     '''
 
-    def __init__(self, bags, n_pts=None, stack=False, copy=False, **meta):
+    def __init__(self, bags, n_pts=None, stack=False, copy=False, bare=False,
+                 **meta):
         if isinstance(bags, Features):
             if n_pts is not None:
                 raise TypeError("can't pass n_pts if copying a Features object")
-            if meta:
-                raise TypeError("can't pass meta if copying a Features object")
 
             oth = bags
             if oth.stacked:
@@ -100,7 +106,9 @@ class Features(object):
             else:
                 bags = oth.features
                 n_pts = None
-            meta = oth.meta
+            if not bare:
+                for k, v in iteritems(oth.meta):
+                    meta.setdefault(k, v)
 
 
         if isinstance(bags, np.ndarray) and bags.ndim == 2:
@@ -356,7 +364,9 @@ class Features(object):
 
     def bare(self):
         "Make a Features object with no metadata; points to the same features."
-        if self.stacked:
+        if not self.meta:
+            return self
+        elif self.stacked:
             return Features(self.stacked_features, self.n_pts, copy=False)
         else:
             return Features(self.features, copy=False)

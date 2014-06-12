@@ -114,6 +114,16 @@ def test_copy_constructor():
     assert oth_unstacked.features[0] is unstacked.features[0]
     assert oth_unstacked == unstacked
 
+    oth_unstacked_bare = Features(unstacked, bare=True)
+    assert oth_unstacked_bare == bags
+    assert oth_unstacked_bare.bare() == oth_unstacked_bare
+
+    oth_unstacked = Features(unstacked, label=np.ones(20))
+    assert np.all(oth_unstacked.label == 1)
+
+    oth_unstacked2 = Features(unstacked, bare=True, label=np.arange(20))
+    assert oth_unstacked2 == unstacked
+
     oth_unstacked_copy = Features(unstacked, copy=True)
     assert oth_unstacked_copy == unstacked
     assert not np.may_share_memory(oth_unstacked_copy.features[0],
