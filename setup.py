@@ -47,9 +47,17 @@ setup(
     download_url=DOWNLOAD_URL,
     license=LICENSE,
     classifiers=CLASSIFIERS,
-    packages=['skl_groups', 'skl_groups.summaries', 'skl_groups.tests'],
+    packages=[
+        'skl_groups',
+        'skl_groups.divergences',
+        'skl_groups.summaries',
+        'skl_groups.tests',
+    ],
     install_requires=[
         'scikit-learn >= 0.13',
     ],
+    extras_require={
+        'knn_divs': ['cyflann'],
+    },
     zip_safe=False,
 )

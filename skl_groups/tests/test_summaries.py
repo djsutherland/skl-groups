@@ -1,15 +1,12 @@
 from __future__ import division
 
-from copy import copy, deepcopy
-from functools import partial
 import os
 import sys
-import warnings
 
 import numpy as np
 from sklearn.pipeline import Pipeline
 from sklearn.cluster import KMeans, MiniBatchKMeans
-from sklearn.externals.six.moves import xrange, cPickle as pickle
+from sklearn.externals.six.moves import xrange
 from nose.tools import assert_raises
 
 if __name__ == '__main__':
@@ -91,7 +88,7 @@ def test_l2density_basic():
     t = L2DensityTransformer(10)
     assert_raises(AttributeError, lambda: t.transform(bags))
     t.fit(dim)
-    tl2 = t.transform(BagMinMaxScaler([0, 1]).fit_transform(bags))
+    t.transform(BagMinMaxScaler([0, 1]).fit_transform(bags))
     assert_raises(ValueError, lambda: t.transform([b[:, :2] for b in bags]))
     assert_raises(ValueError, lambda: t.transform(bags))
     t.basis = 'haha snuck my way in'
