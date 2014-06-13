@@ -198,11 +198,20 @@ def test_feats_add():
     assert not plus_list.meta
     assert np.all(plus_list[16] == bags[16])
 
+    plus_singlelist = first_15 + [bags[18]]
+    assert np.all(plus_singlelist[15] == bags[18])
+
     rplus_list = bags[15:] + first_15
     assert np.all(rplus_list[0] == bags[15])
 
+    rplus_singlelist = [bags[15]] + first_15
+    assert np.all(rplus_singlelist[0] == bags[15])
+    assert rplus_singlelist[1:] == first_15.bare()
+
     wrong_type(lambda: first_15 + 12)
     wrong_type(lambda: 12 + first_15)
+
+    assert_raises(ValueError, lambda: first_15 + np.asarray(bags))
 
 ################################################################################
 

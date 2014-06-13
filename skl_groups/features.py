@@ -139,8 +139,10 @@ class Features(object):
             self.n_pts = n_pts
             self.stacked_features = bags
             self._boundaries = bounds = np.r_[0, np.cumsum(n_pts)]
-            self.features = [bags[bounds[i-1]:bounds[i]]
-                             for i in xrange(1, len(bounds))]
+
+            self.features = np.empty(len(n_pts), object)
+            self.features[:] = [bags[bounds[i-1]:bounds[i]]
+                                for i in xrange(1, len(bounds))]
 
         else:
             if n_pts is not None:
@@ -343,10 +345,10 @@ class Features(object):
             meta = {k: np.r_[self.meta[k], oth.meta[k]]
                     for k in self.meta if k in oth.meta}
             oth_features = oth.features
-        elif isinstance(oth, list) or \
-                (isinstance(oth, np.ndarray) and oth.dtype.kind == 'o'):
+        elif isinstance(oth, list):
             meta = {}
-            oth_features = oth
+            oth_features = np.empty(len(oth), object)
+            oth_features[:] = oth
         else:
             return NotImplemented
 
@@ -354,10 +356,13 @@ class Features(object):
                         stack=False, copy=True, **meta)
 
     def __radd__(self, oth):
-        if isinstance(oth, list) or \
-                (isinstance(oth, np.ndarray) and oth.dtype.kind == 'o'):
-            return Features(np.r_[oth, self.features], stack=False, copy=True)
-        return NotImplemented
+        if isinstance(oth, list):
+            oth_features = np.empty(len(oth), object)
+            oth_features[:] = oth
+        else:
+            return NotImplemented
+        return Features(np.r_[oth_features, self.features],
+                        stack=False, copy=True)
 
     ############################################################################
     ## Others
