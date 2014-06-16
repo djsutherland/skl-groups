@@ -49,11 +49,13 @@ class KNNDivergenceEstimator(BaseEstimator, TransformerMixin):
         The number of CPUs to use to do the computation. -1 means 'all CPUs'.
     '''
     def __init__(self, div_funcs=('kl',), Ks=(3,), do_sym=False, n_jobs=1,
-                 min_dist=1e-3, flann_algorithm='auto', flann_args=None):
+                 clamp=True, min_dist=1e-3,
+                 flann_algorithm='auto', flann_args=None):
         self.div_funcs = div_funcs
         self.Ks = Ks
         self.do_sym = do_sym
         self.n_jobs = n_jobs
+        self.clamp = clamp
         self.min_dist = min_dist
         self.flann_algorithm = flann_algorithm
         self.flann_args = flann_args
@@ -169,7 +171,7 @@ class KNNDivergenceEstimator(BaseEstimator, TransformerMixin):
             if meta.needs_rhos[1]:
                 args += (Y_rhos,)
             args += (required,)
-            r = meta(*args)
+            r = meta(*args, clamp=self.clamp)
             if r.ndim == 3:
                 r = r[np.newaxis, :, :, :]
             outputs[info.pos, :, :, :] = r
@@ -231,7 +233,7 @@ class KNNDivergenceEstimator(BaseEstimator, TransformerMixin):
             self.funcs_, self.Ks, self.max_K_, self.save_all_Ks_,
             len(self.div_funcs) + self.n_meta_only_, do_sym,
             partial(plog, name="Cross-divergences"),
-            self._n_jobs, self.min_dist)
+            self._n_jobs, self.min_dist, self.clamp)
         logger.info("Getting meta functions...")
         outputs = self._finalize(outputs, X_rhos, Y_rhos)
         logger.info("Done with divergences.")
@@ -480,19 +482,20 @@ bhattacharyya.needs_rhos = (False, False)
 bhattacharyya.needs_results = [MetaRequirement(alpha_div, 0.5, False)]
 
 
-def hellinger(Ks, dim, required):
+def hellinger(Ks, dim, required, clamp=True):
     r'''
     Estimate the Hellinger distance between distributions, based on kNN
     distances:  \sqrt{1 - \int \sqrt{p q}}
 
-    Always clamps 0 <= H <= 1.
+    If clamp (the default), enforces 0 <= H <= 1.
 
     Returns a vector: one element for each K.
     '''
     bc, = required
     est = 1 - bc
-    np.maximum(est, 0, out=est)
-    np.sqrt(est, out=est)
+    if clamp:
+        np.maximum(est, 0, out=est)
+        np.sqrt(est, out=est)
     return est
 hellinger.needs_alpha = False
 hellinger.needs_rhos = (False, False)
@@ -531,7 +534,7 @@ def tsallis(alphas, Ks, dim, required, clamp=True):
     Estimate the Tsallis-alpha divergence between distributions, based on kNN
     distances:  (\int p^alpha q^(1-\alpha) - 1) / (\alpha - 1)
 
-    If clamp (the default), enforces that the inner integral is nonnegative.
+    If clamp (the default), enforces the estimate is nonnegative.
 
     Returns an array of shape (num_alphas, num_Ks).
     '''
@@ -540,14 +543,15 @@ def tsallis(alphas, Ks, dim, required, clamp=True):
 
     est = alpha_est - 1
     est /= alphas - 1
-    # TODO: Tsallis is also nonnegative, no? Should we clamp it here?
+    if clamp:
+        np.maximum(est, 0, out=est)
     return est
 tsallis.needs_alpha = True
 tsallis.needs_rhos = (False, False)
 tsallis.needs_results = [MetaRequirement(alpha_div, identity, False)]
 
 
-def l2(Ks, dim, X_rhos, Y_rhos, required):
+def l2(Ks, dim, X_rhos, Y_rhos, required, clamp=True):
     r'''
     Estimates the L2 distance between distributions, via
         \int (p - q)^2 = \int p^2 - \int p q - \int q p + \int q^2.
@@ -555,6 +559,9 @@ def l2(Ks, dim, X_rhos, Y_rhos, required):
     \int pq and \int qp are estimated with the linear function (in both
     directions), while \int p^2 and \int q^2 are estimated via the quadratic
     function below.
+
+    Always clamps negative estimates of l2^2 to 0, because otherwise the sqrt
+    would break.
     '''
     n_X = len(X_rhos)
     n_Y = len(Y_rhos)
@@ -602,7 +609,8 @@ def quadratic(Ks, dim, rhos, required=None):
     N = rhos.shape[0]
     Ks = np.asarray(Ks)
     Bs = (Ks - 1) / np.pi ** (dim / 2) * gamma(dim / 2 + 1)  # shape (num_Ks,)
-    return Bs / (N - 1) * np.mean(rhos ** (-dim), axis=0)
+    est = Bs / (N - 1) * np.mean(rhos ** (-dim), axis=0)
+    return est
 
 
 def jensen_shannon(Ks, dim, X_rhos, Y_rhos, required, clamp=True):

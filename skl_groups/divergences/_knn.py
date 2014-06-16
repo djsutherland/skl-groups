@@ -5,13 +5,16 @@ from sklearn.externals.six import iteritems
 from sklearn.externals.six.moves import xrange, zip
 
 
-def _linear(Bs, dim, num_q, rhos, nus):
+def _linear(Bs, dim, num_q, rhos, nus, clamp=True):
     # and the rest of the estimator is
     #   B / m * mean(nu ^ -dim)
-    return Bs / num_q * np.mean(nus ** (-dim), axis=0)
+    est = Bs / num_q * np.mean(nus ** (-dim), axis=0)
+    if clamp:
+        np.maximum(est, 0, out=est)
+    return est
 
 
-def kl(Ks, dim, num_q, rhos, nus):
+def kl(Ks, dim, num_q, rhos, nus, clamp=True):
     r'''
     Estimate the KL divergence between distributions:
         \int p(x) \log (p(x) / q(x))
@@ -24,19 +27,20 @@ def kl(Ks, dim, num_q, rhos, nus):
     which is:
         d * 1/n \sum \log (nu_k(i) / rho_k(i)) + log(m / (n - 1))
 
-    Enforces KL >= 0.
+    If clamp, enforces KL >= 0.
 
     Returns an array of shape (num_Ks,).
     '''
     est = dim * np.mean(np.log(nus) - np.log(rhos), axis=0)
     est += np.log(num_q / (rhos.shape[0] - 1))
-    np.maximum(est, 0, out=est)
+    if clamp:
+        np.maximum(est, 0, out=est)
     return est
 kl.self_value = 0
 kl.needs_alpha = False
 
 
-def _alpha_div(omas, Bs, dim, num_q, rhos, nus):
+def _alpha_div(omas, Bs, dim, num_q, rhos, nus, clamp=True):
     N = rhos.shape[0]
 
     # the actual main estimate:
@@ -53,16 +57,19 @@ def _alpha_div(omas, Bs, dim, num_q, rhos, nus):
     #   1 / [ (n-1)^(est alpha) * m^(est beta) ] = ((n-1) / m) ^ (1 - alpha)
     estimates *= ((N - 1) / num_q) ** omas
 
-    np.maximum(estimates, 0, out=estimates)
+    if clamp:
+        np.maximum(estimates, 0, out=estimates)
     return estimates
 
 
-def _jensen_shannon_core(Ks, dim, min_i, digamma_vals, num_q, rhos, nus):
+def _jensen_shannon_core(Ks, dim, min_i, digamma_vals, num_q, rhos, nus, clamp=True):
     # We need to calculate the mean over points in X of
     # d * log radius of largest ball with no more than M/(n+m-1) weight
     #         where X points have weight 1 / (2 (n-1))
     #           and Y points have weight 1 / (2 m)
     # - digamma(# of neighbors in that ball)
+
+    # ignores clamp.
 
     # NOTE: this is a stupidly slow implementation. the cython one should
     #       be much better, and also parallelize.
@@ -101,7 +108,7 @@ def _estimate_cross_divs(X_features, X_indices, X_rhos,
                          Y_features, Y_indices, Y_rhos,
                          funcs, Ks, max_K, save_all_Ks,
                          n_output, do_sym,
-                         log_progress, n_jobs, min_dist):
+                         log_progress, n_jobs, min_dist, clamp):
     n_X = len(X_indices)
     n_Y = len(Y_features)
 
@@ -156,9 +163,9 @@ def _estimate_cross_divs(X_features, X_indices, X_rhos,
             for func, info in iteritems(funcs):
                 o = (info.pos, slice(None), i, j, 0)
                 if needs_sub(func):
-                    outputs[o] = func(num_q, rho_sub, nu_sub)
+                    outputs[o] = func(num_q, rho_sub, nu_sub, clamp=clamp)
                 else:
-                    outputs[o] = func(num_q, rho, nu)
+                    outputs[o] = func(num_q, rho, nu, clamp=clamp)
 
     # TODO: maybe we only need the symmetric part for some components?
     if do_sym:
