@@ -23,7 +23,7 @@ from skl_groups.divergences import KNNDivergenceEstimator
 
 ################################################################################
 
-def test_knn_basic():
+def test_knn_sanity():
     dim = 3
     n = 20
     np.random.seed(47)
@@ -34,7 +34,7 @@ def test_knn_basic():
     est = KNNDivergenceEstimator(
         div_funcs=('kl', 'js', 'renyi:.9', 'l2'), Ks=(3, 4))
     res = est.fit_transform(bags)
-    assert res.shape == (4, 2, n, n, 2)
+    assert res.shape == (4, 2, n, n)
     assert np.all(np.isfinite(res))
 
     # test that JS blows up when there's a huge difference in bag sizes
@@ -76,23 +76,41 @@ def test_knn_kl():
 
 def test_knn_js():
     # verified by hand
-    x = np.reshape([0, 1, 3], (3, 1))
-    y = np.reshape([.2, 1.2, 3.2, 6.2], (4, 1))
+    x = np.reshape([0, 1, 3, 6], (4, 1))
+    n = 4
 
-    mix_ent = np.log(2) + np.log(3) + psi(2) \
-        + (np.log(.2) + np.log(.8) + np.log(1.8) - psi(1) - 2*psi(2)) / 6 \
-        + (np.log(.2) + np.log(2) + np.log(3.2) - psi(1) - 3*psi(2)) / 8
-    x_ent = np.log(2) + (np.log(3) + np.log(2) + np.log(3)) / 3
-    y_ent = np.log(3) + (np.log(3) + np.log(2) + np.log(3) + np.log(5)) / 4
-    right_js = mix_ent - (x_ent + y_ent) / 2
-    # TODO: clamping???
+    y = np.reshape([.2, 1.2, 3.2, 6.2, 10.2], (5, 1))
+    m = 5
+
+    M = 2
+
+    right_js = (
+        np.log(n + m - 1) + psi(M)
+        + 1/(2*n) * (  # x weight is 1/7, y weight is 4/35, quantile 1/4
+            np.log(.2) - psi(1)     # 0 => .2(y), 1(x)
+            + np.log(.8) - psi(2)   # 1 => 1.2(y), .2(y)
+            + np.log(1.8) - psi(2)  # 3 => 3.2(y), 1.2(y)
+            + np.log(2.8) - psi(2)  # 6 => 6.2(y), 3.2(y)
+        )
+        + 1/(2*m) * (  # x weight is 5/36, y weight is 1/9, quantile 1/4
+            np.log(.2) - psi(1)     # .2 => 0(x)
+            + np.log(1) - psi(2)    # 1.2 => 1(x), .2(y)
+            + np.log(2) - psi(2)    # 3.2 => 3(x), 1.2(y)
+            + np.log(3) - psi(2)    # 6.2 => 6(x), 3.2(y)
+            + np.log(4.2) - psi(2)  # 10.2 => 6.2(y), 6(x)
+        )
+        - 1/2 * np.log(n-1) - 1/(2*n) * (
+            np.log(3) + np.log(2) + np.log(3) + np.log(5))
+        - 1/2 * np.log(m-1) - 1/(2*m) * (
+            np.log(3) + np.log(2) + np.log(3) + np.log(4) + np.log(7))
+    )
 
     est = KNNDivergenceEstimator(div_funcs=['js'], Ks=[2])
     res = est.fit([x]).transform([y]).squeeze()
-    assert res.shape == (2,)
-    assert res[0] == res[1]
+    assert res.shape == ()
+    res = res[()]
     err_msg = "got {}, expected {}"
-    assert np.allclose(res[0], right_js), err_msg.format(res, right_js)
+    assert np.allclose(res, right_js), err_msg.format(res, right_js)
 
 
 

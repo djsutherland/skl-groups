@@ -140,7 +140,7 @@ class KNNDivergenceEstimator(BaseEstimator, TransformerMixin):
             idx.build_index(bag)
         return indices
 
-    def _get_rhos(self, X):
+    def _get_rhos(self, X, indices):
         "Gets within-bag distances for each bag."
         logger.info("Getting within-bag distances...")
 
@@ -150,7 +150,7 @@ class KNNDivergenceEstimator(BaseEstimator, TransformerMixin):
         which_Ks = slice(1, None) if self.save_all_Ks_ else self.Ks
         min_dist = self.min_dist
 
-        indices = plog(self.indices_, name="within-bag distances")
+        indices = plog(indices, name="within-bag distances")
         rhos = [None] * len(X)
         for i, (bag, idx) in enumerate(zip(X, indices)):
             r = np.sqrt(idx.nn_index(bag, self.max_K_ + 1)[1][:, which_Ks])
@@ -176,9 +176,11 @@ class KNNDivergenceEstimator(BaseEstimator, TransformerMixin):
                 r = r[np.newaxis, :, :, :]
             outputs[info.pos, :, :, :] = r
 
+        if not self.do_sym:
+            outputs = outputs[:, :, :, :, 0]
+
         if self.n_meta_only_:
-            outputs = np.ascontiguousarray(
-                outputs[:-self.n_meta_only_, :, :, :, :])
+            outputs = np.ascontiguousarray(outputs[:-self.n_meta_only_])
         return outputs
 
     def fit(self, X, y=None, skip_rhos=False):
@@ -197,7 +199,7 @@ class KNNDivergenceEstimator(BaseEstimator, TransformerMixin):
 
         self.indices_ = self._build_indices(X)
         if not skip_rhos:
-            self.rhos_ = self._get_rhos(X)
+            self.rhos_ = self._get_rhos(X, self.indices_)
         return self
 
     def transform(self, X):
@@ -212,20 +214,22 @@ class KNNDivergenceEstimator(BaseEstimator, TransformerMixin):
         self._choose_funcs(X, Y)
         self._check_Ks(X, Y)
         if hasattr(self, 'rhos_') and self.max_K_ > old_max_K:
-            logger.warning("Fit with a lower max_K than we actually need; "
-                           "recomputing rhos. This should be rare, but if "
-                           "it's happening to you a lot, pass skip_rhos=True "
-                           "to fit() so that it doesn't do the first useless "
-                           "time.")
+            logger.warning(("Fit with a lower max_K ({}) than we actually need "
+                            "({}); recomputing rhos. This should only happen "
+                            "with Jensen-Shannon; if it's taking a significant "
+                            "amount of time, pass skip_rhos=True to fit() or "
+                            "set the max_K_ attribute to {} to avoid the "
+                            "useless step.").format(
+                                old_max_K, self.max_K_, self.max_K_))
             del self.rhos_
 
         if not hasattr(self, 'rhos_'):
-            self.rhos_ = self._get_rhos(X)
+            self.rhos_ = self._get_rhos(X, self.indices_)
 
         X_indices = self.indices_
         X_rhos = self.rhos_
         Y_indices = self._build_indices(Y)
-        Y_rhos = self._get_rhos(Y) if do_sym else None
+        Y_rhos = self._get_rhos(Y, Y_indices) if do_sym else None
 
         logger.info("Getting divergences...")
         outputs = _estimate_cross_divs(
