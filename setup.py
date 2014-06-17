@@ -56,7 +56,7 @@ setup(
         'scikit-learn >= 0.13',
     ],
     extras_require={
-        'knn_divs': ['cyflann'],
+        'knn_divs': ['cyflann >= 0.1.15'],
     },
     zip_safe=False,
 )
