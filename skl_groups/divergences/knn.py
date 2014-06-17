@@ -4,6 +4,7 @@ from collections import namedtuple, defaultdict, OrderedDict
 from functools import partial
 import itertools
 import logging
+import warnings
 
 import numpy as np
 from scipy.special import gamma, gammaln, psi
@@ -20,8 +21,13 @@ from .. import Features
 from ..utils import identity, ProgressLogger
 from ._knn import _linear, kl, _alpha_div, _jensen_shannon_core
 
-# TODO: cython version
 from ._knn import _estimate_cross_divs
+try:
+    from skl_groups_accel.knn_divs import (
+            _estimate_cross_divs as _estimate_cross_divs_fast)
+    have_fast_version = True
+except ImportError:
+    have_fast_version = False
 
 
 __all__ = ['KNNDivergenceEstimator']
@@ -35,7 +41,6 @@ progress_logger = logging.getLogger(__name__ + '.progress')
 progress_logger.propagate = False
 progress_logger.addHandler(logging.NullHandler())
 
-# TODO: break out into utils
 def plog(it, name=None, total=None):
     return ProgressLogger(progress_logger, name=name)(it, total=total)
 
@@ -54,7 +59,7 @@ class KNNDivergenceEstimator(BaseEstimator, TransformerMixin):
     '''
     def __init__(self, div_funcs=('kl',), Ks=(3,), do_sym=False, n_jobs=1,
                  clamp=True, min_dist=1e-3,
-                 flann_algorithm='auto', flann_args=None):
+                 flann_algorithm='auto', flann_args=None, version='best'):
         self.div_funcs = div_funcs
         self.Ks = Ks
         self.do_sym = do_sym
@@ -63,6 +68,7 @@ class KNNDivergenceEstimator(BaseEstimator, TransformerMixin):
         self.min_dist = min_dist
         self.flann_algorithm = flann_algorithm
         self.flann_args = flann_args
+        self.version = version
 
         # check params, but need to re-run in fit() in case args are set by
         # a pipeline or whatever
@@ -88,6 +94,35 @@ class KNNDivergenceEstimator(BaseEstimator, TransformerMixin):
         except AttributeError as e:
             msg = "flann_args contains an invalid argument:\n  {}"
             raise TypeError(msg.format(e))
+
+        # check whether we can use the fast version of the code
+        non_fastable_funcs = set(self.funcs_base_) - fast_funcs
+        if self.version == 'fast':
+            if not have_fast_version:
+                msg = "asked for 'fast', but skl_groups_accel not available"
+                raise ValueError(msg)
+            elif non_fastable_funcs:
+                msg = "asked for 'fast', but functions are incompatible: {}"
+                raise ValueError(msg.format(non_fastable_funcs))
+            else:
+                self.version_ = 'fast'
+        elif self.version == 'slow':
+            self.version_ = 'slow'
+        elif self.version == 'best':
+            if have_fast_version:
+                self.version_ = 'slow' if non_fastable_funcs else 'fast'
+            elif non_fastable_funcs:
+                self.version_ = 'slow'
+            else:
+                warnings.warn("Using 'slow' version of KNNDivergenceEstimator, "
+                              " because skl_groups_accel isn't available; its "
+                              "'fast' version is much faster on large "
+                              "problems. Pass version='slow' to suppress this "
+                              "warning.")
+                self.version_ = 'slow'
+        else:
+            msg = "Unknown value '{}' for version."
+            raise ValueError(msg.format(self.version))
 
     @property
     def _n_jobs(self):
@@ -243,12 +278,15 @@ class KNNDivergenceEstimator(BaseEstimator, TransformerMixin):
             Y_rhos = self._get_rhos(Y, Y_indices) if do_sym else None
 
         logger.info("Getting divergences...")
-        outputs = _estimate_cross_divs(
-            X, X_indices, X_rhos, Y, Y_indices, Y_rhos,
-            self.funcs_, self.Ks, self.max_K_, self.save_all_Ks_,
-            len(self.div_funcs) + self.n_meta_only_, do_sym,
-            partial(plog, name="Cross-divergences"),
-            self._n_jobs, self.min_dist, self.clamp)
+        if self.version_ == 'fast':
+            fn = _estimate_cross_divs_fast
+        else:
+            fn = _estimate_cross_divs
+        outputs = fn(X, X_indices, X_rhos, Y, Y_indices, Y_rhos,
+                     self.funcs_, self.Ks, self.max_K_, self.save_all_Ks_,
+                     len(self.div_funcs) + self.n_meta_only_, do_sym,
+                     partial(plog, name="Cross-divergences"),
+                     self._n_jobs, self.min_dist, self.clamp)
         logger.info("Getting meta functions...")
         outputs = self._finalize(outputs, X_rhos, Y_rhos)
         logger.info("Done with divergences.")
@@ -746,6 +784,7 @@ func_mapping = {
     'js': jensen_shannon,
     'jensen-shannon': jensen_shannon,
 }
+fast_funcs = {kl, alpha_div, linear, jensen_shannon_core}
 
 
 def topological_sort(deps):
