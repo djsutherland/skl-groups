@@ -5,12 +5,16 @@ from functools import partial
 import itertools
 import logging
 
-from cyflann import FLANNIndex, FLANNParameters
 import numpy as np
 from scipy.special import gamma, gammaln, psi
 from sklearn.base import BaseEstimator, TransformerMixin
 from sklearn.externals.six import iteritems, itervalues
 from sklearn.externals.six.moves import map, zip
+
+try:
+    from cyflann import FLANNIndex, FLANNParameters
+except ImportError:
+    from pyflann import FLANN as FLANNIndex, FLANNParameters
 
 from .. import Features
 from ..utils import identity, ProgressLogger
@@ -80,7 +84,7 @@ class KNNDivergenceEstimator(BaseEstimator, TransformerMixin):
 
         # check flann args; just prevents a similar exception later
         try:
-            FLANNParameters(**self._flann_args())
+            FLANNParameters().update(self._flann_args())
         except AttributeError as e:
             msg = "flann_args contains an invalid argument:\n  {}"
             raise TypeError(msg.format(e))

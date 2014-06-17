@@ -86,7 +86,7 @@ def test_knn_kl():
 
 def test_knn_js():
     # verified by hand
-    x = np.reshape([0, 1, 3, 6], (4, 1))
+    x = np.reshape([0., 1, 3, 6], (4, 1))
     n = 4
 
     y = np.reshape([.2, 1.2, 3.2, 6.2, 10.2], (5, 1))
@@ -120,7 +120,7 @@ def test_knn_js():
     assert res.shape == ()
     res = res[()]
     err_msg = "got {}, expected {}"
-    assert np.allclose(res, right_js), err_msg.format(res, right_js)
+    assert np.allclose(res, right_js, atol=1e-6), err_msg.format(res, right_js)
 
 
 

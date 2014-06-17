@@ -4,7 +4,6 @@ try:
     from setuptools import setup
 except ImportError:
     from distutils.core import setup
-from distutils.extension import Extension
 
 DESCRIPTION = "Addon to scikit-learn for handling set-based data."
 with open('README.rst') as f:
