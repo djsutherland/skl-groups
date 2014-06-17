@@ -294,7 +294,9 @@ class Features(object):
     __hash__ = None
 
     def __eq__(self, oth):
-        if isinstance(oth, Features):
+        if self is oth:
+            return True
+        elif isinstance(oth, Features):
             return (len(self) == len(oth) and
                     set(self.meta) == set(oth.meta) and
                     all(np.all(self_b == oth_b)
