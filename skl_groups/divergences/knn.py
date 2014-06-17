@@ -545,7 +545,7 @@ def tsallis(alphas, Ks, dim, required, clamp=True):
     Returns an array of shape (num_alphas, num_Ks).
     '''
     alphas = np.reshape(alphas, (-1, 1))
-    alpha_est = required
+    alpha_est, = required
 
     est = alpha_est - 1
     est /= alphas - 1

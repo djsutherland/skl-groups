@@ -32,7 +32,7 @@ def test_knn_sanity():
 
     # just make sure it runs
     est = KNNDivergenceEstimator(
-        div_funcs=('kl', 'js', 'renyi:.9', 'l2'), Ks=(3, 4))
+        div_funcs=('kl', 'js', 'renyi:.9', 'l2', 'tsallis:.8'), Ks=(3, 4))
     res = est.fit_transform(bags)
     assert res.shape == (4, 2, n, n)
     assert np.all(np.isfinite(res))
