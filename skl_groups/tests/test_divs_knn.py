@@ -31,10 +31,11 @@ def test_knn_sanity():
                      for _ in xrange(n)])
 
     # just make sure it runs
-    est = KNNDivergenceEstimator(
-        div_funcs=('kl', 'js', 'renyi:.9', 'l2', 'tsallis:.8'), Ks=(3, 4))
+    div_funcs = ('kl', 'js', 'renyi:.9', 'l2', 'tsallis:.8')
+    Ks = (3, 4)
+    est = KNNDivergenceEstimator(div_funcs=div_funcs, Ks=Ks)
     res = est.fit_transform(bags)
-    assert res.shape == (4, 2, n, n)
+    assert res.shape == (len(div_funcs), len(Ks), n, n)
     assert np.all(np.isfinite(res))
 
     # test that JS blows up when there's a huge difference in bag sizes
@@ -50,6 +51,15 @@ def test_knn_sanity():
         res = est.transform([np.random.randn(300, dim)])
         assert len(l.records) == 1
         assert l.records[0].message.startswith('Fit with a lower max_K')
+
+    # test that passing div func more than once raises
+    def blah(df):
+        est = KNNDivergenceEstimator(div_funcs=[df, df])
+        return est.fit(bags)
+    assert_raises(ValueError, lambda: blah('kl'))
+    assert_raises(ValueError, lambda: blah('renyi:.8'))
+    assert_raises(ValueError, lambda: blah('l2'))
+
 
 
 def test_knn_kl():

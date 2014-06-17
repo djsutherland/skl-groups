@@ -175,6 +175,7 @@ class KNNDivergenceEstimator(BaseEstimator, TransformerMixin):
             if r.ndim == 3:
                 r = r[np.newaxis, :, :, :]
             outputs[info.pos, :, :, :] = r
+            # TODO: pass meta functions an out=... argument to avoid a copy
 
         if not self.do_sym:
             outputs = outputs[:, :, :, :, 0]
@@ -230,8 +231,12 @@ class KNNDivergenceEstimator(BaseEstimator, TransformerMixin):
 
         X_indices = self.indices_
         X_rhos = self.rhos_
-        Y_indices = self._build_indices(Y)
-        Y_rhos = self._get_rhos(Y, Y_indices) if do_sym else None
+        if X == Y:
+            Y_indices = X_indices
+            Y_rhos = X_rhos
+        else:
+            Y_indices = self._build_indices(Y)
+            Y_rhos = self._get_rhos(Y, Y_indices) if do_sym else None
 
         logger.info("Getting divergences...")
         outputs = _estimate_cross_divs(

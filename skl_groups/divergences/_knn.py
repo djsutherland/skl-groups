@@ -168,6 +168,11 @@ def _estimate_cross_divs(X_features, X_indices, X_rhos,
                     outputs[o] = func(num_q, rho, nu, clamp=clamp)
 
     if do_sym:
+        if X_features == Y_features:
+            w = slice(None) if do_sym == True else list(do_sym)
+            outputs[w, ..., 1] = outputs[w, ..., 0].transpose(0, 1, 3, 2)
+            return outputs
+
         Y_features.make_stacked()
         Y_feats = Y_features.stacked_features
         Y_bounds = Y_features._boundaries
