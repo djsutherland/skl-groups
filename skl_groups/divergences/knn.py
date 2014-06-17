@@ -207,9 +207,6 @@ class KNNDivergenceEstimator(BaseEstimator, TransformerMixin):
         X = self.features_  # yes, naming here is confusing.
         # TODO: optimize for getting divergences among self
 
-        do_sym = self.do_sym or any(req.needs_transpose
-                                    for f in self.metas_
-                                    for req in f.needs_results)
         old_max_K = self.max_K_
         self._choose_funcs(X, Y)
         self._check_Ks(X, Y)
@@ -225,6 +222,11 @@ class KNNDivergenceEstimator(BaseEstimator, TransformerMixin):
 
         if not hasattr(self, 'rhos_'):
             self.rhos_ = self._get_rhos(X, self.indices_)
+
+        do_sym = self.do_sym or {
+            req_pos for f, info in iteritems(self.metas_)
+                    for req_pos, req in zip(info.deps, f.needs_results)
+                    if req.needs_transpose}
 
         X_indices = self.indices_
         X_rhos = self.rhos_
@@ -409,9 +411,9 @@ def _get_jensen_shannon_core(Ks, dim, X_ns, Y_ns):
     max_i = int(np.ceil( wt_bounds[1] * max_K))
     digamma_vals = psi(np.arange(min_i, max_i + 1))
 
-    # FIXME: If we don't actually hit the worst case, might be nice to still
-    #        run and just nan those elements that we can't compute. This is
-    #        over-conservative.
+    # TODO: If we don't actually hit the worst case, might be nice to still
+    #       run and just nan those elements that we can't compute. This is
+    #       over-conservative.
     return partial(_jensen_shannon_core, Ks, dim, min_i, digamma_vals), max_i
 
 jensen_shannon_core.needs_alpha = False

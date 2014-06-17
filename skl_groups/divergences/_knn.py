@@ -167,11 +167,16 @@ def _estimate_cross_divs(X_features, X_indices, X_rhos,
                 else:
                     outputs[o] = func(num_q, rho, nu, clamp=clamp)
 
-    # TODO: maybe we only need the symmetric part for some components?
     if do_sym:
         Y_features.make_stacked()
         Y_feats = Y_features.stacked_features
         Y_bounds = Y_features._boundaries
+
+        if do_sym == True:
+            sym_funcs = funcs
+        else:
+            sym_funcs = {func: info for func, info in iteritems(funcs)
+                         if not do_sym.isdisjoint(info.pos)}
 
         X_indices_loop = log_progress(X_indices) if log_progress else X_indices
         for i, X_index in enumerate(X_indices_loop):
@@ -193,7 +198,7 @@ def _estimate_cross_divs(X_features, X_indices, X_rhos,
                     rho_sub = rho[:, K_indices]
                     nu_sub = nu[:, K_indices]
 
-                for func, info in iteritems(funcs):
+                for func, info in iteritems(sym_funcs):
                     o = (info.pos, slice(None), i, j, 1)
                     if needs_sub(func):
                         outputs[o] = func(num_q, rho_sub, nu_sub)
