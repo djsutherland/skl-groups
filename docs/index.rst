@@ -25,6 +25,12 @@ Contents:
    preprocessing.BagPCA
    preprocessing.BagPreprocesser
    preprocessing.BagStandardizer
+   kernels.PairwisePicker
+   kernels.Symmetrize
+   kernels.ProjectPSD
+   kernels.FlipPSD
+   kernels.ShiftPSD
+   kernels.SquarePSD
 
 
 Indices and tables
