@@ -77,8 +77,8 @@ class Features(object):
     Attributes
     ----------
     features : list of arrays of shape ``[n_pts[i], dim]``
-        A list of the contained features. If ``stacked``, each array is a
-        slice of `stacked_features`.
+        A list of the contained features.
+        If ``stacked``, each array is a slice of ``stacked_features``.
 
     stacked : boolean
         Whether the features are stacked.
