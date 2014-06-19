@@ -17,7 +17,7 @@ try:
 except ImportError:
     from pyflann import FLANN as FLANNIndex, FLANNParameters
 
-from .. import Features
+from ..features import Features
 from ..utils import identity, ProgressLogger
 from ._knn import _linear, kl, _alpha_div, _jensen_shannon_core
 

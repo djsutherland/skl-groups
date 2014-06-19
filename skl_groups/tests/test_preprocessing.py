@@ -13,7 +13,7 @@ if __name__ == '__main__':
     _this_dir = os.path.dirname(os.path.abspath(__file__))
     sys.path.insert(0, os.path.dirname(os.path.dirname(_this_dir)))
 
-from skl_groups import Features
+from skl_groups.features import Features
 from skl_groups.preprocessing import (BagPreprocesser, BagStandardizer,
                                       BagMinMaxScaler, BagNormalizer, BagPCA)
 
@@ -36,7 +36,7 @@ def test_basic():
     assert first_five == stdized[:5]
 
     minmaxer = BagMinMaxScaler([3, 7])
-    minmaxed = minmaxer.fit_transform(bags)
+    minmaxed = minmaxer.fit_transform(feats)
     minmaxed.make_stacked()
     assert np.allclose(np.min(minmaxed.stacked_features, 0), 3)
     assert np.allclose(np.max(minmaxed.stacked_features, 0), 7)

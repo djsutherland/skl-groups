@@ -1,5 +1,3 @@
-import numpy as np
-
 from sklearn.base import BaseEstimator, TransformerMixin
 from sklearn.decomposition import PCA, RandomizedPCA
 from sklearn.preprocessing import MinMaxScaler, StandardScaler, Normalizer

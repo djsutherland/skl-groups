@@ -6,7 +6,7 @@ import numpy as np
 from sklearn.base import BaseEstimator, TransformerMixin
 from sklearn.externals.six.moves import xrange, reduce
 
-from .. import Features
+from ..features import Features
 from ..utils import is_integer
 
 VALID_BASES = frozenset({'cosine'})

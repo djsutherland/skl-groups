@@ -15,7 +15,7 @@ if __name__ == '__main__':
     _this_dir = os.path.dirname(os.path.abspath(__file__))
     sys.path.insert(0, os.path.dirname(os.path.dirname(_this_dir)))
 
-from skl_groups import Features
+from skl_groups.features import Features
 
 
 wrong_type = partial(assert_raises, TypeError)
