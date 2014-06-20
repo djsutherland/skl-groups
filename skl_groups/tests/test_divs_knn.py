@@ -78,8 +78,8 @@ def test_knn_kl():
 
     est = KNNDivergenceEstimator(div_funcs=['kl'], Ks=[2], clamp=False)
     res = est.fit_transform([x, y]).squeeze()
-    # assert res[0, 0] == 0
-    # assert res[1, 1] == 0
+    assert res[0, 0] == 0
+    assert res[1, 1] == 0
     assert np.allclose(res[0, 1], x_to_y), "{} vs {}".format(res[0, 1], x_to_y)
     assert np.allclose(res[1, 0], y_to_x), "{} vs {}".format(res[1, 0], y_to_x)
 

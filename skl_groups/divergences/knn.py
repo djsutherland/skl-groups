@@ -197,7 +197,7 @@ class KNNDivergenceEstimator(BaseEstimator, TransformerMixin):
             rhos[i] = r
         return rhos
 
-    def _finalize(self, outputs, X_rhos, Y_rhos):
+    def _finalize(self, outputs, X_rhos, Y_rhos, to_self):
         if self.save_all_Ks_:
             X_rhos = [rho[:, self.Ks - 1] for rho in X_rhos]
             Y_rhos = [rho[:, self.Ks - 1] for rho in Y_rhos]
@@ -210,7 +210,7 @@ class KNNDivergenceEstimator(BaseEstimator, TransformerMixin):
             if meta.needs_rhos[1]:
                 args += (Y_rhos,)
             args += (required,)
-            r = meta(*args, clamp=self.clamp)
+            r = meta(*args, clamp=self.clamp, to_self=to_self)
             if r.ndim == 3:
                 r = r[np.newaxis, :, :, :]
             outputs[info.pos, :, :, :] = r
@@ -271,9 +271,11 @@ class KNNDivergenceEstimator(BaseEstimator, TransformerMixin):
         X_indices = self.indices_
         X_rhos = self.rhos_
         if X == Y:
+            to_self = True
             Y_indices = X_indices
             Y_rhos = X_rhos
         else:
+            to_self = False
             Y_indices = self._build_indices(Y)
             Y_rhos = self._get_rhos(Y, Y_indices) if do_sym else None
 
@@ -284,11 +286,12 @@ class KNNDivergenceEstimator(BaseEstimator, TransformerMixin):
             fn = _estimate_cross_divs
         outputs = fn(X, X_indices, X_rhos, Y, Y_indices, Y_rhos,
                      self.funcs_, self.Ks, self.max_K_, self.save_all_Ks_,
-                     len(self.div_funcs) + self.n_meta_only_, do_sym,
+                     len(self.div_funcs) + self.n_meta_only_,
+                     do_sym, to_self,
                      partial(plog, name="Cross-divergences"),
                      self._n_jobs, self.min_dist, self.clamp)
         logger.info("Getting meta functions...")
-        outputs = self._finalize(outputs, X_rhos, Y_rhos)
+        outputs = self._finalize(outputs, X_rhos, Y_rhos, to_self)
         logger.info("Done with divergences.")
         return outputs
 
@@ -517,7 +520,7 @@ MetaRequirement = namedtuple('MetaRequirement', 'func alpha needs_transpose')
 # needs_transpose: if true, ensures the required results have both directions
 
 
-def bhattacharyya(Ks, dim, required, clamp=True):
+def bhattacharyya(Ks, dim, required, clamp=True, to_self=False):
     r'''
     Estimate the Bhattacharyya coefficient between distributions, based on kNN
     distances:  \int \sqrt{p q}
@@ -535,27 +538,30 @@ bhattacharyya.needs_rhos = (False, False)
 bhattacharyya.needs_results = [MetaRequirement(alpha_div, 0.5, False)]
 
 
-def hellinger(Ks, dim, required, clamp=True):
+def hellinger(Ks, dim, required, clamp=True, to_self=False):
     r'''
     Estimate the Hellinger distance between distributions, based on kNN
     distances:  \sqrt{1 - \int \sqrt{p q}}
 
-    If clamp (the default), enforces 0 <= H <= 1.
+    Always enforces 0 <= H, to be able to sqrt; if clamp, also enforces
+    H <= 1.
 
     Returns a vector: one element for each K.
     '''
     bc, = required
     est = 1 - bc
+    np.maximum(est, 0, out=est)
     if clamp:
-        np.maximum(est, 0, out=est)
-        np.sqrt(est, out=est)
+        np.minimum(est, 1, out=est)
+    np.sqrt(est, out=est)
     return est
 hellinger.needs_alpha = False
 hellinger.needs_rhos = (False, False)
 hellinger.needs_results = [MetaRequirement(alpha_div, 0.5, False)]
 
 
-def renyi(alphas, Ks, dim, required, min_val=np.spacing(1), clamp=True):
+def renyi(alphas, Ks, dim, required, min_val=np.spacing(1),
+          clamp=True, to_self=False):
     r'''
     Estimate the Renyi-alpha divergence between distributions, based on kNN
     distances:  1/(\alpha-1) \log \int p^alpha q^(1-\alpha)
@@ -582,7 +588,7 @@ renyi.needs_rhos = (False, False)
 renyi.needs_results = [MetaRequirement(alpha_div, identity, False)]
 
 
-def tsallis(alphas, Ks, dim, required, clamp=True):
+def tsallis(alphas, Ks, dim, required, clamp=True, to_self=False):
     r'''
     Estimate the Tsallis-alpha divergence between distributions, based on kNN
     distances:  (\int p^alpha q^(1-\alpha) - 1) / (\alpha - 1)
@@ -604,7 +610,7 @@ tsallis.needs_rhos = (False, False)
 tsallis.needs_results = [MetaRequirement(alpha_div, identity, False)]
 
 
-def l2(Ks, dim, X_rhos, Y_rhos, required, clamp=True):
+def l2(Ks, dim, X_rhos, Y_rhos, required, clamp=True, to_self=False):
     r'''
     Estimates the L2 distance between distributions, via
         \int (p - q)^2 = \int p^2 - \int p q - \int q p + \int q^2.
@@ -636,9 +642,9 @@ def l2(Ks, dim, X_rhos, Y_rhos, required, clamp=True):
     np.maximum(est, 0, out=est)
     np.sqrt(est, out=est)
 
-    # # diagonal is of course known to be zero
-    # all_bags = xrange(n_bags)
-    # est[all_bags, all_bags, :, :] = 0
+    # diagonal is of course known to be zero
+    if to_self:
+        est[:, :, range(n_X), range(n_Y)] = 0
     return est[:, :, :, :, None]
 l2.needs_alpha = False
 l2.needs_rhos = (True, True)
@@ -666,7 +672,8 @@ def quadratic(Ks, dim, rhos, required=None):
     return est
 
 
-def jensen_shannon(Ks, dim, X_rhos, Y_rhos, required, clamp=True):
+def jensen_shannon(Ks, dim, X_rhos, Y_rhos, required,
+                   clamp=True, to_self=False):
     r'''
     Estimate the difference between the Shannon entropy of an equally-weighted
     mixture between X and Y and the mixture of the Shannon entropies:
@@ -754,9 +761,9 @@ def jensen_shannon(Ks, dim, X_rhos, Y_rhos, required, clamp=True):
     est += np.log(-1 + X_ns[None, None, :, None] + Y_ns[None, None, None, :])
     est += psi(Ks)[None, :, None, None]
 
-    # # diagonal is zero
-    # all_bags = xrange(n_bags)
-    # est[all_bags, all_bags, :, :] = 0
+    # diagonal is zero
+    if to_self:
+        est[:, :, range(n_X), range(n_Y)] = 0
 
     if clamp:  # know that 0 <= JS <= ln(2)
         np.maximum(0, est, out=est)

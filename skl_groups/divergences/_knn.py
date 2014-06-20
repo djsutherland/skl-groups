@@ -107,7 +107,7 @@ def _jensen_shannon_core(Ks, dim, min_i, digamma_vals, num_q, rhos, nus, clamp=T
 def _estimate_cross_divs(X_features, X_indices, X_rhos,
                          Y_features, Y_indices, Y_rhos,
                          funcs, Ks, max_K, save_all_Ks,
-                         n_output, do_sym,
+                         n_output, do_sym, to_self,
                          log_progress, n_jobs, min_dist, clamp):
     n_X = len(X_indices)
     n_Y = len(Y_features)
@@ -162,7 +162,10 @@ def _estimate_cross_divs(X_features, X_indices, X_rhos,
 
             for func, info in iteritems(funcs):
                 o = (info.pos, slice(None), i, j, 0)
-                if needs_sub(func):
+
+                if i == j and to_self and func.self_value is not None:
+                    outputs[o] = func.self_value
+                elif needs_sub(func):
                     outputs[o] = func(num_q, rho_sub, nu_sub, clamp=clamp)
                 else:
                     outputs[o] = func(num_q, rho, nu, clamp=clamp)
@@ -188,8 +191,6 @@ def _estimate_cross_divs(X_features, X_indices, X_rhos,
             # Loop over rows of the output array,
             # searching / getting nus from all of the Y bags to this one X bag.
 
-            # TODO: X = Y case
-
             num_q = X_features.n_pts[i]
 
             knns = np.sqrt(X_index.nn_index(Y_feats, max_K)[1][:, which_Ks])
@@ -205,9 +206,12 @@ def _estimate_cross_divs(X_features, X_indices, X_rhos,
 
                 for func, info in iteritems(sym_funcs):
                     o = (info.pos, slice(None), i, j, 1)
-                    if needs_sub(func):
-                        outputs[o] = func(num_q, rho_sub, nu_sub)
+
+                    if i == j and to_self and func.self_value is not None:
+                        outputs[o] = func.self_value
+                    elif needs_sub(func):
+                        outputs[o] = func(num_q, rho_sub, nu_sub, clamp=clamp)
                     else:
-                        outputs[o] = func(num_q, rho, nu)
+                        outputs[o] = func(num_q, rho, nu, clamp=clamp)
 
     return outputs
