@@ -156,9 +156,9 @@ class KNNDivergenceEstimator(BaseEstimator, TransformerMixin):
         self.max_K_ = max_K
 
     def _check_features(self, X):
-        # TODO: if we have the cython code, don't stack
         if isinstance(X, Features):
-            X.make_stacked()
+            if self.version_ == 'slow':
+                X.make_stacked()
             return X.bare()
         else:
             return Features(X, stack=True)
@@ -229,7 +229,7 @@ class KNNDivergenceEstimator(BaseEstimator, TransformerMixin):
         FLANN indices and gets within-bag distances for X.
         '''
         self._setup_args()
-        self.features_ = X = Features(X, bare=True)
+        self.features_ = X = self._check_features(X)
 
         # if we're using a function that needs to pick its K vals itself,
         # then we need to set max_K here. when we transform(), might have to
@@ -243,7 +243,7 @@ class KNNDivergenceEstimator(BaseEstimator, TransformerMixin):
         return self
 
     def transform(self, X):
-        Y = Features(X, bare=True)
+        Y = self._check_features(X)
         X = self.features_  # yes, naming here is confusing.
         # TODO: optimize for getting divergences among self
 
