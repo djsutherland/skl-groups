@@ -30,6 +30,10 @@ If you want to use the knn divergence estimator, you'll need to have
 and either its Python interface (pyflann) or the
 `cyflann <https://github.com/dougalsutherland/cyflann/>`_ library.
 These can be installed after installing skl-groups.
+If you're running on non-tiny datasets, you'll want a version with OpenMP
+support.
+If you use Anaconda, the cyflann page has a pointer on how to install both
+FLANN and cyflann through conda.
 
 You may also want the
 `skl-groups-accel <https://github.com/dougalsutherland/skl-groups-accel>`_
