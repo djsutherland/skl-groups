@@ -49,13 +49,151 @@ def plog(it, name=None, total=None):
 ### Main class
 
 class KNNDivergenceEstimator(BaseEstimator, TransformerMixin):
-    '''
+    r'''
+    Estimates various divergence functions between bags.
+
+    Assumes that each bag represents an independent and identically distributed
+    sample from some unknown probability distribution (on which certain
+    technical assumptions are made), and estimates various distances between
+    them. The valid divergence functions are, where p and q refer to the density
+    functions for two bags:
+
+    * 'kl': The Kullback-Liebler divergence, which acts like a distance and has
+      some attractive information-theoretic properties as well as often giving
+      good results on machine learning problems in practice. Values are
+      nonnegative but can go to infinity.
+      :math:`\int p(x) \log\left( \frac{p(x)}{q(x)} \right) dx`.
+      Estimated as in [1]_.
+    * 'renyi:.8' or any other number (other than 1): The Renyi-alpha divergence,
+      :math:`\frac{1}{\alpha - 1} \log \int p(x) \left( \frac{p(x)}{q(x)} \right)^{\alpha - 1} dx`.
+      Converges to 'kl' as :math:`\alpha` goes to 1.
+      Values are nonnegative, but can go to infinity.
+      Estimated as in [2]_.
+    * 'tsallis:.8' or any other number (other than 1): The Tsallis-alpha divergence,
+      :math:`\frac{1}{\alpha - 1} \left( \int p(x) \left(\frac{p(x)}{q(x)} \right)^{\alpha - 1} dx - 1 \right)`.
+      Converges to `kl` as :math:`\alpha` goes to 1.
+      Values are nonnegative, but can go to infinity.
+      Estimated as in [2]_.
+    * 'hellinger': The Hellinger distance, which is a true distance (i.e. it is
+      symmetric and its true value satisfies the triangle inequality) and is
+      between 0 and 1. Defined by :math:`\sqrt{1 - \int \sqrt{p(x) q(x)} dx}`.
+      Estimated as in [2]_.
+    * 'bc': The Bhattacharyya coefficient, `:math:\int \sqrt{p(x) q(x)} dx`.
+      This is an affinity rather than a distance and is between 0 and 1.
+      Estimated as in [2]_.
+    * 'l2': The :math:`L_2` distance between density functions
+      :math:`\sqrt{ \int (p(x) - q(x))^2 dx }`.
+      Estimated as in [2]_.
+      A true distance function (symmetric and satisfies the triangle inequality.)
+    * 'linear': :math:`\int p(x) q(x) dx`.
+      Estimated as in [2]_.
+    * 'jensen-shannon' or 'js': The Jensen-Shannon divergence.
+      Equal to :math:`\frac{1}{2} D(p \| M) + \tfrac{1}{2} D(q \| M)`,
+      where D is the Kullback-Liebler divergence
+      and M is an equal mixture between p and q,
+      or equivalently :math:`H[M] - \frac{1}{2} H[p] - \frac{1}{2} H[q]`
+      where H is the Shannon entropy.
+      Symmetric, its square root satisfies the triangle inequality,
+      and is between 0 and :math:`\ln 2`.
+      Estimated using [3]_.
+
 
     Parameters
     ----------
 
+    div_funcs : sequence of strings, optional, default ['kl']
+        A sequence of divergence function spec strings, as above.
+        For Renyi or Tsallis divergences, you can pass multiple values of
+        alpha, e.g. ``['renyi:.9', 'renyi:.8', 'tsallis:.99']``.
+
+    Ks : sequence of positive integers, optional, default [3]
+        The Ks to use for the K-nearest-neighbor estimator.
+        If you have very small bags (sizes less than, say, 25), try 1 or 2;
+        if large, say more than 1000, try 4 or 5.
+        Must be less than the smallest bag size; for the proof of [2]_ to work,
+        should be at least 3 for most divergence functions.
+        Jensen-Shannon treats this parameter a little differently.
+
+    do_sym : boolean, optional, default False
+        As well as returning D(X || Y), return D(Y || X).
+
     n_jobs : integer, optional
-        The number of CPUs to use to do the computation. -1 means 'all CPUs'.
+        The number of CPUs to use in the computation. -1 means 'all CPUs'.
+
+    clamp : boolean, optional, default True
+        For functions with bounded outputs, "clamp" them to lie within that
+        range; for example, if the estimator for KL divergence gives a negative
+        value, return 0 instead.
+
+    min_dist : float, optional, default 1e-3
+        Protect against nearly-identical points by treating any distances less
+        than this amount as this number. Tiny distances screw up the estimators
+        because they assume that the inputs are from a continuous distribution,
+        where this doesn't happen.
+
+    flann_algorithm : string, optional, default 'auto'
+        Which algorithm to use in FLANN for nearest neighbors. Defaults to
+        'auto', which chooses 'kdtree_single' if the input dimension is at most
+        5 and 'linear' otherwise. In high-ish dimensional spaces, you can get
+        much better performance at the cost of approximate answers by using
+        other index types; see the FLANN documentation.
+
+    flann_args : dictionary, optional, default {}
+        Other arguments to pass to FLANN.
+
+    version : one of {'best', 'fast', 'slow'}, optional, default 'best'
+        Whether to use the fast Cython implementation from skl-groups-accel
+        or the slower pure-Python implementation. 'best' chooses 'fast' if
+        available and you aren't using custom divergence functions, 'slow'
+        otherwise.
+
+    Attributes
+    ----------
+
+    `features_` : :class:`skl_groups.features.Features`
+        The features passed to `fit`.
+
+    `indices_` : list
+        A FLANN index for each bag in `features_`.
+
+    `rhos_` : list
+        For each bag in `features_`, the Kth nearest neighbor of each point
+        amongst its own bag.
+
+    `version_` : 'fast' or 'slow'
+        As `self.version`, but with 'best' resolved to either 'fast' or 'slow'.
+
+    `save_all_Ks_` : boolean
+        Whether all K nearest neighbors must be saved, or just the requested Ks.
+
+    `max_K_` : integer
+        The K value out to which searches must be done. Usually ``max(self.Ks)``,
+        but Jensen-Shannon can require slightly more.
+
+    `funcs_base_` : dictionary
+        The processed "base" divergence functions corresponding to `div_funcs`.
+
+    `metas_base_` : dictionary
+        The processed "meta" divergence functions corresponding to `div_funcs`.
+
+    `funcs_` : dictionary
+        `funcs_base_` but with partial application matching `features_`.
+
+    `metas_` : dictionary
+        `metas_base_` but with partial application matching `features_`.
+
+    References
+    ----------
+    .. [1] Q. Wang, S. Kulkarni, & S. Verdu. (2009).
+           Divergence Estimation for Multidimensional Densities Via
+           k-Nearest-Neighbor Distances.
+           IEEE Transactions on Information Theory, 55(5), 2392-2405.
+    .. [2] B. Poczos, L. Xiong, D. J. Sutherland, & J. Schneider. (2012).
+           Nonparametric kernel estimators for image classification.
+           In Computer Vision and Pattern Recognition (CVPR) (pp. 2989-2996).
+    .. [3] H. Hino & N. Murata. (2013).
+           Information estimators for weighted observations.
+           Neural Networks.
     '''
     def __init__(self, div_funcs=('kl',), Ks=(3,), do_sym=False, n_jobs=1,
                  clamp=True, min_dist=1e-3,
@@ -75,6 +213,7 @@ class KNNDivergenceEstimator(BaseEstimator, TransformerMixin):
         self._setup_args()
 
     def _setup_args(self):
+        "Checks arguments are correct and does divergence spec parsing."
         self.Ks = Ks = np.asarray(self.Ks)
         if Ks.ndim != 1:
             raise TypeError("Ks should be 1-dim, got shape {}".format(Ks.shape))
@@ -126,12 +265,14 @@ class KNNDivergenceEstimator(BaseEstimator, TransformerMixin):
 
     @property
     def _n_jobs(self):
+        "n_jobs, but with the number of cores instead of -1."
         if self.n_jobs == -1:
             from multiprocessing import cpu_count
             return cpu_count()
         return self.n_jobs
 
     def _flann_args(self, X=None):
+        "The dictionary of arguments to give to FLANN."
         args = {'cores': self._n_jobs}
         if self.flann_algorithm == 'auto':
             if X is None or X.dim > 5:
@@ -145,6 +286,7 @@ class KNNDivergenceEstimator(BaseEstimator, TransformerMixin):
         return args
 
     def _choose_funcs(self, X, Y=None):
+        "Assigns partial results to funcs and metas_; picks max_K_."
         self.funcs_, self.metas_ = _set_up_funcs(
             self.funcs_base_, self.metas_base_, self.Ks,
             X.dim, X.n_pts, None if Y is None else Y.n_pts)
@@ -156,6 +298,7 @@ class KNNDivergenceEstimator(BaseEstimator, TransformerMixin):
         self.max_K_ = max_K
 
     def _check_features(self, X):
+        "Stacks X if necessary and returns a bare version of it."
         if isinstance(X, Features):
             if self.version_ == 'slow':
                 X.make_stacked()
@@ -164,6 +307,7 @@ class KNNDivergenceEstimator(BaseEstimator, TransformerMixin):
             return Features(X, stack=True)
 
     def _check_Ks(self, X, Y=None):
+        "Checks that Ks will work with the given features."
         min_pt = min(X.n_pts.min(), np.inf if Y is None else Y.n_pts.min())
         if self.max_K_ >= min_pt:
             msg = "asked for K = {}, but there's a bag with only {} points"
@@ -198,6 +342,7 @@ class KNNDivergenceEstimator(BaseEstimator, TransformerMixin):
         return rhos
 
     def _finalize(self, outputs, X_rhos, Y_rhos, to_self):
+        "Applies meta functions and subsets to the requested outputs."
         if self.save_all_Ks_:
             X_rhos = [rho[:, self.Ks - 1] for rho in X_rhos]
             Y_rhos = [rho[:, self.Ks - 1] for rho in Y_rhos]
@@ -223,10 +368,23 @@ class KNNDivergenceEstimator(BaseEstimator, TransformerMixin):
             outputs = np.ascontiguousarray(outputs[:-self.n_meta_only_])
         return outputs
 
-    def fit(self, X, y=None, skip_rhos=False):
+    def fit(self, X, y=None, skip_rhos=True):
         '''
         Sets up for divergence estimation "from" X "to" new data. Builds
         FLANN indices and gets within-bag distances for X.
+
+        Parameters
+        ----------
+        X : list of arrays or :class:`skl_groups.features.Features`
+            The bags to search "from".
+
+        skip_rhos : boolean, optional, default True
+            Don't actually get within-bag distances yet. Useful if you're
+            using Jensen-Shannon divergence, because it might need to ask for
+            a higher max_K_ once it sees the number of points in the bags
+            you're searching "to". Note that this just moves a bit of
+            computation from the fit stage to the transform stage; it'll still
+            be saved if you transform more than once.
         '''
         self._setup_args()
         self.features_ = X = self._check_features(X)
@@ -243,9 +401,25 @@ class KNNDivergenceEstimator(BaseEstimator, TransformerMixin):
         return self
 
     def transform(self, X):
+        '''
+        Computes the divergences between `features_` and X.
+
+        Parameters
+        ----------
+        X : list of bag feature arrays or :class:`skl_groups.features.Features`
+            The bags to search "to".
+
+        Returns
+        -------
+        divs : array of shape [len(div_funcs), len(Ks), len(features_), len(X)] + [2] if do_sym else []
+            The divergences between features_ and X.
+            ``divs[d, k, i, j]`` is the ``div_funcs[d]`` divergence
+            between ``fetaures_[i]`` and ``X[j]`` using a K of ``Ks[k]``;
+            if ``do_sym``, ``divs[d, k, i, j, 0]`` is :math:`D(i \| j)` and
+            ``divs[d, k, i, j, 1]`` is :math:`D(j \| i)`.
+        '''
         Y = self._check_features(X)
         X = self.features_  # yes, naming here is confusing.
-        # TODO: optimize for getting divergences among self
 
         old_max_K = self.max_K_
         self._choose_funcs(X, Y)

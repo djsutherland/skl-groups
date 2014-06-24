@@ -16,7 +16,8 @@ Contents:
 .. autosummary::
    :toctree: skl_groups
 
-   Features
+   features.Features
+   divergences.KNNDivergenceEstimator
    summaries.BagMean
    summaries.BagOfWords
    summaries.L2DensityTransformer
