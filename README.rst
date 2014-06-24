@@ -1,7 +1,38 @@
-This is a work-in-progress generalization of
-[`py-sdm`](https://github.com/dougalsutherland/py-sdm/)
-to allow for other types of learning on groups
-and to normalize the API to be a little more like that of scikit-learn proper.
+skl-groups
+==========
 
-It's currently in very early stages of development;
-feel free get in touch if you're interested.
+skl-groups is a package to perform machine learning on sets (or "groups") of
+features in Python. It extends the `scikit-learn <http://scikit-learn.org>`_
+library with support for either transforming sets into feature vectors that
+can be operated on with standard scikit-learn constructs or obtaining
+pairwise similarity/etc matrices that can be turned into kernels for use in
+scikit-learn.
+
+skl-groups is currently in early stages of development; feel free to get in
+touch if you're interested.
+
+
+Installation
+------------
+
+This code is written and tested for Python 2.7, 3.3, and 3.4. 3.2 probably
+works. It is also only tested on OS X and Linux, though it's not known not to
+work on other platforms; let me know if you try it.
+
+Get reasonably recent versions of numpy, scipy, and scikit-learn, then run::
+
+    python setup.py install
+
+to install skl-groups.
+
+If you want to use the knn divergence estimator, you'll need to have
+`FLANN <http://people.cs.ubc.ca/~mariusm/index.php/FLANN/FLANN>`_
+and either its Python interface (pyflann) or the
+`cyflann <https://github.com/dougalsutherland/cyflann/>`_ library.
+These can be installed after installing skl-groups.
+
+You may also want the
+`skl-groups-accel <https://github.com/dougalsutherland/skl-groups-accel>`_
+package, which contains faster implementations of some of the algorithms in
+skl-groups; it's split out to make the base package of skl-groups easier to
+install.
