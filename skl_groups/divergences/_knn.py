@@ -120,8 +120,6 @@ def _estimate_cross_divs(X_features, X_indices, X_rhos,
                        dtype=np.float32)
     outputs.fill(np.nan)
 
-    # TODO: handle self_value
-
     # Keep track of whether each function needs rho_sub or just rho
     if save_all_Ks:
         def needs_sub(func):

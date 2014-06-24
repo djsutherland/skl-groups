@@ -10,7 +10,7 @@ import numpy as np
 from scipy.special import gamma, gammaln, psi
 from sklearn.base import BaseEstimator, TransformerMixin
 from sklearn.externals.six import iteritems, itervalues
-from sklearn.externals.six.moves import map, zip
+from sklearn.externals.six.moves import map, zip, xrange
 
 try:
     from cyflann import FLANNIndex, FLANNParameters
@@ -288,7 +288,7 @@ class KNNDivergenceEstimator(BaseEstimator, TransformerMixin):
                      self.funcs_, self.Ks, self.max_K_, self.save_all_Ks_,
                      len(self.div_funcs) + self.n_meta_only_,
                      do_sym, to_self,
-                     partial(plog, name="Cross-divergences"),
+                     ProgressLogger(progress_logger, name="Cross-divergences"),
                      self._n_jobs, self.min_dist, self.clamp)
         logger.info("Getting meta functions...")
         outputs = self._finalize(outputs, X_rhos, Y_rhos, to_self)
@@ -628,23 +628,23 @@ def l2(Ks, dim, X_rhos, Y_rhos, required, clamp=True, to_self=False):
     linears, = required
     assert linears.shape == (1, Ks.size, n_X, n_Y, 2)
 
-    X_quadratics = np.empty((n_X, Ks.size), dtype=np.float32)
+    X_quadratics = np.empty((Ks.size, n_X), dtype=np.float32)
     for i, rho in enumerate(X_rhos):
-        X_quadratics[i, :] = quadratic(Ks, dim, rho)
+        X_quadratics[:, i] = quadratic(Ks, dim, rho)
 
-    Y_quadratics = np.empty((n_Y, Ks.size), dtype=np.float32)
-    for i, rho in enumerate(Y_rhos):
-        Y_quadratics[i, :] = quadratic(Ks, dim, rho)
+    Y_quadratics = np.empty((Ks.size, n_Y), dtype=np.float32)
+    for j, rho in enumerate(Y_rhos):
+        Y_quadratics[:, j] = quadratic(Ks, dim, rho)
 
     est = -linears.sum(axis=4)
-    est += X_quadratics.reshape(1, Ks.size, n_X, 1)
-    est += Y_quadratics.reshape(1, Ks.size, 1, n_Y)
+    est += X_quadratics[None, :, :, None]
+    est += Y_quadratics[None, :, None, :]
     np.maximum(est, 0, out=est)
     np.sqrt(est, out=est)
 
     # diagonal is of course known to be zero
     if to_self:
-        est[:, :, range(n_X), range(n_Y)] = 0
+        est[:, :, xrange(n_X), xrange(n_Y)] = 0
     return est[:, :, :, :, None]
 l2.needs_alpha = False
 l2.needs_rhos = (True, True)
@@ -763,7 +763,7 @@ def jensen_shannon(Ks, dim, X_rhos, Y_rhos, required,
 
     # diagonal is zero
     if to_self:
-        est[:, :, range(n_X), range(n_Y)] = 0
+        est[:, :, xrange(n_X), xrange(n_Y)] = 0
 
     if clamp:  # know that 0 <= JS <= ln(2)
         np.maximum(0, est, out=est)
