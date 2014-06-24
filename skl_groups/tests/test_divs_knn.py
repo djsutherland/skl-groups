@@ -7,7 +7,7 @@ import sys
 
 import numpy as np
 from scipy.special import psi
-from sklearn.externals.six.moves import xrange
+from sklearn.externals.six.moves import xrange, zip
 
 from nose.tools import assert_raises
 from testfixtures import LogCapture
@@ -30,13 +30,27 @@ def test_knn_sanity():
     bags = Features([np.random.randn(np.random.randint(30, 100), dim)
                      for _ in xrange(n)])
 
-    # just make sure it runs
     div_funcs = ('kl', 'js', 'renyi:.9', 'l2', 'tsallis:.8')
     Ks = (3, 4)
-    est = KNNDivergenceEstimator(div_funcs=div_funcs, Ks=Ks)
+    get_est = partial(KNNDivergenceEstimator, div_funcs=div_funcs, Ks=Ks)
+    results = {}
+    for version in ('fast', 'slow', 'best'):
+        est = get_est(version=version)
+        results[version] = res = est.fit_transform(bags)
+        assert res.shape == (len(div_funcs), len(Ks), n, n)
+        assert np.all(np.isfinite(res))
+
+    for df, fast, slow in zip(div_funcs, results['fast'], results['slow']):
+        assert np.allclose(fast, slow, atol=5e-3 if df == 'js' else 1e-5), df
+        # TODO: debug JS differences
+
+    est = get_est(version='fast', n_jobs=-1)
     res = est.fit_transform(bags)
-    assert res.shape == (len(div_funcs), len(Ks), n, n)
-    assert np.all(np.isfinite(res))
+    assert np.allclose(results['fast'], res)
+
+    est = get_est(version='slow', n_jobs=-1)
+    res = est.fit_transform(bags)
+    assert np.allclose(results['slow'], res)
 
     # test that JS blows up when there's a huge difference in bag sizes
     # (so that K is too low)
@@ -76,12 +90,17 @@ def test_knn_kl():
     y_to_x = np.log(n / (m-1)) + 1/m * (
         np.log(.8 / 3) + np.log(1.2 / 2) + np.log(2.2 / 3) + np.log(6.2 / 6))
 
-    est = KNNDivergenceEstimator(div_funcs=['kl'], Ks=[2], clamp=False)
-    res = est.fit_transform([x, y]).squeeze()
-    assert res[0, 0] == 0
-    assert res[1, 1] == 0
-    assert np.allclose(res[0, 1], x_to_y), "{} vs {}".format(res[0, 1], x_to_y)
-    assert np.allclose(res[1, 0], y_to_x), "{} vs {}".format(res[1, 0], y_to_x)
+    msg = "got {}, expected {} with {}"
+    for version in ['fast', 'slow']:
+        est = KNNDivergenceEstimator(div_funcs=['kl'], Ks=[2],
+                                     clamp=False, version=version)
+        res = est.fit_transform([x, y]).squeeze()
+        assert res[0, 0] == 0
+        assert res[1, 1] == 0
+        assert np.allclose(res[0, 1], x_to_y), msg.format(
+            res[0, 1], x_to_y, version)
+        assert np.allclose(res[1, 0], y_to_x), msg.format(
+            res[1, 0], y_to_x, version)
 
 
 def test_knn_js():
@@ -115,12 +134,15 @@ def test_knn_js():
             np.log(3) + np.log(2) + np.log(3) + np.log(4) + np.log(7))
     )
 
-    est = KNNDivergenceEstimator(div_funcs=['js'], Ks=[2])
-    res = est.fit([x]).transform([y]).squeeze()
-    assert res.shape == ()
-    res = res[()]
-    err_msg = "got {}, expected {}"
-    assert np.allclose(res, right_js, atol=1e-6), err_msg.format(res, right_js)
+    msg = "got {}, expected {} with {}"
+    for version in ['fast', 'slow']:
+        est = KNNDivergenceEstimator(div_funcs=['js'], Ks=[2],
+                                     version=version, clamp=False)
+        res = est.fit([x]).transform([y]).squeeze()
+        assert res.shape == ()
+        res = res[()]
+        assert np.allclose(res, right_js, atol=1e-6), msg.format(
+            res, right_js, version)
 
 
 
