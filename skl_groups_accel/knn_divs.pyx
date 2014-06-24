@@ -111,7 +111,7 @@ cdef void _alpha_div(const float[::1] omas, const float[:, ::1] Bs,
                 results[poses[i], j] = 0
 
 
-# @cython.boundscheck(False)
+@cython.boundscheck(False)
 @cython.wraparound(False)
 @cython.cdivision(True)
 cdef void _jensen_shannon_core(const int[::1] Ks, int dim,
@@ -191,7 +191,7 @@ cdef void _jensen_shannon_core(const int[::1] Ks, int dim,
 
 ################################################################################
 
-# @cython.boundscheck(False)
+@cython.boundscheck(False)
 @cython.wraparound(False)
 @cython.cdivision(True)
 def _estimate_cross_divs(X_features, X_indices, X_rhos,
