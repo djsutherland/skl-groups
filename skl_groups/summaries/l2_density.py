@@ -82,7 +82,7 @@ class L2DensityTransformer(BaseEstimator, TransformerMixin):
 
     References
     ----------
-    .. [1] Oliva, J. B., Poczos, B., & Schneider, J. (2014).
+    .. [1] J. B. Oliva, B. Poczos, & J. Schneider. (2014).
            Fast Distribution To Real Regression.
            In Proceedings of the 17th International Conference on
            Artificial Intelligence and Statistics (AISTATS).
@@ -136,8 +136,9 @@ class L2DensityTransformer(BaseEstimator, TransformerMixin):
 
         Parameters
         ----------
-        X : :class:`Features` or list of bag feature arrays
-            New data to transform. The data should be in
+        X : :class:`skl_groups.features.Features` or list of bag feature arrays
+            New data to transform. The data should all lie in [0, 1];
+            use :class:`skl_groups.preprocessing.BagMinMaxScaler` if not.
 
         Returns
         -------
