@@ -60,7 +60,7 @@ def test_knn_sanity():
 
     # test fit() and then transform() with JS, with different-sized test bags
     est = KNNDivergenceEstimator(div_funcs=('js',), Ks=(5,))
-    est.fit(bags)
+    est.fit(bags, skip_rhos=False)
     with LogCapture('skl_groups.divergences.knn', level=logging.WARNING) as l:
         res = est.transform([np.random.randn(300, dim)])
         assert len(l.records) == 1
