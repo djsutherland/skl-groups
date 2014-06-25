@@ -30,16 +30,17 @@ def test_symmetrize():
     X = np.random.normal(size=(10, 10))
     Xo = X.copy()
 
-    Xs = Symmetrize(copy=True).fit_transform(X)
+    sym = Symmetrize(copy=True)
+    Xs = sym.fit_transform(X)
     assert np.all(X == Xo)
     assert np.allclose(Xs, (X + X.T) / 2)
+    assert np.all(sym.transform(X + 1) == X + 1)
 
     Xs2 = Symmetrize(copy=False).fit_transform(X)
     assert np.allclose(Xs2, (X + X.T) / 2)
 
     sym = Symmetrize()
     assert_raises(NotImplementedError, lambda: sym.fit(X))
-    assert_raises(NotImplementedError, lambda: sym.transform(X))
     assert_raises(TypeError, lambda: sym.fit_transform(np.zeros((5, 3))))
 
 

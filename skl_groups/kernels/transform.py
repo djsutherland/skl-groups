@@ -64,8 +64,8 @@ class Symmetrize(BaseEstimator, TransformerMixin):
         raise NotImplementedError("Symmetrize can only fit_transform")
 
     def transform(self, X):
-        "Raises NotImplementedError."
-        raise NotImplementedError("Symmetrize can only fit_transform")
+        "Does nothing, so that it works nicely in pipelines."
+        return X
 
     def fit_transform(self, X, y=None):
         '''
