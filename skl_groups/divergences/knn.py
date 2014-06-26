@@ -432,7 +432,8 @@ class KNNDivergenceEstimator(BaseEstimator, TransformerMixin):
                     if req.needs_transpose}
 
         Y_indices = self.indices_
-        def get_Y_rhos():
+        to_self = X == Y
+        if to_self or do_sym:
             if hasattr(self, 'rhos_') and self.max_K_ > old_max_K:
                 logger.warning(("Fit with a lower max_K ({}) than we actually "
                                 "need ({}); recomputing rhos.").format(
@@ -440,22 +441,13 @@ class KNNDivergenceEstimator(BaseEstimator, TransformerMixin):
                 del self.rhos_
             if not hasattr(self, 'rhos_'):
                 self.rhos_ = self._get_rhos(Y, Y_indices)
-
-        if X == Y:
-            to_self = True
+        if to_self:
             X_indices = Y_indices
-            get_Y_rhos()
             X_rhos = Y_rhos = self.rhos_
         else:
-            to_self = False
             X_indices = self._build_indices(X)
             X_rhos = self._get_rhos(X, X_indices)
-
-            if do_sym:
-                get_Y_rhos()
-                Y_rhos = self.rhos_
-            else:
-                Y_rhos = None
+            Y_rhos = self.rhos_ if do_sym else None
 
         logger.info("Getting divergences...")
         if self.version_ == 'fast':
