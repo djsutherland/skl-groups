@@ -4,6 +4,7 @@ from functools import partial
 import logging
 import os
 import sys
+import tempfile
 
 import numpy as np
 from scipy.special import psi
@@ -65,7 +66,7 @@ def test_knn_sanity():
         res = est.transform([np.random.randn(300, dim)])
         assert res.shape == (1, 1, 1, len(bags))
         assert len(l.records) == 1
-        assert l.records[0].message.startswith('Fit with a lower max_K')
+        assert l.records[0].message.startswith('Y_rhos had a lower max_K')
 
     # test that passing div func more than once raises
     def blah(df):
@@ -75,6 +76,21 @@ def test_knn_sanity():
     assert_raises(ValueError, lambda: blah('renyi:.8'))
     assert_raises(ValueError, lambda: blah('l2'))
 
+    # test memory
+    tdir = tempfile.mkdtemp()
+    est = get_est(memory=tdir)
+    res1 = est.fit_transform(bags)
+
+    with LogCapture('skl_groups.divergences.knn', level=logging.INFO) as l:
+        res2 = est.transform(bags)
+        assert len(l.records) == 0
+    assert np.all(res1 == res2)
+
+    with LogCapture('skl_groups.divergences.knn', level=logging.INFO) as l:
+        res3 = est.fit_transform(bags)
+        for r in l.records:
+            assert not r.message.startswith("Getting divergences")
+    assert np.all(res1 == res3)
 
 
 def test_knn_kl():

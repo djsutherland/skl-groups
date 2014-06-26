@@ -9,7 +9,8 @@ import warnings
 import numpy as np
 from scipy.special import gamma, gammaln, psi
 from sklearn.base import BaseEstimator, TransformerMixin
-from sklearn.externals.six import iteritems, itervalues
+from sklearn.externals.joblib import Memory
+from sklearn.externals.six import iteritems, itervalues, string_types
 from sklearn.externals.six.moves import map, zip, xrange
 
 try:
@@ -18,7 +19,7 @@ except ImportError:
     from pyflann import FLANN as FLANNIndex, FLANNParameters
 
 from ..features import Features
-from ..utils import identity, ProgressLogger
+from ..utils import identity, ProgressLogger, as_integer_type
 from ._knn import _linear, kl, _alpha_div, _jensen_shannon_core
 
 from ._knn import _estimate_cross_divs
@@ -147,6 +148,11 @@ class KNNDivergenceEstimator(BaseEstimator, TransformerMixin):
         available and you aren't using custom divergence functions, 'slow'
         otherwise.
 
+    memory : Instance of joblib.Memory or string (optional)
+        Used to cache the output of ``transform()``.
+        By default, no caching is done. If a string is given, it is the
+        path to the caching directory.
+
     Attributes
     ----------
 
@@ -158,29 +164,7 @@ class KNNDivergenceEstimator(BaseEstimator, TransformerMixin):
 
     `rhos_` : list
         For each bag in `features_`, the Kth nearest neighbor of each point
-        amongst its own bag.
-
-    `version_` : 'fast' or 'slow'
-        As `self.version`, but with 'best' resolved to either 'fast' or 'slow'.
-
-    `save_all_Ks_` : boolean
-        Whether all K nearest neighbors must be saved, or just the requested Ks.
-
-    `max_K_` : integer
-        The K value out to which searches must be done. Usually ``max(self.Ks)``,
-        but Jensen-Shannon can require slightly more.
-
-    `funcs_base_` : dictionary
-        The processed "base" divergence functions corresponding to `div_funcs`.
-
-    `metas_base_` : dictionary
-        The processed "meta" divergence functions corresponding to `div_funcs`.
-
-    `funcs_` : dictionary
-        `funcs_base_` but with partial application matching `features_`.
-
-    `metas_` : dictionary
-        `metas_base_` but with partial application matching `features_`.
+        amongst its own bag. May or may not be present when fit.
 
     References
     ----------
@@ -197,7 +181,8 @@ class KNNDivergenceEstimator(BaseEstimator, TransformerMixin):
     '''
     def __init__(self, div_funcs=('kl',), Ks=(3,), do_sym=False, n_jobs=1,
                  clamp=True, min_dist=1e-3,
-                 flann_algorithm='auto', flann_args=None, version='best'):
+                 flann_algorithm='auto', flann_args=None, version='best',
+                 memory=Memory(cachedir=None, verbose=0)):
         self.div_funcs = div_funcs
         self.Ks = Ks
         self.do_sym = do_sym
@@ -207,61 +192,16 @@ class KNNDivergenceEstimator(BaseEstimator, TransformerMixin):
         self.flann_algorithm = flann_algorithm
         self.flann_args = flann_args
         self.version = version
+        self.memory = memory
 
-        # check params, but need to re-run in fit() in case args are set by
-        # a pipeline or whatever
-        self._setup_args()
-
-    def _setup_args(self):
-        "Checks arguments are correct and does divergence spec parsing."
-        self.Ks = Ks = np.asarray(self.Ks)
+    def _get_Ks(self):
+        "Ks as an array and type-checked."
+        Ks = as_integer_type(self.Ks)
         if Ks.ndim != 1:
             raise TypeError("Ks should be 1-dim, got shape {}".format(Ks.shape))
         if Ks.min() < 1:
             raise ValueError("Ks should be positive; got {}".format(Ks.min()))
-
-        if not hasattr(self, 'funcs_base_'):
-            self.funcs_base_, self.metas_base_, self.n_meta_only_ = \
-                _parse_specs(self.div_funcs, Ks)
-
-            self.save_all_Ks_ = any(getattr(f, 'needs_all_ks', False)
-                                    for f in self.funcs_base_)
-
-        # check flann args; just prevents a similar exception later
-        try:
-            FLANNParameters().update(self._flann_args())
-        except AttributeError as e:
-            msg = "flann_args contains an invalid argument:\n  {}"
-            raise TypeError(msg.format(e))
-
-        # check whether we can use the fast version of the code
-        non_fastable_funcs = set(self.funcs_base_) - fast_funcs
-        if self.version == 'fast':
-            if not have_fast_version:
-                msg = "asked for 'fast', but skl_groups_accel not available"
-                raise ValueError(msg)
-            elif non_fastable_funcs:
-                msg = "asked for 'fast', but functions are incompatible: {}"
-                raise ValueError(msg.format(non_fastable_funcs))
-            else:
-                self.version_ = 'fast'
-        elif self.version == 'slow':
-            self.version_ = 'slow'
-        elif self.version == 'best':
-            if have_fast_version:
-                self.version_ = 'slow' if non_fastable_funcs else 'fast'
-            elif non_fastable_funcs:
-                self.version_ = 'slow'
-            else:
-                warnings.warn("Using 'slow' version of KNNDivergenceEstimator, "
-                              " because skl_groups_accel isn't available; its "
-                              "'fast' version is much faster on large "
-                              "problems. Pass version='slow' to suppress this "
-                              "warning.")
-                self.version_ = 'slow'
-        else:
-            msg = "Unknown value '{}' for version."
-            raise ValueError(msg.format(self.version))
+        return Ks
 
     @property
     def _n_jobs(self):
@@ -283,89 +223,23 @@ class KNNDivergenceEstimator(BaseEstimator, TransformerMixin):
             args['algorithm'] = self.flann_algorithm
         if self.flann_args:
             args.update(self.flann_args)
+
+        # check that arguments are correct
+        try:
+            FLANNParameters().update(args)
+        except AttributeError as e:
+            msg = "flann_args contains an invalid argument:\n  {}"
+            raise TypeError(msg.format(e))
+
         return args
 
-    def _choose_funcs(self, X, Y=None):
-        "Assigns partial results to funcs and metas_; picks max_K_."
-        self.funcs_, self.metas_ = _set_up_funcs(
-            self.funcs_base_, self.metas_base_, self.Ks,
-            X.dim, X.n_pts, None if Y is None else Y.n_pts)
-
-        max_K = max(self.Ks.max(), getattr(self, 'max_K_', 0))
-        for func in self.funcs_:
-            if hasattr(func, 'k_needed'):
-                max_K = max(max_K, func.k_needed)
-        self.max_K_ = max_K
-
-    def _check_features(self, X):
+    def _as_stacked_bare(self, X):
         "Stacks X if necessary and returns a bare version of it."
         if isinstance(X, Features):
             X.make_stacked()
             return X.bare()
         else:
             return Features(X, stack=True)
-
-    def _check_Ks(self, X, Y=None):
-        "Checks that Ks will work with the given features."
-        min_pt = min(X.n_pts.min(), np.inf if Y is None else Y.n_pts.min())
-        if self.max_K_ >= min_pt:
-            msg = "asked for K = {}, but there's a bag with only {} points"
-            raise ValueError(msg.format(self.max_K_, min_pt))
-
-    def _build_indices(self, X):
-        "Builds FLANN indices for each bag."
-        # TODO: should probably multithread this
-        logger.info("Building indices...")
-        indices = [None] * len(X)
-        for i, bag in enumerate(plog(X, name="index building")):
-            indices[i] = idx = FLANNIndex(**self._flann_args())
-            idx.build_index(bag)
-        return indices
-
-    def _get_rhos(self, X, indices):
-        "Gets within-bag distances for each bag."
-        logger.info("Getting within-bag distances...")
-
-        # need to throw away the closest neighbor, which will always be self
-        # thus K=1 corresponds to column 1 in the result array
-        self._check_Ks(X)
-        which_Ks = slice(1, None) if self.save_all_Ks_ else self.Ks
-        min_dist = self.min_dist
-
-        indices = plog(indices, name="within-bag distances")
-        rhos = [None] * len(X)
-        for i, (bag, idx) in enumerate(zip(X, indices)):
-            r = np.sqrt(idx.nn_index(bag, self.max_K_ + 1)[1][:, which_Ks])
-            np.maximum(min_dist, r, out=r)
-            rhos[i] = r
-        return rhos
-
-    def _finalize(self, outputs, X_rhos, Y_rhos, to_self):
-        "Applies meta functions and subsets to the requested outputs."
-        if self.save_all_Ks_:
-            X_rhos = [rho[:, self.Ks - 1] for rho in X_rhos]
-            Y_rhos = [rho[:, self.Ks - 1] for rho in Y_rhos]
-
-        for meta, info in iteritems(self.metas_):
-            required = [outputs[[i]] for i in info.deps]
-            args = ()
-            if meta.needs_rhos[0]:
-                args += (X_rhos,)
-            if meta.needs_rhos[1]:
-                args += (Y_rhos,)
-            args += (required,)
-            r = meta(*args, clamp=self.clamp, to_self=to_self)
-            if r.ndim == 3:
-                r = r[np.newaxis, :, :, :]
-            outputs[info.pos, :, :, :] = r
-            # TODO: pass meta functions an out=... argument to avoid a copy
-
-        if not self.do_sym:
-            outputs = outputs[:, :, :, :, 0]
-
-        if self.n_meta_only_:
-            outputs = np.ascontiguousarray(outputs[:-self.n_meta_only_])
-        return outputs
 
     def fit(self, X, y=None, get_rhos=False):
         '''
@@ -385,18 +259,22 @@ class KNNDivergenceEstimator(BaseEstimator, TransformerMixin):
             needed once it sees the number of points in the transformed bags,
             so the computation here might be wasted.
         '''
-        self._setup_args()
-        self.features_ = X = self._check_features(X)
+        self.features_ = X = self._as_stacked_bare(X)
 
         # if we're using a function that needs to pick its K vals itself,
         # then we need to set max_K here. when we transform(), might have to
         # re-do this :|
-        self._choose_funcs(X)
-        self._check_Ks(X)
+        Ks = self._get_Ks()
+        _, _, _, max_K, save_all_Ks, _ = _choose_funcs(
+            self.div_funcs, Ks, X.dim, X.n_pts, None, self.version)
 
-        self.indices_ = self._build_indices(X)
+        if max_K >= X.n_pts.min():
+            msg = "asked for K = {}, but there's a bag with only {} points"
+            raise ValueError(msg.format(max_K, X.n_pts.min()))
+
+        self.indices_ = id = _build_indices(X, self._flann_args())
         if get_rhos:
-            self.rhos_ = self._get_rhos(X, self.indices_)
+            self.rhos_ = _get_rhos(X, id, Ks, max_K, save_all_Ks, self.min_dist)
         elif hasattr(self, 'rhos_'):
             del self.rhos_
         return self
@@ -419,51 +297,178 @@ class KNNDivergenceEstimator(BaseEstimator, TransformerMixin):
             if ``do_sym``, ``divs[d, k, i, j, 0]`` is :math:`D(i \| j)` and
             ``divs[d, k, i, j, 1]`` is :math:`D(j \| i)`.
         '''
-        X = self._check_features(X)
+        X = self._as_stacked_bare(X)
         Y = self.features_
 
-        old_max_K = self.max_K_
-        self._choose_funcs(X, Y)
-        self._check_Ks(X, Y)
+        Ks = np.asarray(self.Ks)
 
-        do_sym = self.do_sym or {
-            req_pos for f, info in iteritems(self.metas_)
+        if X.dim != Y.dim:
+            msg = "incompatible dimensions: fit with {}, transform with {}"
+            raise ValueError(msg.format(Y.dim, X.dim))
+
+        memory = self.memory
+        if isinstance(memory, string_types):
+            memory = Memory(cachedir=memory, verbose=0)
+
+        # ignore Y_indices to avoid slow pickling of them
+        # NOTE: if the indices are approximate, then might not get the same
+        #       results!
+        return memory.cache(_est_divs, ignore=['n_jobs', 'Y_indices'])(
+            X, Y, self.indices_, getattr(self, 'rhos_', None),
+            self.div_funcs, Ks,
+            self.do_sym, self.clamp, self.version, self.min_dist,
+            self._flann_args(), self._n_jobs)
+
+
+def _choose_funcs(div_funcs, Ks, dim, X_n_pts, Y_n_pts, version):
+    funcs_base, metas_base, n_meta_only = _parse_specs(div_funcs, Ks)
+    funcs, metas = _set_up_funcs(
+        funcs_base, metas_base, Ks, dim, X_n_pts, Y_n_pts)
+
+    max_K = Ks.max()
+    for func in funcs:
+        if hasattr(func, 'K_needed'):
+            max_K = max(max_K, func.K_needed)
+
+    save_all_Ks = any(getattr(f, 'needs_all_ks', False) for f in funcs_base)
+
+    # choose the version we can handle
+    non_fastable_funcs = set(funcs_base) - fast_funcs
+    if version == 'fast':
+        if not have_fast_version:
+            msg = "asked for 'fast', but skl_groups_accel not available"
+            raise ValueError(msg)
+        elif non_fastable_funcs:
+            msg = "asked for 'fast', but functions are incompatible: {}"
+            raise ValueError(msg.format(non_fastable_funcs))
+    elif version == 'slow':
+        pass
+    elif version == 'best':
+        if non_fastable_funcs:
+            version = 'slow'
+        elif have_fast_version:
+            version = 'fast'
+        else:
+            warnings.warn("Using 'slow' version of KNNDivergenceEstimator, "
+                          " because skl_groups_accel isn't available; its "
+                          "'fast' version is much faster on large "
+                          "problems. Pass version='slow' to suppress this "
+                          "warning.")
+            version = 'slow'
+    else:
+        msg = "Unknown value '{}' for version."
+        raise ValueError(msg.format(version))
+
+    return funcs, metas, n_meta_only, max_K, save_all_Ks, version
+
+
+def _build_indices(X, flann_args):
+    "Builds FLANN indices for each bag."
+    # TODO: should probably multithread this
+    logger.info("Building indices...")
+    indices = [None] * len(X)
+    for i, bag in enumerate(plog(X, name="index building")):
+        indices[i] = idx = FLANNIndex(**flann_args)
+        idx.build_index(bag)
+    return indices
+
+
+def _get_rhos(X, indices, Ks, max_K, save_all_Ks, min_dist):
+    "Gets within-bag distances for each bag."
+    logger.info("Getting within-bag distances...")
+
+    if max_K >= X.n_pts.min():
+        msg = "asked for K = {}, but there's a bag with only {} points"
+        raise ValueError(msg.format(max_K, X.n_pts.min()))
+
+    # need to throw away the closest neighbor, which will always be self
+    # thus K=1 corresponds to column 1 in the result array
+    which_Ks = slice(1, None) if save_all_Ks else Ks
+
+    indices = plog(indices, name="within-bag distances")
+    rhos = [None] * len(X)
+    for i, (bag, idx) in enumerate(zip(X, indices)):
+        r = np.sqrt(idx.nn_index(bag, max_K + 1)[1][:, which_Ks])
+        np.maximum(min_dist, r, out=r)
+        rhos[i] = r
+    return rhos
+
+
+def _est_divs(X, Y, Y_indices, Y_rhos, div_funcs, Ks,
+              do_sym, clamp, version, min_dist, flann_args, n_jobs):
+
+    funcs, metas, n_meta_only, max_K, save_all_Ks, version = _choose_funcs(
+        div_funcs, Ks, X.dim, X.n_pts, Y.n_pts, version)
+
+    if not do_sym:
+        do_sym = {
+            req_pos for f, info in iteritems(metas)
                     for req_pos, req in zip(info.deps, f.needs_results)
-                    if req.needs_transpose}
+                    if req.needs_transpose
+        }
 
-        Y_indices = self.indices_
-        to_self = X == Y
-        if to_self or do_sym:
-            if hasattr(self, 'rhos_') and self.max_K_ > old_max_K:
-                logger.warning(("Fit with a lower max_K ({}) than we actually "
-                                "need ({}); recomputing rhos.").format(
-                                    old_max_K, self.max_K_, self.max_K_))
-                del self.rhos_
-            if not hasattr(self, 'rhos_'):
-                self.rhos_ = self._get_rhos(Y, Y_indices)
-        if to_self:
-            X_indices = Y_indices
-            X_rhos = Y_rhos = self.rhos_
-        else:
-            X_indices = self._build_indices(X)
-            X_rhos = self._get_rhos(X, X_indices)
-            Y_rhos = self.rhos_ if do_sym else None
+    to_self = X == Y
+    need_Y_rhos = to_self or do_sym or any(meta.needs_rhos[1] for meta in metas)
 
-        logger.info("Getting divergences...")
-        if self.version_ == 'fast':
-            fn = _estimate_cross_divs_fast
-        else:
-            fn = _estimate_cross_divs
-        outputs = fn(X, X_indices, X_rhos, Y, Y_indices, Y_rhos,
-                     self.funcs_, self.Ks, self.max_K_, self.save_all_Ks_,
-                     len(self.div_funcs) + self.n_meta_only_,
-                     do_sym, to_self,
-                     ProgressLogger(progress_logger, name="Cross-divergences"),
-                     self._n_jobs, self.min_dist, self.clamp)
-        logger.info("Getting meta functions...")
-        outputs = self._finalize(outputs, X_rhos, Y_rhos, to_self)
-        logger.info("Done with divergences.")
-        return outputs
+    if need_Y_rhos:
+        if Y_rhos is not None:
+            if save_all_Ks:
+                old_max_K = Y_rhos[0].shape[1]
+                if max_K > old_max_K:
+                    msg = ("Y_rhos had a lower max_K ({}) than we actually "
+                           "need ({}); recomputing rhos.")
+                    logger.warning(msg.format(old_max_K, max_K))
+                    Y_rhos = None
+            else:
+                if Y_rhos[0].shape[1] != Ks.size:
+                    raise ValueError("invalid Y_rhos passed")
+
+        if Y_rhos is None:
+            Y_rhos = _get_rhos(Y, Y_indices, Ks, max_K, save_all_Ks, min_dist)
+
+    if to_self:
+        X_indices = Y_indices
+        X_rhos = Y_rhos
+    else:
+        X_indices = _build_indices(X, flann_args)
+        X_rhos = _get_rhos(X, X_indices, Ks, max_K, save_all_Ks, min_dist)
+
+    logger.info("Getting divergences...")
+    if version == 'fast':
+        fn = _estimate_cross_divs_fast
+    else:
+        fn = _estimate_cross_divs
+    outputs = fn(X, X_indices, X_rhos, Y, Y_indices, Y_rhos,
+                 funcs, Ks, max_K, save_all_Ks, len(div_funcs) + n_meta_only,
+                 do_sym, to_self,
+                 ProgressLogger(progress_logger, name="Cross-divergences"),
+                 n_jobs, min_dist, clamp)
+
+    logger.info("Computing meta-divergences...")
+
+    if save_all_Ks:
+        X_rhos = [rho[:, Ks - 1] for rho in X_rhos]
+        if need_Y_rhos:
+            Y_rhos = [rho[:, Ks - 1] for rho in Y_rhos]
+
+    for meta, info in iteritems(metas):
+        args = ()
+        if meta.needs_rhos[0]:
+            args += (X_rhos,)
+        if meta.needs_rhos[1]:
+            args += (Y_rhos,)
+        args += (outputs[info.deps],)
+
+        outputs[info.pos] = meta(*args, clamp=clamp, to_self=to_self)
+
+    if do_sym != True:
+        outputs = outputs[:, :, :, :, 0]
+
+    if n_meta_only:
+        outputs = np.ascontiguousarray(outputs[:-n_meta_only])
+
+    logger.info("Done with divergences.")
+    return outputs
 
 
 ################################################################################
@@ -678,9 +683,7 @@ jensen_shannon_core.self_value = np.nan
 #             where the last dimension depends on whether we're doing the
 #             symmetric or not.
 #
-# Returns: array of results.
-# If needs_alpha, has shape (num_alphas, num_Ks, n_X, n_Y, 1 or 2);
-# otherwise, has shape (num_Ks, n_X, n_Y, 1 or 2)
+# Returns: array of results, shape (num_alphas, num_Ks, n_X, n_Y, 1 or 2).
 
 MetaRequirement = namedtuple('MetaRequirement', 'func alpha needs_transpose')
 # func: the function of the regular divergence that's needed
@@ -699,7 +702,7 @@ def bhattacharyya(Ks, dim, required, clamp=True, to_self=False):
 
     Returns an array of shape (num_Ks,).
     '''
-    est, = required
+    est = required
     if clamp:
         est = np.minimum(est, 1)  # BC <= 1
     return est
@@ -718,7 +721,7 @@ def hellinger(Ks, dim, required, clamp=True, to_self=False):
 
     Returns a vector: one element for each K.
     '''
-    bc, = required
+    bc = required
     est = 1 - bc
     np.maximum(est, 0, out=est)
     if clamp:
@@ -745,7 +748,7 @@ def renyi(alphas, Ks, dim, required, min_val=np.spacing(1),
     Returns an array of shape (num_alphas, num_Ks).
     '''
     alphas = np.reshape(alphas, (-1, 1))
-    est, = required
+    est = required
 
     est = np.maximum(est, min_val)  # TODO: can we modify in-place?
     np.log(est, out=est)
@@ -768,7 +771,7 @@ def tsallis(alphas, Ks, dim, required, clamp=True, to_self=False):
     Returns an array of shape (num_alphas, num_Ks).
     '''
     alphas = np.reshape(alphas, (-1, 1))
-    alpha_est, = required
+    alpha_est = required
 
     est = alpha_est - 1
     est /= alphas - 1
@@ -795,7 +798,7 @@ def l2(Ks, dim, X_rhos, Y_rhos, required, clamp=True, to_self=False):
     n_X = len(X_rhos)
     n_Y = len(Y_rhos)
 
-    linears, = required
+    linears = required
     assert linears.shape == (1, Ks.size, n_X, n_Y, 2)
 
     X_quadratics = np.empty((Ks.size, n_X), dtype=np.float32)
@@ -909,7 +912,7 @@ def jensen_shannon(Ks, dim, X_rhos, Y_rhos, required,
 
     # cores[0, k, i, j, 0] is mean_X(d * ... - psi(...)) for X[i], Y[j], M=Ks[k]
     # cores[0, k, i, j, 1] is mean_Y(d * ... - psi(...)) for X[i], Y[j], M=Ks[k]
-    cores, = required
+    cores = required
     assert cores.shape == (1, Ks.size, n_X, n_Y, 2)
 
     # X_bits[k, i] is log(n-1) + mean_X( d * log rho_M(X_i) )  for X[i], M=Ks[k]
@@ -1195,8 +1198,8 @@ def _set_up_funcs(funcs, metas_ordered, Ks, dim, X_ns=None, Y_ns=None):
             args += (X_ns, Y_ns)
             if (getattr(func, 'needs_all_ks', False) and
                     getattr(func.chooser_fn, 'returns_ks', False)):
-                new, k = func.chooser_fn(*args)
-                new.k_needed = k
+                new, K = func.chooser_fn(*args)
+                new.K_needed = K
             else:
                 new = func.chooser_fn(*args)
         else:
