@@ -367,23 +367,23 @@ class KNNDivergenceEstimator(BaseEstimator, TransformerMixin):
             outputs = np.ascontiguousarray(outputs[:-self.n_meta_only_])
         return outputs
 
-    def fit(self, X, y=None, skip_rhos=True):
+    def fit(self, X, y=None, get_rhos=False):
         '''
-        Sets up for divergence estimation "from" X "to" new data. Builds
-        FLANN indices and gets within-bag distances for X.
+        Sets up for divergence estimation "from" new data "to" X.
+        Builds FLANN indices for each bag, and maybe gets within-bag distances.
 
         Parameters
         ----------
         X : list of arrays or :class:`skl_groups.features.Features`
             The bags to search "from".
 
-        skip_rhos : boolean, optional, default True
-            Don't actually get within-bag distances yet. Useful if you're
-            using Jensen-Shannon divergence, because it might need to ask for
-            a higher max_K_ once it sees the number of points in the bags
-            you're searching "to". Note that this just moves a bit of
-            computation from the fit stage to the transform stage; it'll still
-            be saved if you transform more than once.
+        get_rhos : boolean, optional, default False
+            Compute within-bag distances. These are only needed for some
+            divergence functions or if do_sym is passed, and they'll be computed
+            (and saved) during transform() if they're not computed here. Also,
+            if you're using Jensen-Shannon divergence, a higher max_K_ may be
+            needed once it sees the number of points in the transformed bags,
+            so the computation here might be wasted.
         '''
         self._setup_args()
         self.features_ = X = self._check_features(X)
@@ -395,62 +395,67 @@ class KNNDivergenceEstimator(BaseEstimator, TransformerMixin):
         self._check_Ks(X)
 
         self.indices_ = self._build_indices(X)
-        if not skip_rhos:
+        if get_rhos:
             self.rhos_ = self._get_rhos(X, self.indices_)
+        elif hasattr(self, 'rhos_'):
+            del self.rhos_
         return self
 
     def transform(self, X):
         '''
-        Computes the divergences between `features_` and X.
+        Computes the divergences from X to `features_`.
 
         Parameters
         ----------
         X : list of bag feature arrays or :class:`skl_groups.features.Features`
-            The bags to search "to".
+            The bags to search "from".
 
         Returns
         -------
-        divs : array of shape [len(div_funcs), len(Ks), len(features_), len(X)] + [2] if do_sym else []
-            The divergences between features_ and X.
+        divs : array of shape [len(div_funcs), len(Ks), len(X), len(features_)] + [2] if do_sym else []
+            The divergences from X to features_.
             ``divs[d, k, i, j]`` is the ``div_funcs[d]`` divergence
-            between ``fetaures_[i]`` and ``X[j]`` using a K of ``Ks[k]``;
+            from ``X[i]`` to ``fetaures_[j]`` using a K of ``Ks[k]``;
             if ``do_sym``, ``divs[d, k, i, j, 0]`` is :math:`D(i \| j)` and
             ``divs[d, k, i, j, 1]`` is :math:`D(j \| i)`.
         '''
-        Y = self._check_features(X)
-        X = self.features_  # yes, naming here is confusing.
+        X = self._check_features(X)
+        Y = self.features_
 
         old_max_K = self.max_K_
         self._choose_funcs(X, Y)
         self._check_Ks(X, Y)
-        if hasattr(self, 'rhos_') and self.max_K_ > old_max_K:
-            logger.warning(("Fit with a lower max_K ({}) than we actually need "
-                            "({}); recomputing rhos. This should only happen "
-                            "with Jensen-Shannon; if it's taking a significant "
-                            "amount of time, pass skip_rhos=True to fit() or "
-                            "set the max_K_ attribute to {} to avoid the "
-                            "useless step.").format(
-                                old_max_K, self.max_K_, self.max_K_))
-            del self.rhos_
-
-        if not hasattr(self, 'rhos_'):
-            self.rhos_ = self._get_rhos(X, self.indices_)
 
         do_sym = self.do_sym or {
             req_pos for f, info in iteritems(self.metas_)
                     for req_pos, req in zip(info.deps, f.needs_results)
                     if req.needs_transpose}
 
-        X_indices = self.indices_
-        X_rhos = self.rhos_
+        Y_indices = self.indices_
+        def get_Y_rhos():
+            if hasattr(self, 'rhos_') and self.max_K_ > old_max_K:
+                logger.warning(("Fit with a lower max_K ({}) than we actually "
+                                "need ({}); recomputing rhos.").format(
+                                    old_max_K, self.max_K_, self.max_K_))
+                del self.rhos_
+            if not hasattr(self, 'rhos_'):
+                self.rhos_ = self._get_rhos(Y, Y_indices)
+
         if X == Y:
             to_self = True
-            Y_indices = X_indices
-            Y_rhos = X_rhos
+            X_indices = Y_indices
+            get_Y_rhos()
+            X_rhos = Y_rhos = self.rhos_
         else:
             to_self = False
-            Y_indices = self._build_indices(Y)
-            Y_rhos = self._get_rhos(Y, Y_indices) if do_sym else None
+            X_indices = self._build_indices(X)
+            X_rhos = self._get_rhos(X, X_indices)
+
+            if do_sym:
+                get_Y_rhos()
+                Y_rhos = self.rhos_
+            else:
+                Y_rhos = None
 
         logger.info("Getting divergences...")
         if self.version_ == 'fast':

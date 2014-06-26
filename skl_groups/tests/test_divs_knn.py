@@ -46,11 +46,11 @@ def test_knn_sanity():
 
     est = get_est(version='fast', n_jobs=-1)
     res = est.fit_transform(bags)
-    assert np.allclose(results['fast'], res)
+    assert np.all(results['fast'] == res)
 
     est = get_est(version='slow', n_jobs=-1)
     res = est.fit_transform(bags)
-    assert np.allclose(results['slow'], res)
+    assert np.all(results['slow'] == res)
 
     # test that JS blows up when there's a huge difference in bag sizes
     # (so that K is too low)
@@ -60,9 +60,10 @@ def test_knn_sanity():
 
     # test fit() and then transform() with JS, with different-sized test bags
     est = KNNDivergenceEstimator(div_funcs=('js',), Ks=(5,))
-    est.fit(bags, skip_rhos=False)
+    est.fit(bags, get_rhos=True)
     with LogCapture('skl_groups.divergences.knn', level=logging.WARNING) as l:
         res = est.transform([np.random.randn(300, dim)])
+        assert res.shape == (1, 1, 1, len(bags))
         assert len(l.records) == 1
         assert l.records[0].message.startswith('Fit with a lower max_K')
 
@@ -138,9 +139,9 @@ def test_knn_js():
     for version in ['fast', 'slow']:
         est = KNNDivergenceEstimator(div_funcs=['js'], Ks=[2],
                                      version=version, clamp=False)
-        res = est.fit([x]).transform([y]).squeeze()
-        assert res.shape == ()
-        res = res[()]
+        res = est.fit([x]).transform([y])
+        assert res.shape == (1, 1, 1, 1)
+        res = res[0, 0, 0, 0]
         assert np.allclose(res, right_js, atol=1e-6), msg.format(
             res, right_js, version)
 
