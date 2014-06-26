@@ -300,8 +300,7 @@ class KNNDivergenceEstimator(BaseEstimator, TransformerMixin):
     def _check_features(self, X):
         "Stacks X if necessary and returns a bare version of it."
         if isinstance(X, Features):
-            if self.version_ == 'slow':
-                X.make_stacked()
+            X.make_stacked()
             return X.bare()
         else:
             return Features(X, stack=True)
