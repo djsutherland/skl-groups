@@ -1,8 +1,14 @@
 import numpy as np
 import scipy.linalg
 from sklearn.base import BaseEstimator, TransformerMixin
-from sklearn.externals.six import with_metaclass
+from sklearn.externals.joblib import Memory
+from sklearn.externals.six import string_types, with_metaclass
 from sklearn.externals.six.moves import xrange
+
+def get_memory(memory):
+    if isinstance(memory, string_types):
+        return Memory(memory, verbose=0)
+    return memory
 
 
 class _Meta(type):
@@ -115,6 +121,11 @@ class ProjectPSD(BaseEstimator, TransformerMixin):
         Optimize memory usage for the case where we expect there to be negative
         eigenvalues.
 
+    memory : Instance of joblib.Memory or string (optional)
+        Used to cache the eigendecomposition.
+        By default, no caching is done. If a string is given, it is the
+        path to the caching directory.
+
     Attributes
     ----------
     `clip_` : array of shape (n, n)
@@ -131,10 +142,12 @@ class ProjectPSD(BaseEstimator, TransformerMixin):
     _pairwise = True
     _pairwise_output = True
 
-    def __init__(self, min_eig=0, copy=True, negatives_likely=True):
+    def __init__(self, min_eig=0, copy=True, negatives_likely=True,
+                 memory=Memory(cachedir=None, verbose=0)):
         self.min_eig = min_eig
         self.copy = copy
         self.negatives_likely = negatives_likely
+        self.memory = memory
 
     def fit(self, X, y=None):
         '''
@@ -154,7 +167,9 @@ class ProjectPSD(BaseEstimator, TransformerMixin):
             raise TypeError("Input must be a square matrix.")
 
         # TODO: only get negative eigs somehow?
-        vals, vecs = scipy.linalg.eigh(X, overwrite_a=not self.copy)
+        memory = get_memory(self.memory)
+        vals, vecs = memory.cache(scipy.linalg.eigh, ignore=['overwrite_a'])(
+            X, overwrite_a=not self.copy)
         vals = vals.reshape(-1, 1)
 
         if self.min_eig == 0:
@@ -208,8 +223,10 @@ class ProjectPSD(BaseEstimator, TransformerMixin):
         if X.shape != (n, n):
             raise TypeError("Input must be a square matrix.")
 
+        memory = get_memory(self.memory)
         discard_X = not self.copy and self.negatives_likely
-        vals, vecs = scipy.linalg.eigh(X, overwrite_a=discard_X)
+        vals, vecs = memory.cache(scipy.linalg.eigh, ignore=['overwrite_a'])(
+            X, overwrite_a=discard_X)
         vals = vals[:, None]
 
         self.clip_ = np.dot(vecs, (vals > self.min_eig) * vecs.T)
@@ -246,6 +263,11 @@ class FlipPSD(BaseEstimator, TransformerMixin):
         Optimize memory usage for the case where we expect there to be negative
         eigenvalues.
 
+    memory : Instance of joblib.Memory or string (optional)
+        Used to cache the eigendecomposition.
+        By default, no caching is done. If a string is given, it is the
+        path to the caching directory.
+
     Attributes
     ----------
     `flip_` : array of shape (n, n)
@@ -262,9 +284,11 @@ class FlipPSD(BaseEstimator, TransformerMixin):
     _pairwise = True
     _pairwise_output = True
 
-    def __init__(self, copy=True, negatives_likely=True):
+    def __init__(self, copy=True, negatives_likely=True,
+                 memory=Memory(cachedir=None, verbose=0)):
         self.copy = copy
         self.negatives_likely = negatives_likely
+        self.memory = memory
 
     def fit(self, X, y=None):
         '''
@@ -281,7 +305,9 @@ class FlipPSD(BaseEstimator, TransformerMixin):
             raise TypeError("Input must be a square matrix.")
 
         # TODO: only get negative eigs somehow?
-        vals, vecs = scipy.linalg.eigh(X, overwrite_a=not self.copy)
+        memory = get_memory(self.memory)
+        vals, vecs = memory.cache(scipy.linalg.eigh, ignore=['overwrite_a'])(
+            X, overwrite_a=not self.copy)
         vals = vals[:, None]
 
         self.flip_ = np.dot(vecs, np.sign(vals) * vecs.T)
@@ -327,8 +353,10 @@ class FlipPSD(BaseEstimator, TransformerMixin):
         if X.shape != (n, n):
             raise TypeError("Input must be a square matrix.")
 
+        memory = get_memory(self.memory)
         discard_X = not self.copy and self.negatives_likely
-        vals, vecs = scipy.linalg.eigh(X, overwrite_a=discard_X)
+        vals, vecs = memory.cache(scipy.linalg.eigh, ignore=['overwrite_a'])(
+            X, overwrite_a=discard_X)
         vals = vals[:, None]
 
         self.clip_ = np.dot(vecs, np.sign(vals) * vecs.T)
@@ -364,6 +392,11 @@ class ShiftPSD(BaseEstimator, TransformerMixin):
         Operate on a copy of the passed-in matrix; otherwise, the original
         matrix will be invalidated (for both ``fit()`` and ``transform()``).
 
+    memory : Instance of joblib.Memory or string (optional)
+        Used to cache the eigendecomposition.
+        By default, no caching is done. If a string is given, it is the
+        path to the caching directory.
+
     Attributes
     ----------
     `train_` : array of shape [n, n]
@@ -378,9 +411,11 @@ class ShiftPSD(BaseEstimator, TransformerMixin):
     _pairwise = True
     _pairwise_output = True
 
-    def __init__(self, min_eig=0, copy=True):
+    def __init__(self, min_eig=0, copy=True,
+                 memory=Memory(cachedir=None, verbose=0)):
         self.min_eig = min_eig
         self.copy = copy
+        self.memory = memory
 
     def fit(self, X, y=None):
         '''
@@ -397,8 +432,11 @@ class ShiftPSD(BaseEstimator, TransformerMixin):
             raise TypeError("Input must be a square matrix.")
 
         self.train_ = X
-        lo, = scipy.linalg.eigvalsh(X, eigvals=(0, 0))
+
+        memory = get_memory(self.memory)
+        lo, = memory.cache(scipy.linalg.eigvalsh)(X, eigvals=(0, 0))
         self.shift_ = max(self.min_eig - lo, 0)
+
         return self
 
     def transform(self, X):
