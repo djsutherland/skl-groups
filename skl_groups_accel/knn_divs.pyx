@@ -227,25 +227,6 @@ def _estimate_cross_divs(X_features, X_indices, X_rhos,
                                             dtype=np.float32)
     cdef long[:] Y_boundaries = Y_features._boundaries
 
-    cdef float[:, ::1] X_rhos_stacked, all_X_rhos_stacked
-    cdef float[:, ::1] Y_rhos_stacked, all_Y_rhos_stacked
-
-    if save_all_Ks:
-        all_X_rhos_stacked = np.ascontiguousarray(
-            np.vstack(X_rhos), dtype=np.float32)
-        all_Y_rhos_stacked = np.ascontiguousarray(
-            np.vstack(Y_rhos), dtype=np.float32)
-
-        X_rhos_stacked = np.ascontiguousarray(
-            np.asarray(all_X_rhos_stacked)[:, np.asarray(Ks) - 1])
-        Y_rhos_stacked = np.ascontiguousarray(
-            np.asarray(all_Y_rhos_stacked)[:, np.asarray(Ks) - 1])
-    else:
-        X_rhos_stacked = np.ascontiguousarray(
-            np.vstack(X_rhos), dtype=np.float32)
-        Y_rhos_stacked = np.ascontiguousarray(
-            np.vstack(Y_rhos), dtype=np.float32)
-
     cdef bint do_any_sym = bool(do_sym)
     cdef uint8_t[::1] do_sym_a = np.zeros(n_output, dtype=np.uint8)
     if do_sym == True:
@@ -255,6 +236,27 @@ def _estimate_cross_divs(X_features, X_indices, X_rhos,
             if pos < 0:
                 pos += n_output
             do_sym_a[pos] = True
+
+    cdef float[:, ::1] X_rhos_stacked, all_X_rhos_stacked
+    cdef float[:, ::1] Y_rhos_stacked, all_Y_rhos_stacked
+
+    if save_all_Ks:
+        all_X_rhos_stacked = np.ascontiguousarray(
+            np.vstack(X_rhos), dtype=np.float32)
+        X_rhos_stacked = np.ascontiguousarray(
+            np.asarray(all_X_rhos_stacked)[:, np.asarray(Ks) - 1])
+
+        if do_any_sym and not to_self:
+            all_Y_rhos_stacked = np.ascontiguousarray(
+                np.vstack(Y_rhos), dtype=np.float32)
+            Y_rhos_stacked = np.ascontiguousarray(
+                np.asarray(all_Y_rhos_stacked)[:, np.asarray(Ks) - 1])
+    else:
+        X_rhos_stacked = np.ascontiguousarray(
+            np.vstack(X_rhos), dtype=np.float32)
+        if do_any_sym and not to_self:
+            Y_rhos_stacked = np.ascontiguousarray(
+                np.vstack(Y_rhos), dtype=np.float32)
 
 
     ############################################################################
