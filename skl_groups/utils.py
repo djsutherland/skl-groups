@@ -3,6 +3,7 @@ from __future__ import division, print_function
 import json
 
 import numpy as np
+from sklearn.externals import six
 
 
 def identity(x):
@@ -55,16 +56,16 @@ class NoImportStub(object):
     still import the name, but using it will raise the original import error
     that prevented us using the name anyway.
     '''
-    def __init__(self, message):
-        self.message = message
+    def __init__(self, exception):
+        self.exception = exception
 
     def __getattribute__(self, name):
-        if name == 'message':
+        if name == 'exception':
             return object.__getattribute__(self, name)
-        raise ImportError(self.message)
+        six.reraise(*self.exception)
 
     def __call__(self, *args, **kwargs):
-        raise ImportError(self.message)
+        six.reraise(*self.exception)
 
 
 ################################################################################
