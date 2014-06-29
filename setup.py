@@ -1,5 +1,6 @@
 #!/usr/bin/env python
 
+import os
 try:
     from setuptools import setup
 except ImportError:
@@ -33,6 +34,15 @@ import skl_groups
 VERSION = skl_groups.__version__
 
 
+# ReadTheDocs doesn't want to install C extensions, so don't make it.
+if os.environ.get('READTHEDOCS', None) == 'True':
+    install_requires = []
+else:
+    install_requires=[
+        'scikit-learn >= 0.13',
+    ],
+
+
 setup(
     name=NAME,
     version=VERSION,
@@ -52,9 +62,7 @@ setup(
         'skl_groups.summaries',
         'skl_groups.tests',
     ],
-    install_requires=[
-        'scikit-learn >= 0.13',
-    ],
+    install_requires=install_requires,
     extras_require={
         'knn_divs': ['cyflann >= 0.1.15'],
     },
