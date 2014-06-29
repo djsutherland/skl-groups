@@ -269,3 +269,9 @@ numpydoc_show_class_members = False
 
 autosummary_generate = True
 autodoc_default_flags = ['members']
+
+
+intersphinx_mapping = {
+  'python': ('http://docs.python.org/3.4', None),
+  'sklearn': ('http://scikit-learn.org/stable/', None),
+}
