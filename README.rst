@@ -8,8 +8,11 @@ can be operated on with standard scikit-learn constructs or obtaining
 pairwise similarity/etc matrices that can be turned into kernels for use in
 scikit-learn.
 
+For an introduction to the package, why you might want to use it, and how to
+do so, see `the documentation <https://dougalsutherland.github.io/skl-groups>`_.
+
 skl-groups is currently in early stages of development; feel free to get in
-touch if you're interested.
+touch (dsutherl@cs.cmu.edu) if you're interested.
 
 
 Installation
@@ -25,7 +28,7 @@ Get reasonably recent versions of numpy, scipy, and scikit-learn, then run::
 
 to install skl-groups.
 
-If you want to use the knn divergence estimator, you'll need to have
+If you want to use the kNN divergence estimator, you'll need to have
 `FLANN <http://people.cs.ubc.ca/~mariusm/index.php/FLANN/FLANN>`_
 and either its Python interface (pyflann) or the
 `cyflann <https://github.com/dougalsutherland/cyflann/>`_ library.
@@ -39,4 +42,4 @@ You may also want the
 `skl-groups-accel <https://github.com/dougalsutherland/skl-groups-accel>`_
 package, which contains faster implementations of some of the algorithms in
 skl-groups; it's split out to make the base package of skl-groups easier to
-install.
+install. (Currently, it only has the kNN divergence estimator).
