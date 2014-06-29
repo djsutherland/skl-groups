@@ -119,7 +119,7 @@ class KNNDivergenceEstimator(BaseEstimator, TransformerMixin):
     do_sym : boolean, optional, default False
         As well as returning D(X || Y), return D(Y || X).
 
-    n_jobs : integer, optional
+    n_jobs : integer, optional, default 1
         The number of CPUs to use in the computation. -1 means 'all CPUs'.
 
     clamp : boolean, optional, default True
@@ -149,8 +149,8 @@ class KNNDivergenceEstimator(BaseEstimator, TransformerMixin):
         available and you aren't using custom divergence functions, 'slow'
         otherwise.
 
-    memory : Instance of joblib.Memory or string (optional)
-        Used to cache the output of ``transform()``.
+    memory : Instance of :class:`joblib.Memory` or string, optional
+        Used to cache the indices and the output of :meth:`transform`.
         By default, no caching is done. If a string is given, it is the
         path to the caching directory.
 
@@ -158,14 +158,33 @@ class KNNDivergenceEstimator(BaseEstimator, TransformerMixin):
     ----------
 
     `features_` : :class:`skl_groups.features.Features`
-        The features passed to `fit`.
+        The features passed to `fit` (except made :meth:`sklearn.features.Features.bare`).
 
-    `indices_` : list
+    `indices_` : list of :class:`cyflann.FLANNIndex` or :class:`pyflann.FLANN`
         A FLANN index for each bag in `features_`.
 
-    `rhos_` : list
-        For each bag in `features_`, the Kth nearest neighbor of each point
-        amongst its own bag. May or may not be present when fit.
+    `rhos_` : list of arrays
+        For each bag in `features_`, the distance to the Kth nearest neighbor
+        of each point amongst its own bag.
+        ``rhos_[i][j, k]`` is the distance to either the ``Ks[k]`` th or the
+        ``k+1`` th nearest neighbor of ``features_[i][j, :]`` in
+        ``features_[i]`` (not including ``features_[i][j, :]`` itself).
+        It's the ``k+1`` th if Jensen-Shannon divergence is requested.
+
+        May or may not be present after :meth:`fit`; will be after
+        :meth:`transform`.
+
+    Notes
+    -----
+    The convergence proof in [1]_ is incorrect. The estimator seems to work
+    well, in practice, though.
+
+    The Jensen-Shannon estimation is performed by using the estimator of
+    [3]_ to get :math:`H[\frac{1}{2}(X + Y)]`, by combining the two samples
+    and assigning weights such that the total weight from each sample is equal,
+    and subtracting the mean of :math:`H[X]` and :math:`H[Y]` according to the
+    same estimator (with equally-weighted points). The ``K`` parameter is
+    used for the value of :math:`M = n \alpha` in [3]_.
 
     References
     ----------
@@ -253,11 +272,13 @@ class KNNDivergenceEstimator(BaseEstimator, TransformerMixin):
             The bags to search "from".
 
         get_rhos : boolean, optional, default False
-            Compute within-bag distances. These are only needed for some
-            divergence functions or if do_sym is passed, and they'll be computed
-            (and saved) during transform() if they're not computed here. Also,
-            if you're using Jensen-Shannon divergence, a higher max_K_ may be
-            needed once it sees the number of points in the transformed bags,
+            Compute within-bag distances :attr:`rhos_`. These are only needed
+            for some divergence functions or if do_sym is passed, and they'll
+            be computed (and saved) during :meth:`transform` if they're not
+            computed here.
+
+            If you're using Jensen-Shannon divergence, a higher max_K may
+            be needed once it sees the number of points in the transformed bags,
             so the computation here might be wasted.
         '''
         self.features_ = X = self._as_stacked_bare(X)
@@ -285,8 +306,8 @@ class KNNDivergenceEstimator(BaseEstimator, TransformerMixin):
         return self
 
     def transform(self, X):
-        '''
-        Computes the divergences from X to `features_`.
+        r'''
+        Computes the divergences from X to :attr:`features_`.
 
         Parameters
         ----------
@@ -295,12 +316,13 @@ class KNNDivergenceEstimator(BaseEstimator, TransformerMixin):
 
         Returns
         -------
-        divs : array of shape [len(div_funcs), len(Ks), len(X), len(features_)] + [2] if do_sym else []
-            The divergences from X to features_.
+        divs : array of shape ``[len(div_funcs), len(Ks), len(X), len(features_)] + ([2] if do_sym else [])``
+            The divergences from X to :attr:`features_`.
             ``divs[d, k, i, j]`` is the ``div_funcs[d]`` divergence
-            from ``X[i]`` to ``fetaures_[j]`` using a K of ``Ks[k]``;
-            if ``do_sym``, ``divs[d, k, i, j, 0]`` is :math:`D(i \| j)` and
-            ``divs[d, k, i, j, 1]`` is :math:`D(j \| i)`.
+            from ``X[i]`` to ``fetaures_[j]`` using a K of ``Ks[k]``.
+            If ``do_sym``, ``divs[d, k, i, j, 0]`` is
+            :math:`D_{d,k}( X_i \| \texttt{features_}_j)` and
+            ``divs[d, k, i, j, 1]`` is :math:`D_{d,k}(\texttt{features_}_j \| X_i)`.
         '''
         X = self._as_stacked_bare(X)
         Y = self.features_
