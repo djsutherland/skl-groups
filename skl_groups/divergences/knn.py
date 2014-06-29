@@ -318,11 +318,13 @@ class KNNDivergenceEstimator(BaseEstimator, TransformerMixin):
         # ignore Y_indices to avoid slow pickling of them
         # NOTE: if the indices are approximate, then might not get the same
         #       results!
-        return memory.cache(_est_divs, ignore=['n_jobs', 'Y_indices'])(
+        est = memory.cache(_est_divs, ignore=['n_jobs', 'Y_indices', 'Y_rhos'])
+        output, self.rhos_ = est(
             X, Y, self.indices_, getattr(self, 'rhos_', None),
             self.div_funcs, Ks,
             self.do_sym, self.clamp, self.version, self.min_dist,
             self._flann_args(), self._n_jobs)
+        return output
 
 
 def _choose_funcs(div_funcs, Ks, dim, X_n_pts, Y_n_pts, version):
@@ -473,7 +475,7 @@ def _est_divs(X, Y, Y_indices, Y_rhos, div_funcs, Ks,
         outputs = np.ascontiguousarray(outputs[:-n_meta_only])
 
     logger.info("Done with divergences.")
-    return outputs
+    return outputs, Y_rhos
 
 
 ################################################################################
