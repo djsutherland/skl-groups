@@ -27,8 +27,9 @@ try:
     from skl_groups_accel.knn_divs import (
             _estimate_cross_divs as _estimate_cross_divs_fast)
     have_fast_version = True
-except ImportError:
+except ImportError as e:
     have_fast_version = False
+    fast_version_error = e
 
 
 __all__ = ['KNNDivergenceEstimator']
@@ -353,7 +354,7 @@ def _choose_funcs(div_funcs, Ks, dim, X_n_pts, Y_n_pts, version):
                           " because skl_groups_accel isn't available; its "
                           "'fast' version is much faster on large "
                           "problems. Pass version='slow' to suppress this "
-                          "warning.")
+                          "warning. \n  {}".format(fast_version_error))
             version = 'slow'
     else:
         msg = "Unknown value '{}' for version."
