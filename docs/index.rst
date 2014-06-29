@@ -15,6 +15,7 @@ Contents:
 
 .. autosummary::
    :toctree: skl_groups
+   :nosignatures:
 
    features.Features
    divergences.KNNDivergenceEstimator

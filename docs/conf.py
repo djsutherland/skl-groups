@@ -268,3 +268,4 @@ texinfo_documents = [
 numpydoc_show_class_members = False
 
 autosummary_generate = True
+autodoc_default_flags = ['members']
