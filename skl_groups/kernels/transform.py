@@ -244,7 +244,7 @@ class ProjectPSD(BaseEstimator, TransformerMixin):
 
 class FlipPSD(BaseEstimator, TransformerMixin):
     '''
-    Makes a pairwise symmetric square affinitimy matrix into a valid positive
+    Makes a pairwise symmetric square affinity matrix into a valid positive
     semidefinite kernel, by flipping the sign of any negative eigenvalues in
     its spectrum.
 
@@ -374,7 +374,7 @@ class FlipPSD(BaseEstimator, TransformerMixin):
 
 class ShiftPSD(BaseEstimator, TransformerMixin):
     '''
-    Makes a pairwise squar affinitimy matrix into a valid positive semidefinite
+    Makes a pairwise square affinity matrix into a valid positive semidefinite
     kernel, by flipping the sign of any negative eigenvalues in its spectrum.
 
     `fit_transform()` does the actual projection. If you `transform` onto data
@@ -470,8 +470,8 @@ class ShiftPSD(BaseEstimator, TransformerMixin):
 
 class SquarePSD(BaseEstimator, TransformerMixin):
     '''
-    Makes a pairwise square affinity matrix into a valid positive semidefinite
-    kernel by symmetrizing then squaring its eigenvalues (via S -> S S^T).
+    Makes a pairwise symmetric square affinity matrix into a valid positive
+    semidefinite kernel by squaring its eigenvalues (via S -> S S^T).
     Equivalent to using the similarities to training points as features in a
     linear classifier.
 

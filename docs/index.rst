@@ -6,33 +6,11 @@
 Documentation for skl-groups
 ============================
 
-Contents:
-
 .. toctree::
    :maxdepth: 2
 
-.. currentmodule:: skl_groups
+   reference
 
-.. autosummary::
-   :toctree: skl_groups
-   :nosignatures:
-
-   features.Features
-   divergences.KNNDivergenceEstimator
-   summaries.BagMean
-   summaries.BagOfWords
-   summaries.L2DensityTransformer
-   preprocessing.BagMinMaxScaler
-   preprocessing.BagNormalizer
-   preprocessing.BagPCA
-   preprocessing.BagPreprocesser
-   preprocessing.BagStandardizer
-   kernels.PairwisePicker
-   kernels.Symmetrize
-   kernels.ProjectPSD
-   kernels.FlipPSD
-   kernels.ShiftPSD
-   kernels.SquarePSD
 
 
 Indices and tables

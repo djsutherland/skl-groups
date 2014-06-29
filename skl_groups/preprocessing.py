@@ -138,8 +138,8 @@ class BagStandardizer(BagPreprocesser):
 
 class BagMinMaxScaler(BagPreprocesser):
     '''
-    Linearly scales each feature dimension to lie within the given range, e.g.
-    [0, 1].
+    Linearly scales each feature dimension to lie within the given range, for
+    example [0, 1].
 
     This is just :class:`BagPreprocesser` with
     :class:`sklearn.preprocessing.MinMaxScaler`.
