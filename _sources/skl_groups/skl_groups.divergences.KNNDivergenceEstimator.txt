@@ -3,4 +3,25 @@ skl_groups.divergences.KNNDivergenceEstimator
 
 .. currentmodule:: skl_groups.divergences
 
-.. autodata:: KNNDivergenceEstimator
+.. autoclass:: KNNDivergenceEstimator
+
+   
+   .. automethod:: __init__
+
+   
+   .. rubric:: Methods
+
+   .. autosummary::
+   
+      ~KNNDivergenceEstimator.__init__
+      ~KNNDivergenceEstimator.fit
+      ~KNNDivergenceEstimator.fit_transform
+      ~KNNDivergenceEstimator.get_params
+      ~KNNDivergenceEstimator.set_params
+      ~KNNDivergenceEstimator.transform
+   
+   
+
+   
+   
+   
