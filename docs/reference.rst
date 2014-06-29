@@ -2,7 +2,6 @@ API reference
 =============
 
 .. currentmodule:: skl_groups
-.. toctree::
 
 
 Features representation

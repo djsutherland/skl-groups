@@ -21,7 +21,7 @@ class BagOfWords(BaseEstimator, TransformerMixin):
     ----------
     kmeans : KMeans estimator
         Object to run k-means with; :class:`sklearn.cluster.KMeans` or
-        :class:`sklearn.cluster.MinibatchKMeans` are most likely.
+        :class:`sklearn.cluster.MiniBatchKMeans` are most likely.
         Compared to a standard clustering setup, you want a much higher
         ``n_clusters`` (depending on the size and dimensionality, between maybe
         tens and thousands), lowish ``max_iter`` (maybe 100; we don't care so
