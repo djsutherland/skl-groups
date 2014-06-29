@@ -273,7 +273,11 @@ class KNNDivergenceEstimator(BaseEstimator, TransformerMixin):
             msg = "asked for K = {}, but there's a bag with only {} points"
             raise ValueError(msg.format(max_K, X.n_pts.min()))
 
-        self.indices_ = id = _build_indices(X, self._flann_args())
+        memory = self.memory
+        if isinstance(memory, string_types):
+            memory = Memory(cachedir=memory, verbose=0)
+
+        self.indices_ = id = memory.cache(_build_indices)(X, self._flann_args())
         if get_rhos:
             self.rhos_ = _get_rhos(X, id, Ks, max_K, save_all_Ks, self.min_dist)
         elif hasattr(self, 'rhos_'):
