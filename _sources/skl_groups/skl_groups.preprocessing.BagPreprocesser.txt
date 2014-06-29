@@ -1,0 +1,28 @@
+skl_groups.preprocessing.BagPreprocesser
+========================================
+
+.. currentmodule:: skl_groups.preprocessing
+
+.. autoclass:: BagPreprocesser
+
+   
+   .. automethod:: __init__
+
+   
+   .. rubric:: Methods
+
+   .. autosummary::
+   
+      ~BagPreprocesser.__init__
+      ~BagPreprocesser.fit
+      ~BagPreprocesser.fit_transform
+      ~BagPreprocesser.get_params
+      ~BagPreprocesser.inverse_transform
+      ~BagPreprocesser.set_params
+      ~BagPreprocesser.transform
+   
+   
+
+   
+   
+   

@@ -1,0 +1,287 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+  "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+
+
+<html xmlns="http://www.w3.org/1999/xhtml">
+  <head>
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+    
+    <title>skl_groups.divergences.KNNDivergenceEstimator &mdash; skl-groups 0.1.0-dev documentation</title>
+    
+    <link rel="stylesheet" href="../_static/default.css" type="text/css" />
+    <link rel="stylesheet" href="../_static/pygments.css" type="text/css" />
+    
+    <script type="text/javascript">
+      var DOCUMENTATION_OPTIONS = {
+        URL_ROOT:    '../',
+        VERSION:     '0.1.0-dev',
+        COLLAPSE_INDEX: false,
+        FILE_SUFFIX: '.html',
+        HAS_SOURCE:  true
+      };
+    </script>
+    <script type="text/javascript" src="../_static/jquery.js"></script>
+    <script type="text/javascript" src="../_static/underscore.js"></script>
+    <script type="text/javascript" src="../_static/doctools.js"></script>
+    <script type="text/javascript" src="http://cdn.mathjax.org/mathjax/latest/MathJax.js?config=TeX-AMS-MML_HTMLorMML"></script>
+    <link rel="top" title="skl-groups 0.1.0-dev documentation" href="../index.html" />
+    <link rel="up" title="API reference" href="../reference.html" />
+    <link rel="next" title="skl_groups.kernels.PairwisePicker" href="skl_groups.kernels.PairwisePicker.html" />
+    <link rel="prev" title="skl_groups.summaries.L2DensityTransformer" href="skl_groups.summaries.L2DensityTransformer.html" /> 
+  </head>
+  <body>
+    <div class="related">
+      <h3>Navigation</h3>
+      <ul>
+        <li class="right" style="margin-right: 10px">
+          <a href="../genindex.html" title="General Index"
+             accesskey="I">index</a></li>
+        <li class="right" >
+          <a href="skl_groups.kernels.PairwisePicker.html" title="skl_groups.kernels.PairwisePicker"
+             accesskey="N">next</a> |</li>
+        <li class="right" >
+          <a href="skl_groups.summaries.L2DensityTransformer.html" title="skl_groups.summaries.L2DensityTransformer"
+             accesskey="P">previous</a> |</li>
+        <li><a href="../index.html">skl-groups 0.1.0-dev documentation</a> &raquo;</li>
+          <li><a href="../reference.html" accesskey="U">API reference</a> &raquo;</li> 
+      </ul>
+    </div>  
+
+    <div class="document">
+      <div class="documentwrapper">
+        <div class="bodywrapper">
+          <div class="body">
+            
+  <div class="section" id="skl-groups-divergences-knndivergenceestimator">
+<h1>skl_groups.divergences.KNNDivergenceEstimator<a class="headerlink" href="#skl-groups-divergences-knndivergenceestimator" title="Permalink to this headline">¶</a></h1>
+<dl class="data">
+<dt id="skl_groups.divergences.KNNDivergenceEstimator">
+<tt class="descclassname">skl_groups.divergences.</tt><tt class="descname">KNNDivergenceEstimator</tt><em class="property"> = &lt;class 'skl_groups.divergences.knn.KNNDivergenceEstimator'&gt;</em><a class="headerlink" href="#skl_groups.divergences.KNNDivergenceEstimator" title="Permalink to this definition">¶</a></dt>
+<dd><p>Estimates various divergence functions between bags.</p>
+<p>Assumes that each bag represents an independent and identically distributed
+sample from some unknown probability distribution (on which certain
+technical assumptions are made), and estimates various distances between
+them. The valid divergence functions are, where p and q refer to the density
+functions for two bags:</p>
+<ul class="simple">
+<li>&#8216;kl&#8217;: The Kullback-Liebler divergence, which acts like a distance and has
+some attractive information-theoretic properties as well as often giving
+good results on machine learning problems in practice. Values are
+nonnegative but can go to infinity.
+<span class="math">\(\int p(x) \log\left( \frac{p(x)}{q(x)} \right) dx\)</span>.
+Estimated as in <a class="reference internal" href="#r5" id="id1">[R5]</a>.</li>
+<li>&#8216;renyi:.8&#8217; or any other number (other than 1): The Renyi-alpha divergence,
+<span class="math">\(\frac{1}{\alpha - 1} \log \int p(x) \left( \frac{p(x)}{q(x)} \right)^{\alpha - 1} dx\)</span>.
+Converges to &#8216;kl&#8217; as <span class="math">\(\alpha\)</span> goes to 1.
+Values are nonnegative, but can go to infinity.
+Estimated as in <a class="reference internal" href="#r6" id="id2">[R6]</a>.</li>
+<li>&#8216;tsallis:.8&#8217; or any other number (other than 1): The Tsallis-alpha divergence,
+<span class="math">\(\frac{1}{\alpha - 1} \left( \int p(x) \left(\frac{p(x)}{q(x)} \right)^{\alpha - 1} dx - 1 \right)\)</span>.
+Converges to <cite>kl</cite> as <span class="math">\(\alpha\)</span> goes to 1.
+Values are nonnegative, but can go to infinity.
+Estimated as in <a class="reference internal" href="#r6" id="id3">[R6]</a>.</li>
+<li>&#8216;hellinger&#8217;: The Hellinger distance, which is a true distance (i.e. it is
+symmetric and its true value satisfies the triangle inequality) and is
+between 0 and 1. Defined by <span class="math">\(\sqrt{1 - \int \sqrt{p(x) q(x)} dx}\)</span>.
+Estimated as in <a class="reference internal" href="#r6" id="id4">[R6]</a>.</li>
+<li>&#8216;bc&#8217;: The Bhattacharyya coefficient, <cite>:math:int sqrt{p(x) q(x)} dx</cite>.
+This is an affinity rather than a distance and is between 0 and 1.
+Estimated as in <a class="reference internal" href="#r6" id="id5">[R6]</a>.</li>
+<li>&#8216;l2&#8217;: The <span class="math">\(L_2\)</span> distance between density functions
+<span class="math">\(\sqrt{ \int (p(x) - q(x))^2 dx }\)</span>.
+Estimated as in <a class="reference internal" href="#r6" id="id6">[R6]</a>.
+A true distance function (symmetric and satisfies the triangle inequality.)</li>
+<li>&#8216;linear&#8217;: <span class="math">\(\int p(x) q(x) dx\)</span>.
+Estimated as in <a class="reference internal" href="#r6" id="id7">[R6]</a>.</li>
+<li>&#8216;jensen-shannon&#8217; or &#8216;js&#8217;: The Jensen-Shannon divergence.
+Equal to <span class="math">\(\frac{1}{2} D(p \| M) + \tfrac{1}{2} D(q \| M)\)</span>,
+where D is the Kullback-Liebler divergence
+and M is an equal mixture between p and q,
+or equivalently <span class="math">\(H[M] - \frac{1}{2} H[p] - \frac{1}{2} H[q]\)</span>
+where H is the Shannon entropy.
+Symmetric, its square root satisfies the triangle inequality,
+and is between 0 and <span class="math">\(\ln 2\)</span>.
+Estimated using <a class="reference internal" href="#r7" id="id8">[R7]</a>.</li>
+</ul>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><p class="first"><strong>div_funcs</strong> : sequence of strings, optional, default [&#8216;kl&#8217;]</p>
+<blockquote>
+<div><p>A sequence of divergence function spec strings, as above.
+For Renyi or Tsallis divergences, you can pass multiple values of
+alpha, e.g. <tt class="docutils literal"><span class="pre">['renyi:.9',</span> <span class="pre">'renyi:.8',</span> <span class="pre">'tsallis:.99']</span></tt>.</p>
+</div></blockquote>
+<p><strong>Ks</strong> : sequence of positive integers, optional, default [3]</p>
+<blockquote>
+<div><p>The Ks to use for the K-nearest-neighbor estimator.
+If you have very small bags (sizes less than, say, 25), try 1 or 2;
+if large, say more than 1000, try 4 or 5.
+Must be less than the smallest bag size; for the proof of <a class="reference internal" href="#r6" id="id9">[R6]</a> to work,
+should be at least 3 for most divergence functions.
+Jensen-Shannon treats this parameter a little differently.</p>
+</div></blockquote>
+<p><strong>do_sym</strong> : boolean, optional, default False</p>
+<blockquote>
+<div><p>As well as returning D(X || Y), return D(Y || X).</p>
+</div></blockquote>
+<p><strong>n_jobs</strong> : integer, optional, default 1</p>
+<blockquote>
+<div><p>The number of CPUs to use in the computation. -1 means &#8216;all CPUs&#8217;.</p>
+</div></blockquote>
+<p><strong>clamp</strong> : boolean, optional, default True</p>
+<blockquote>
+<div><p>For functions with bounded outputs, &#8220;clamp&#8221; them to lie within that
+range; for example, if the estimator for KL divergence gives a negative
+value, return 0 instead.</p>
+</div></blockquote>
+<p><strong>min_dist</strong> : float, optional, default 1e-3</p>
+<blockquote>
+<div><p>Protect against nearly-identical points by treating any distances less
+than this amount as this number. Tiny distances screw up the estimators
+because they assume that the inputs are from a continuous distribution,
+where this doesn&#8217;t happen.</p>
+</div></blockquote>
+<p><strong>flann_algorithm</strong> : string, optional, default &#8216;auto&#8217;</p>
+<blockquote>
+<div><p>Which algorithm to use in FLANN for nearest neighbors. Defaults to
+&#8216;auto&#8217;, which chooses &#8216;kdtree_single&#8217; if the input dimension is at most
+5 and &#8216;linear&#8217; otherwise. In high-ish dimensional spaces, you can get
+much better performance at the cost of approximate answers by using
+other index types; see the FLANN documentation.</p>
+</div></blockquote>
+<p><strong>flann_args</strong> : dictionary, optional, default {}</p>
+<blockquote>
+<div><p>Other arguments to pass to FLANN.</p>
+</div></blockquote>
+<p><strong>version</strong> : one of {&#8216;best&#8217;, &#8216;fast&#8217;, &#8216;slow&#8217;}, optional, default &#8216;best&#8217;</p>
+<blockquote>
+<div><p>Whether to use the fast Cython implementation from skl-groups-accel
+or the slower pure-Python implementation. &#8216;best&#8217; chooses &#8216;fast&#8217; if
+available and you aren&#8217;t using custom divergence functions, &#8216;slow&#8217;
+otherwise.</p>
+</div></blockquote>
+<p><strong>memory</strong> : Instance of <tt class="xref py py-class docutils literal"><span class="pre">joblib.Memory</span></tt> or string, optional</p>
+<blockquote class="last">
+<div><p>Used to cache the indices and the output of <tt class="xref py py-meth docutils literal"><span class="pre">transform()</span></tt>.
+By default, no caching is done. If a string is given, it is the
+path to the caching directory.</p>
+</div></blockquote>
+</td>
+</tr>
+</tbody>
+</table>
+<p class="rubric">Notes</p>
+<p>The convergence proof in <a class="reference internal" href="#r5" id="id10">[R5]</a> is incorrect. The estimator seems to work
+well, in practice, though.</p>
+<p>The Jensen-Shannon estimation is performed by using the estimator of
+<a class="reference internal" href="#r7" id="id11">[R7]</a> to get <span class="math">\(H[\frac{1}{2}(X + Y)]\)</span>, by combining the two samples
+and assigning weights such that the total weight from each sample is equal,
+and subtracting the mean of <span class="math">\(H[X]\)</span> and <span class="math">\(H[Y]\)</span> according to the
+same estimator (with equally-weighted points). The <tt class="docutils literal"><span class="pre">K</span></tt> parameter is
+used for the value of <span class="math">\(M = n \alpha\)</span> in <a class="reference internal" href="#r7" id="id12">[R7]</a>.</p>
+<p class="rubric">References</p>
+<table class="docutils citation" frame="void" id="r5" rules="none">
+<colgroup><col class="label" /><col /></colgroup>
+<tbody valign="top">
+<tr><td class="label">[R5]</td><td><em>(<a class="fn-backref" href="#id1">1</a>, <a class="fn-backref" href="#id10">2</a>, <a class="fn-backref" href="#id13">3</a>)</em> Q. Wang, S. Kulkarni, &amp; S. Verdu. (2009).
+Divergence Estimation for Multidimensional Densities Via
+k-Nearest-Neighbor Distances.
+IEEE Transactions on Information Theory, 55(5), 2392-2405.</td></tr>
+</tbody>
+</table>
+<table class="docutils citation" frame="void" id="r6" rules="none">
+<colgroup><col class="label" /><col /></colgroup>
+<tbody valign="top">
+<tr><td class="label">[R6]</td><td><em>(<a class="fn-backref" href="#id2">1</a>, <a class="fn-backref" href="#id3">2</a>, <a class="fn-backref" href="#id4">3</a>, <a class="fn-backref" href="#id5">4</a>, <a class="fn-backref" href="#id6">5</a>, <a class="fn-backref" href="#id7">6</a>, <a class="fn-backref" href="#id9">7</a>, <a class="fn-backref" href="#id14">8</a>)</em> B. Poczos, L. Xiong, D. J. Sutherland, &amp; J. Schneider. (2012).
+Nonparametric kernel estimators for image classification.
+In Computer Vision and Pattern Recognition (CVPR) (pp. 2989-2996).</td></tr>
+</tbody>
+</table>
+<table class="docutils citation" frame="void" id="r7" rules="none">
+<colgroup><col class="label" /><col /></colgroup>
+<tbody valign="top">
+<tr><td class="label">[R7]</td><td><em>(<a class="fn-backref" href="#id8">1</a>, <a class="fn-backref" href="#id11">2</a>, <a class="fn-backref" href="#id12">3</a>, <a class="fn-backref" href="#id15">4</a>)</em> H. Hino &amp; N. Murata. (2013).
+Information estimators for weighted observations.
+Neural Networks.</td></tr>
+</tbody>
+</table>
+<p class="rubric">Attributes</p>
+<table border="1" class="docutils">
+<colgroup>
+<col width="2%" />
+<col width="98%" />
+</colgroup>
+<tbody valign="top">
+<tr class="row-odd"><td><cite>features_</cite></td>
+<td>(<a class="reference internal" href="skl_groups.features.Features.html#skl_groups.features.Features" title="skl_groups.features.Features"><tt class="xref py py-class docutils literal"><span class="pre">skl_groups.features.Features</span></tt></a>) The features passed to <cite>fit</cite> (except made <tt class="xref py py-meth docutils literal"><span class="pre">sklearn.features.Features.bare()</span></tt>).</td>
+</tr>
+<tr class="row-even"><td><cite>indices_</cite></td>
+<td>(list of <tt class="xref py py-class docutils literal"><span class="pre">cyflann.FLANNIndex</span></tt> or <tt class="xref py py-class docutils literal"><span class="pre">pyflann.FLANN</span></tt>) A FLANN index for each bag in <cite>features_</cite>.</td>
+</tr>
+<tr class="row-odd"><td><cite>rhos_</cite></td>
+<td>(list of arrays) For each bag in <cite>features_</cite>, the distance to the Kth nearest neighbor of each point amongst its own bag. <tt class="docutils literal"><span class="pre">rhos_[i][j,</span> <span class="pre">k]</span></tt> is the distance to either the <tt class="docutils literal"><span class="pre">Ks[k]</span></tt> th or the <tt class="docutils literal"><span class="pre">k+1</span></tt> th nearest neighbor of <tt class="docutils literal"><span class="pre">features_[i][j,</span> <span class="pre">:]</span></tt> in <tt class="docutils literal"><span class="pre">features_[i]</span></tt> (not including <tt class="docutils literal"><span class="pre">features_[i][j,</span> <span class="pre">:]</span></tt> itself). It&#8217;s the <tt class="docutils literal"><span class="pre">k+1</span></tt> th if Jensen-Shannon divergence is requested.  May or may not be present after <tt class="xref py py-meth docutils literal"><span class="pre">fit()</span></tt>; will be after <tt class="xref py py-meth docutils literal"><span class="pre">transform()</span></tt>.</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+</div>
+
+
+          </div>
+        </div>
+      </div>
+      <div class="sphinxsidebar">
+        <div class="sphinxsidebarwrapper">
+  <h4>Previous topic</h4>
+  <p class="topless"><a href="skl_groups.summaries.L2DensityTransformer.html"
+                        title="previous chapter">skl_groups.summaries.L2DensityTransformer</a></p>
+  <h4>Next topic</h4>
+  <p class="topless"><a href="skl_groups.kernels.PairwisePicker.html"
+                        title="next chapter">skl_groups.kernels.PairwisePicker</a></p>
+  <h3>This Page</h3>
+  <ul class="this-page-menu">
+    <li><a href="../_sources/skl_groups/skl_groups.divergences.KNNDivergenceEstimator.txt"
+           rel="nofollow">Show Source</a></li>
+  </ul>
+<div id="searchbox" style="display: none">
+  <h3>Quick search</h3>
+    <form class="search" action="../search.html" method="get">
+      <input type="text" name="q" />
+      <input type="submit" value="Go" />
+      <input type="hidden" name="check_keywords" value="yes" />
+      <input type="hidden" name="area" value="default" />
+    </form>
+    <p class="searchtip" style="font-size: 90%">
+    Enter search terms or a module, class or function name.
+    </p>
+</div>
+<script type="text/javascript">$('#searchbox').show(0);</script>
+        </div>
+      </div>
+      <div class="clearer"></div>
+    </div>
+    <div class="related">
+      <h3>Navigation</h3>
+      <ul>
+        <li class="right" style="margin-right: 10px">
+          <a href="../genindex.html" title="General Index"
+             >index</a></li>
+        <li class="right" >
+          <a href="skl_groups.kernels.PairwisePicker.html" title="skl_groups.kernels.PairwisePicker"
+             >next</a> |</li>
+        <li class="right" >
+          <a href="skl_groups.summaries.L2DensityTransformer.html" title="skl_groups.summaries.L2DensityTransformer"
+             >previous</a> |</li>
+        <li><a href="../index.html">skl-groups 0.1.0-dev documentation</a> &raquo;</li>
+          <li><a href="../reference.html" >API reference</a> &raquo;</li> 
+      </ul>
+    </div>
+    <div class="footer">
+        &copy; Copyright 2014, Dougal J. Sutherland.
+      Created using <a href="http://sphinx-doc.org/">Sphinx</a> 1.2.2.
+    </div>
+  </body>
+</html>

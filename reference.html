@@ -1,0 +1,230 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+  "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+
+
+<html xmlns="http://www.w3.org/1999/xhtml">
+  <head>
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+    
+    <title>API reference &mdash; skl-groups 0.1.0-dev documentation</title>
+    
+    <link rel="stylesheet" href="_static/default.css" type="text/css" />
+    <link rel="stylesheet" href="_static/pygments.css" type="text/css" />
+    
+    <script type="text/javascript">
+      var DOCUMENTATION_OPTIONS = {
+        URL_ROOT:    './',
+        VERSION:     '0.1.0-dev',
+        COLLAPSE_INDEX: false,
+        FILE_SUFFIX: '.html',
+        HAS_SOURCE:  true
+      };
+    </script>
+    <script type="text/javascript" src="_static/jquery.js"></script>
+    <script type="text/javascript" src="_static/underscore.js"></script>
+    <script type="text/javascript" src="_static/doctools.js"></script>
+    <script type="text/javascript" src="http://cdn.mathjax.org/mathjax/latest/MathJax.js?config=TeX-AMS-MML_HTMLorMML"></script>
+    <link rel="top" title="skl-groups 0.1.0-dev documentation" href="index.html" />
+    <link rel="next" title="skl_groups.features.Features" href="skl_groups/skl_groups.features.Features.html" />
+    <link rel="prev" title="Documentation for skl-groups" href="index.html" /> 
+  </head>
+  <body>
+    <div class="related">
+      <h3>Navigation</h3>
+      <ul>
+        <li class="right" style="margin-right: 10px">
+          <a href="genindex.html" title="General Index"
+             accesskey="I">index</a></li>
+        <li class="right" >
+          <a href="skl_groups/skl_groups.features.Features.html" title="skl_groups.features.Features"
+             accesskey="N">next</a> |</li>
+        <li class="right" >
+          <a href="index.html" title="Documentation for skl-groups"
+             accesskey="P">previous</a> |</li>
+        <li><a href="index.html">skl-groups 0.1.0-dev documentation</a> &raquo;</li> 
+      </ul>
+    </div>  
+
+    <div class="document">
+      <div class="documentwrapper">
+        <div class="bodywrapper">
+          <div class="body">
+            
+  <div class="section" id="api-reference">
+<h1>API reference<a class="headerlink" href="#api-reference" title="Permalink to this headline">¶</a></h1>
+<div class="section" id="features-representation">
+<h2>Features representation<a class="headerlink" href="#features-representation" title="Permalink to this headline">¶</a></h2>
+<table border="1" class="longtable docutils">
+<colgroup>
+<col width="10%" />
+<col width="90%" />
+</colgroup>
+<tbody valign="top">
+<tr class="row-odd"><td><a class="reference internal" href="skl_groups/skl_groups.features.Features.html#skl_groups.features.Features" title="skl_groups.features.Features"><tt class="xref py py-obj docutils literal"><span class="pre">features.Features</span></tt></a></td>
+<td>A wrapper class for storing bags of features.</td>
+</tr>
+</tbody>
+</table>
+</div>
+<div class="section" id="preprocessing">
+<h2>Preprocessing<a class="headerlink" href="#preprocessing" title="Permalink to this headline">¶</a></h2>
+<table border="1" class="longtable docutils">
+<colgroup>
+<col width="10%" />
+<col width="90%" />
+</colgroup>
+<tbody valign="top">
+<tr class="row-odd"><td><a class="reference internal" href="skl_groups/skl_groups.preprocessing.BagMinMaxScaler.html#skl_groups.preprocessing.BagMinMaxScaler" title="skl_groups.preprocessing.BagMinMaxScaler"><tt class="xref py py-obj docutils literal"><span class="pre">preprocessing.BagMinMaxScaler</span></tt></a></td>
+<td>Linearly scales each feature dimension to lie within the given range, for example [0, 1].</td>
+</tr>
+<tr class="row-even"><td><a class="reference internal" href="skl_groups/skl_groups.preprocessing.BagNormalizer.html#skl_groups.preprocessing.BagNormalizer" title="skl_groups.preprocessing.BagNormalizer"><tt class="xref py py-obj docutils literal"><span class="pre">preprocessing.BagNormalizer</span></tt></a></td>
+<td>Normalizes each sample individually to have unit norm (l1 or l2).</td>
+</tr>
+<tr class="row-odd"><td><a class="reference internal" href="skl_groups/skl_groups.preprocessing.BagPCA.html#skl_groups.preprocessing.BagPCA" title="skl_groups.preprocessing.BagPCA"><tt class="xref py py-obj docutils literal"><span class="pre">preprocessing.BagPCA</span></tt></a></td>
+<td>Runs principal components analysis to reduce the dimensionality of the features.</td>
+</tr>
+<tr class="row-even"><td><a class="reference internal" href="skl_groups/skl_groups.preprocessing.BagPreprocesser.html#skl_groups.preprocessing.BagPreprocesser" title="skl_groups.preprocessing.BagPreprocesser"><tt class="xref py py-obj docutils literal"><span class="pre">preprocessing.BagPreprocesser</span></tt></a></td>
+<td>Applies a preprocessing estimator to each column of the bags, independently.</td>
+</tr>
+<tr class="row-odd"><td><a class="reference internal" href="skl_groups/skl_groups.preprocessing.BagStandardizer.html#skl_groups.preprocessing.BagStandardizer" title="skl_groups.preprocessing.BagStandardizer"><tt class="xref py py-obj docutils literal"><span class="pre">preprocessing.BagStandardizer</span></tt></a></td>
+<td>Standardizes each feature dimension to have zero mean and unit variance, regardless of the bag it falls into.</td>
+</tr>
+</tbody>
+</table>
+</div>
+<div class="section" id="summaries">
+<h2>Summaries<a class="headerlink" href="#summaries" title="Permalink to this headline">¶</a></h2>
+<p>Methods that convert set-based features into single feature vectors.</p>
+<table border="1" class="longtable docutils">
+<colgroup>
+<col width="10%" />
+<col width="90%" />
+</colgroup>
+<tbody valign="top">
+<tr class="row-odd"><td><a class="reference internal" href="skl_groups/skl_groups.summaries.BagMean.html#skl_groups.summaries.BagMean" title="skl_groups.summaries.BagMean"><tt class="xref py py-obj docutils literal"><span class="pre">summaries.BagMean</span></tt></a></td>
+<td>Transforms a list of features or <tt class="xref py py-class docutils literal"><span class="pre">Features</span></tt> object by just taking the mean of each entry.</td>
+</tr>
+<tr class="row-even"><td><a class="reference internal" href="skl_groups/skl_groups.summaries.BagOfWords.html#skl_groups.summaries.BagOfWords" title="skl_groups.summaries.BagOfWords"><tt class="xref py py-obj docutils literal"><span class="pre">summaries.BagOfWords</span></tt></a></td>
+<td>Transforms a list of bags of features (e.g.</td>
+</tr>
+<tr class="row-odd"><td><a class="reference internal" href="skl_groups/skl_groups.summaries.L2DensityTransformer.html#skl_groups.summaries.L2DensityTransformer" title="skl_groups.summaries.L2DensityTransformer"><tt class="xref py py-obj docutils literal"><span class="pre">summaries.L2DensityTransformer</span></tt></a></td>
+<td>Summarizes sets into a single vector, whose inner products estimate the L2 inner product between the density functions underlying each of the sets.</td>
+</tr>
+</tbody>
+</table>
+</div>
+<div class="section" id="divergences">
+<h2>Divergences<a class="headerlink" href="#divergences" title="Permalink to this headline">¶</a></h2>
+<p>These methods assume feature sets are samples from some probability distribution
+and estimate divergences, distances, and so on between those distributions.</p>
+<table border="1" class="longtable docutils">
+<colgroup>
+<col width="10%" />
+<col width="90%" />
+</colgroup>
+<tbody valign="top">
+<tr class="row-odd"><td><a class="reference internal" href="skl_groups/skl_groups.divergences.KNNDivergenceEstimator.html#skl_groups.divergences.KNNDivergenceEstimator" title="skl_groups.divergences.KNNDivergenceEstimator"><tt class="xref py py-obj docutils literal"><span class="pre">divergences.KNNDivergenceEstimator</span></tt></a></td>
+<td>Estimates various divergence functions between bags.</td>
+</tr>
+</tbody>
+</table>
+</div>
+<div class="section" id="kernel-utilities">
+<h2>Kernel utilities<a class="headerlink" href="#kernel-utilities" title="Permalink to this headline">¶</a></h2>
+<p>Utilities to convert generic affinities into valid kernels.</p>
+<table border="1" class="longtable docutils">
+<colgroup>
+<col width="10%" />
+<col width="90%" />
+</colgroup>
+<tbody valign="top">
+<tr class="row-odd"><td><a class="reference internal" href="skl_groups/skl_groups.kernels.PairwisePicker.html#skl_groups.kernels.PairwisePicker" title="skl_groups.kernels.PairwisePicker"><tt class="xref py py-obj docutils literal"><span class="pre">kernels.PairwisePicker</span></tt></a></td>
+<td>Picks a subset of the passed-in matrix.</td>
+</tr>
+<tr class="row-even"><td><a class="reference internal" href="skl_groups/skl_groups.kernels.Symmetrize.html#skl_groups.kernels.Symmetrize" title="skl_groups.kernels.Symmetrize"><tt class="xref py py-obj docutils literal"><span class="pre">kernels.Symmetrize</span></tt></a></td>
+<td>Symmetrizes pairwise affinity/distance/whatever matrices, by taking the mean of itself and its transpose.</td>
+</tr>
+<tr class="row-odd"><td><a class="reference internal" href="skl_groups/skl_groups.kernels.ProjectPSD.html#skl_groups.kernels.ProjectPSD" title="skl_groups.kernels.ProjectPSD"><tt class="xref py py-obj docutils literal"><span class="pre">kernels.ProjectPSD</span></tt></a></td>
+<td>Projects a pairwise square symmetric affinity matrix to be positive semidefinite, by discarding any negative eigenvalues from its spectrum.</td>
+</tr>
+<tr class="row-even"><td><a class="reference internal" href="skl_groups/skl_groups.kernels.FlipPSD.html#skl_groups.kernels.FlipPSD" title="skl_groups.kernels.FlipPSD"><tt class="xref py py-obj docutils literal"><span class="pre">kernels.FlipPSD</span></tt></a></td>
+<td>Makes a pairwise symmetric square affinity matrix into a valid positive semidefinite kernel, by flipping the sign of any negative eigenvalues in its spectrum.</td>
+</tr>
+<tr class="row-odd"><td><a class="reference internal" href="skl_groups/skl_groups.kernels.ShiftPSD.html#skl_groups.kernels.ShiftPSD" title="skl_groups.kernels.ShiftPSD"><tt class="xref py py-obj docutils literal"><span class="pre">kernels.ShiftPSD</span></tt></a></td>
+<td>Makes a pairwise square affinity matrix into a valid positive semidefinite kernel, by flipping the sign of any negative eigenvalues in its spectrum.</td>
+</tr>
+<tr class="row-even"><td><a class="reference internal" href="skl_groups/skl_groups.kernels.SquarePSD.html#skl_groups.kernels.SquarePSD" title="skl_groups.kernels.SquarePSD"><tt class="xref py py-obj docutils literal"><span class="pre">kernels.SquarePSD</span></tt></a></td>
+<td>Makes a pairwise symmetric square affinity matrix into a valid positive semidefinite kernel by squaring its eigenvalues (via S -&gt; S S^T).</td>
+</tr>
+</tbody>
+</table>
+</div>
+</div>
+
+
+          </div>
+        </div>
+      </div>
+      <div class="sphinxsidebar">
+        <div class="sphinxsidebarwrapper">
+  <h3><a href="index.html">Table Of Contents</a></h3>
+  <ul>
+<li><a class="reference internal" href="#">API reference</a><ul>
+<li><a class="reference internal" href="#features-representation">Features representation</a></li>
+<li><a class="reference internal" href="#preprocessing">Preprocessing</a></li>
+<li><a class="reference internal" href="#summaries">Summaries</a></li>
+<li><a class="reference internal" href="#divergences">Divergences</a></li>
+<li><a class="reference internal" href="#kernel-utilities">Kernel utilities</a></li>
+</ul>
+</li>
+</ul>
+
+  <h4>Previous topic</h4>
+  <p class="topless"><a href="index.html"
+                        title="previous chapter">Documentation for skl-groups</a></p>
+  <h4>Next topic</h4>
+  <p class="topless"><a href="skl_groups/skl_groups.features.Features.html"
+                        title="next chapter">skl_groups.features.Features</a></p>
+  <h3>This Page</h3>
+  <ul class="this-page-menu">
+    <li><a href="_sources/reference.txt"
+           rel="nofollow">Show Source</a></li>
+  </ul>
+<div id="searchbox" style="display: none">
+  <h3>Quick search</h3>
+    <form class="search" action="search.html" method="get">
+      <input type="text" name="q" />
+      <input type="submit" value="Go" />
+      <input type="hidden" name="check_keywords" value="yes" />
+      <input type="hidden" name="area" value="default" />
+    </form>
+    <p class="searchtip" style="font-size: 90%">
+    Enter search terms or a module, class or function name.
+    </p>
+</div>
+<script type="text/javascript">$('#searchbox').show(0);</script>
+        </div>
+      </div>
+      <div class="clearer"></div>
+    </div>
+    <div class="related">
+      <h3>Navigation</h3>
+      <ul>
+        <li class="right" style="margin-right: 10px">
+          <a href="genindex.html" title="General Index"
+             >index</a></li>
+        <li class="right" >
+          <a href="skl_groups/skl_groups.features.Features.html" title="skl_groups.features.Features"
+             >next</a> |</li>
+        <li class="right" >
+          <a href="index.html" title="Documentation for skl-groups"
+             >previous</a> |</li>
+        <li><a href="index.html">skl-groups 0.1.0-dev documentation</a> &raquo;</li> 
+      </ul>
+    </div>
+    <div class="footer">
+        &copy; Copyright 2014, Dougal J. Sutherland.
+      Created using <a href="http://sphinx-doc.org/">Sphinx</a> 1.2.2.
+    </div>
+  </body>
+</html>

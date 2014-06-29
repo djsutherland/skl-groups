@@ -1,0 +1,33 @@
+skl_groups.features.Features
+============================
+
+.. currentmodule:: skl_groups.features
+
+.. autoclass:: Features
+
+   
+   .. automethod:: __init__
+
+   
+   .. rubric:: Methods
+
+   .. autosummary::
+   
+      ~Features.__init__
+      ~Features.bare
+      ~Features.copy
+      ~Features.make_stacked
+   
+   
+
+   
+   
+   .. rubric:: Attributes
+
+   .. autosummary::
+   
+      ~Features.dim
+      ~Features.dtype
+      ~Features.total_points
+   
+   

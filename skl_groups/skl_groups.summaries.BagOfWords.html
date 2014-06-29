@@ -1,0 +1,283 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+  "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+
+
+<html xmlns="http://www.w3.org/1999/xhtml">
+  <head>
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+    
+    <title>skl_groups.summaries.BagOfWords &mdash; skl-groups 0.1.0-dev documentation</title>
+    
+    <link rel="stylesheet" href="../_static/default.css" type="text/css" />
+    <link rel="stylesheet" href="../_static/pygments.css" type="text/css" />
+    
+    <script type="text/javascript">
+      var DOCUMENTATION_OPTIONS = {
+        URL_ROOT:    '../',
+        VERSION:     '0.1.0-dev',
+        COLLAPSE_INDEX: false,
+        FILE_SUFFIX: '.html',
+        HAS_SOURCE:  true
+      };
+    </script>
+    <script type="text/javascript" src="../_static/jquery.js"></script>
+    <script type="text/javascript" src="../_static/underscore.js"></script>
+    <script type="text/javascript" src="../_static/doctools.js"></script>
+    <script type="text/javascript" src="http://cdn.mathjax.org/mathjax/latest/MathJax.js?config=TeX-AMS-MML_HTMLorMML"></script>
+    <link rel="top" title="skl-groups 0.1.0-dev documentation" href="../index.html" />
+    <link rel="up" title="API reference" href="../reference.html" />
+    <link rel="next" title="skl_groups.summaries.L2DensityTransformer" href="skl_groups.summaries.L2DensityTransformer.html" />
+    <link rel="prev" title="skl_groups.summaries.BagMean" href="skl_groups.summaries.BagMean.html" /> 
+  </head>
+  <body>
+    <div class="related">
+      <h3>Navigation</h3>
+      <ul>
+        <li class="right" style="margin-right: 10px">
+          <a href="../genindex.html" title="General Index"
+             accesskey="I">index</a></li>
+        <li class="right" >
+          <a href="skl_groups.summaries.L2DensityTransformer.html" title="skl_groups.summaries.L2DensityTransformer"
+             accesskey="N">next</a> |</li>
+        <li class="right" >
+          <a href="skl_groups.summaries.BagMean.html" title="skl_groups.summaries.BagMean"
+             accesskey="P">previous</a> |</li>
+        <li><a href="../index.html">skl-groups 0.1.0-dev documentation</a> &raquo;</li>
+          <li><a href="../reference.html" accesskey="U">API reference</a> &raquo;</li> 
+      </ul>
+    </div>  
+
+    <div class="document">
+      <div class="documentwrapper">
+        <div class="bodywrapper">
+          <div class="body">
+            
+  <div class="section" id="skl-groups-summaries-bagofwords">
+<h1>skl_groups.summaries.BagOfWords<a class="headerlink" href="#skl-groups-summaries-bagofwords" title="Permalink to this headline">¶</a></h1>
+<dl class="class">
+<dt id="skl_groups.summaries.BagOfWords">
+<em class="property">class </em><tt class="descclassname">skl_groups.summaries.</tt><tt class="descname">BagOfWords</tt><big>(</big><em>kmeans</em><big>)</big><a class="headerlink" href="#skl_groups.summaries.BagOfWords" title="Permalink to this definition">¶</a></dt>
+<dd><p>Transforms a list of bags of features (e.g. a <tt class="xref py py-class docutils literal"><span class="pre">Features</span></tt> instance)
+into the bag of words representation:</p>
+<ol class="arabic simple">
+<li>Run k-means on the set of all points from all bags, to get codewords.</li>
+<li>Represent each bag by the count of points assigned to each codeword.</li>
+</ol>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><p class="first"><strong>kmeans</strong> : KMeans estimator</p>
+<blockquote class="last">
+<div><p>Object to run k-means with; <a class="reference external" href="http://scikit-learn.org/stable/modules/generated/sklearn.cluster.KMeans.html#sklearn.cluster.KMeans" title="(in scikit-learn v0.14)"><tt class="xref py py-class docutils literal"><span class="pre">sklearn.cluster.KMeans</span></tt></a> or
+<a class="reference external" href="http://scikit-learn.org/stable/modules/generated/sklearn.cluster.MiniBatchKMeans.html#sklearn.cluster.MiniBatchKMeans" title="(in scikit-learn v0.14)"><tt class="xref py py-class docutils literal"><span class="pre">sklearn.cluster.MiniBatchKMeans</span></tt></a> are most likely.
+Compared to a standard clustering setup, you want a much higher
+<tt class="docutils literal"><span class="pre">n_clusters</span></tt> (depending on the size and dimensionality, between maybe
+tens and thousands), lowish <tt class="docutils literal"><span class="pre">max_iter</span></tt> (maybe 100; we don&#8217;t care so
+much about the exact solution, just that it has a reasonable spread),
+and lower <tt class="docutils literal"><span class="pre">n_init</span></tt> (same reason). The object should not yet be fit;
+we&#8217;ll copy it, not modify it.</p>
+</div></blockquote>
+</td>
+</tr>
+</tbody>
+</table>
+<p class="rubric">Attributes</p>
+<table border="1" class="docutils">
+<colgroup>
+<col width="18%" />
+<col width="82%" />
+</colgroup>
+<tbody valign="top">
+<tr class="row-odd"><td><cite>kmeans_fit_</cite></td>
+<td>(KMeans estimator) A fit version of the <cite>kmeans</cite> parameter.</td>
+</tr>
+</tbody>
+</table>
+<dl class="method">
+<dt id="skl_groups.summaries.BagOfWords.__init__">
+<tt class="descname">__init__</tt><big>(</big><em>kmeans</em><big>)</big><a class="headerlink" href="#skl_groups.summaries.BagOfWords.__init__" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<p class="rubric">Methods</p>
+<table border="1" class="longtable docutils">
+<colgroup>
+<col width="10%" />
+<col width="90%" />
+</colgroup>
+<tbody valign="top">
+<tr class="row-odd"><td><a class="reference internal" href="#skl_groups.summaries.BagOfWords.__init__" title="skl_groups.summaries.BagOfWords.__init__"><tt class="xref py py-obj docutils literal"><span class="pre">__init__</span></tt></a>(kmeans)</td>
+<td></td>
+</tr>
+<tr class="row-even"><td><a class="reference internal" href="#skl_groups.summaries.BagOfWords.fit" title="skl_groups.summaries.BagOfWords.fit"><tt class="xref py py-obj docutils literal"><span class="pre">fit</span></tt></a>(X[,&nbsp;y])</td>
+<td>Choose the codewords based on a training set.</td>
+</tr>
+<tr class="row-odd"><td><a class="reference internal" href="#skl_groups.summaries.BagOfWords.fit_transform" title="skl_groups.summaries.BagOfWords.fit_transform"><tt class="xref py py-obj docutils literal"><span class="pre">fit_transform</span></tt></a>(X)</td>
+<td>Compute clustering and transform a list of bag features into its bag-of-words representation.</td>
+</tr>
+<tr class="row-even"><td><tt class="xref py py-obj docutils literal"><span class="pre">get_params</span></tt>([deep])</td>
+<td>Get parameters for this estimator.</td>
+</tr>
+<tr class="row-odd"><td><tt class="xref py py-obj docutils literal"><span class="pre">set_params</span></tt>(**params)</td>
+<td>Set the parameters of this estimator.</td>
+</tr>
+<tr class="row-even"><td><a class="reference internal" href="#skl_groups.summaries.BagOfWords.transform" title="skl_groups.summaries.BagOfWords.transform"><tt class="xref py py-obj docutils literal"><span class="pre">transform</span></tt></a>(X)</td>
+<td>Transform a list of bag features into its bag-of-words representation.</td>
+</tr>
+</tbody>
+</table>
+<p class="rubric">Attributes</p>
+<table border="1" class="longtable docutils">
+<colgroup>
+<col width="10%" />
+<col width="90%" />
+</colgroup>
+<tbody valign="top">
+<tr class="row-odd"><td><a class="reference internal" href="#skl_groups.summaries.BagOfWords.codewords_" title="skl_groups.summaries.BagOfWords.codewords_"><tt class="xref py py-obj docutils literal"><span class="pre">codewords_</span></tt></a></td>
+<td>The selected codewords.</td>
+</tr>
+<tr class="row-even"><td><a class="reference internal" href="#skl_groups.summaries.BagOfWords.n_codewords" title="skl_groups.summaries.BagOfWords.n_codewords"><tt class="xref py py-obj docutils literal"><span class="pre">n_codewords</span></tt></a></td>
+<td>The number of codewords used.</td>
+</tr>
+</tbody>
+</table>
+<dl class="attribute">
+<dt id="skl_groups.summaries.BagOfWords.codewords_">
+<tt class="descname">codewords_</tt><a class="headerlink" href="#skl_groups.summaries.BagOfWords.codewords_" title="Permalink to this definition">¶</a></dt>
+<dd><p>The selected codewords.</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="skl_groups.summaries.BagOfWords.fit">
+<tt class="descname">fit</tt><big>(</big><em>X</em>, <em>y=None</em><big>)</big><a class="headerlink" href="#skl_groups.summaries.BagOfWords.fit" title="Permalink to this definition">¶</a></dt>
+<dd><p>Choose the codewords based on a training set.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><p class="first"><strong>X</strong> : <tt class="xref py py-class docutils literal"><span class="pre">Features</span></tt> or list of arrays of shape <tt class="docutils literal"><span class="pre">[n_samples[i],</span> <span class="pre">n_features]</span></tt></p>
+<blockquote class="last">
+<div><p>Training set. If a Features object, it will be stacked.</p>
+</div></blockquote>
+</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="method">
+<dt id="skl_groups.summaries.BagOfWords.fit_transform">
+<tt class="descname">fit_transform</tt><big>(</big><em>X</em><big>)</big><a class="headerlink" href="#skl_groups.summaries.BagOfWords.fit_transform" title="Permalink to this definition">¶</a></dt>
+<dd><p>Compute clustering and transform a list of bag features into its
+bag-of-words representation. Like calling fit(X) and then transform(X),
+but more efficient.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><p class="first"><strong>X</strong> : <tt class="xref py py-class docutils literal"><span class="pre">Features</span></tt> or list of bag feature arrays</p>
+<blockquote>
+<div><p>New data to transform.</p>
+</div></blockquote>
+</td>
+</tr>
+<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body"><p class="first"><strong>X_new</strong> : integer array, shape [len(X), kmeans.n_clusters]</p>
+<blockquote class="last">
+<div><p>X transformed into the new space.</p>
+</div></blockquote>
+</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="attribute">
+<dt id="skl_groups.summaries.BagOfWords.n_codewords">
+<tt class="descname">n_codewords</tt><a class="headerlink" href="#skl_groups.summaries.BagOfWords.n_codewords" title="Permalink to this definition">¶</a></dt>
+<dd><p>The number of codewords used.</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="skl_groups.summaries.BagOfWords.transform">
+<tt class="descname">transform</tt><big>(</big><em>X</em><big>)</big><a class="headerlink" href="#skl_groups.summaries.BagOfWords.transform" title="Permalink to this definition">¶</a></dt>
+<dd><p>Transform a list of bag features into its bag-of-words representation.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><p class="first"><strong>X</strong> : <tt class="xref py py-class docutils literal"><span class="pre">Features</span></tt> or list of bag feature arrays</p>
+<blockquote>
+<div><p>New data to transform.</p>
+</div></blockquote>
+</td>
+</tr>
+<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body"><p class="first"><strong>X_new</strong> : integer array, shape [len(X), kmeans.n_clusters]</p>
+<blockquote class="last">
+<div><p>X transformed into the new space.</p>
+</div></blockquote>
+</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+</dd></dl>
+
+</div>
+
+
+          </div>
+        </div>
+      </div>
+      <div class="sphinxsidebar">
+        <div class="sphinxsidebarwrapper">
+  <h4>Previous topic</h4>
+  <p class="topless"><a href="skl_groups.summaries.BagMean.html"
+                        title="previous chapter">skl_groups.summaries.BagMean</a></p>
+  <h4>Next topic</h4>
+  <p class="topless"><a href="skl_groups.summaries.L2DensityTransformer.html"
+                        title="next chapter">skl_groups.summaries.L2DensityTransformer</a></p>
+  <h3>This Page</h3>
+  <ul class="this-page-menu">
+    <li><a href="../_sources/skl_groups/skl_groups.summaries.BagOfWords.txt"
+           rel="nofollow">Show Source</a></li>
+  </ul>
+<div id="searchbox" style="display: none">
+  <h3>Quick search</h3>
+    <form class="search" action="../search.html" method="get">
+      <input type="text" name="q" />
+      <input type="submit" value="Go" />
+      <input type="hidden" name="check_keywords" value="yes" />
+      <input type="hidden" name="area" value="default" />
+    </form>
+    <p class="searchtip" style="font-size: 90%">
+    Enter search terms or a module, class or function name.
+    </p>
+</div>
+<script type="text/javascript">$('#searchbox').show(0);</script>
+        </div>
+      </div>
+      <div class="clearer"></div>
+    </div>
+    <div class="related">
+      <h3>Navigation</h3>
+      <ul>
+        <li class="right" style="margin-right: 10px">
+          <a href="../genindex.html" title="General Index"
+             >index</a></li>
+        <li class="right" >
+          <a href="skl_groups.summaries.L2DensityTransformer.html" title="skl_groups.summaries.L2DensityTransformer"
+             >next</a> |</li>
+        <li class="right" >
+          <a href="skl_groups.summaries.BagMean.html" title="skl_groups.summaries.BagMean"
+             >previous</a> |</li>
+        <li><a href="../index.html">skl-groups 0.1.0-dev documentation</a> &raquo;</li>
+          <li><a href="../reference.html" >API reference</a> &raquo;</li> 
+      </ul>
+    </div>
+    <div class="footer">
+        &copy; Copyright 2014, Dougal J. Sutherland.
+      Created using <a href="http://sphinx-doc.org/">Sphinx</a> 1.2.2.
+    </div>
+  </body>
+</html>

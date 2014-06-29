@@ -1,0 +1,203 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+  "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+
+
+<html xmlns="http://www.w3.org/1999/xhtml">
+  <head>
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+    
+    <title>skl_groups.kernels.Symmetrize &mdash; skl-groups 0.1.0-dev documentation</title>
+    
+    <link rel="stylesheet" href="../_static/default.css" type="text/css" />
+    <link rel="stylesheet" href="../_static/pygments.css" type="text/css" />
+    
+    <script type="text/javascript">
+      var DOCUMENTATION_OPTIONS = {
+        URL_ROOT:    '../',
+        VERSION:     '0.1.0-dev',
+        COLLAPSE_INDEX: false,
+        FILE_SUFFIX: '.html',
+        HAS_SOURCE:  true
+      };
+    </script>
+    <script type="text/javascript" src="../_static/jquery.js"></script>
+    <script type="text/javascript" src="../_static/underscore.js"></script>
+    <script type="text/javascript" src="../_static/doctools.js"></script>
+    <script type="text/javascript" src="http://cdn.mathjax.org/mathjax/latest/MathJax.js?config=TeX-AMS-MML_HTMLorMML"></script>
+    <link rel="top" title="skl-groups 0.1.0-dev documentation" href="../index.html" />
+    <link rel="up" title="API reference" href="../reference.html" />
+    <link rel="next" title="skl_groups.kernels.ProjectPSD" href="skl_groups.kernels.ProjectPSD.html" />
+    <link rel="prev" title="skl_groups.kernels.PairwisePicker" href="skl_groups.kernels.PairwisePicker.html" /> 
+  </head>
+  <body>
+    <div class="related">
+      <h3>Navigation</h3>
+      <ul>
+        <li class="right" style="margin-right: 10px">
+          <a href="../genindex.html" title="General Index"
+             accesskey="I">index</a></li>
+        <li class="right" >
+          <a href="skl_groups.kernels.ProjectPSD.html" title="skl_groups.kernels.ProjectPSD"
+             accesskey="N">next</a> |</li>
+        <li class="right" >
+          <a href="skl_groups.kernels.PairwisePicker.html" title="skl_groups.kernels.PairwisePicker"
+             accesskey="P">previous</a> |</li>
+        <li><a href="../index.html">skl-groups 0.1.0-dev documentation</a> &raquo;</li>
+          <li><a href="../reference.html" accesskey="U">API reference</a> &raquo;</li> 
+      </ul>
+    </div>  
+
+    <div class="document">
+      <div class="documentwrapper">
+        <div class="bodywrapper">
+          <div class="body">
+            
+  <div class="section" id="skl-groups-kernels-symmetrize">
+<h1>skl_groups.kernels.Symmetrize<a class="headerlink" href="#skl-groups-kernels-symmetrize" title="Permalink to this headline">¶</a></h1>
+<dl class="class">
+<dt id="skl_groups.kernels.Symmetrize">
+<em class="property">class </em><tt class="descclassname">skl_groups.kernels.</tt><tt class="descname">Symmetrize</tt><big>(</big><em>copy=True</em><big>)</big><a class="headerlink" href="#skl_groups.kernels.Symmetrize" title="Permalink to this definition">¶</a></dt>
+<dd><p>Symmetrizes pairwise affinity/distance/whatever matrices, by taking
+the mean of itself and its transpose.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><p class="first"><strong>copy</strong> : boolean, optional, default True</p>
+<blockquote class="last">
+<div><p>If false, invalidates the passed-in matrix.</p>
+</div></blockquote>
+</td>
+</tr>
+</tbody>
+</table>
+<p class="rubric">Notes</p>
+<p><tt class="docutils literal"><span class="pre">copy=False</span></tt> currently doesn&#8217;t do anything.</p>
+<dl class="method">
+<dt id="skl_groups.kernels.Symmetrize.__init__">
+<tt class="descname">__init__</tt><big>(</big><em>copy=True</em><big>)</big><a class="headerlink" href="#skl_groups.kernels.Symmetrize.__init__" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<p class="rubric">Methods</p>
+<table border="1" class="longtable docutils">
+<colgroup>
+<col width="10%" />
+<col width="90%" />
+</colgroup>
+<tbody valign="top">
+<tr class="row-odd"><td><a class="reference internal" href="#skl_groups.kernels.Symmetrize.__init__" title="skl_groups.kernels.Symmetrize.__init__"><tt class="xref py py-obj docutils literal"><span class="pre">__init__</span></tt></a>([copy])</td>
+<td></td>
+</tr>
+<tr class="row-even"><td><a class="reference internal" href="#skl_groups.kernels.Symmetrize.fit" title="skl_groups.kernels.Symmetrize.fit"><tt class="xref py py-obj docutils literal"><span class="pre">fit</span></tt></a>(X[,&nbsp;y])</td>
+<td>Raises NotImplementedError.</td>
+</tr>
+<tr class="row-odd"><td><a class="reference internal" href="#skl_groups.kernels.Symmetrize.fit_transform" title="skl_groups.kernels.Symmetrize.fit_transform"><tt class="xref py py-obj docutils literal"><span class="pre">fit_transform</span></tt></a>(X[,&nbsp;y])</td>
+<td>Symmetrizes X.</td>
+</tr>
+<tr class="row-even"><td><tt class="xref py py-obj docutils literal"><span class="pre">get_params</span></tt>([deep])</td>
+<td>Get parameters for this estimator.</td>
+</tr>
+<tr class="row-odd"><td><tt class="xref py py-obj docutils literal"><span class="pre">set_params</span></tt>(**params)</td>
+<td>Set the parameters of this estimator.</td>
+</tr>
+<tr class="row-even"><td><a class="reference internal" href="#skl_groups.kernels.Symmetrize.transform" title="skl_groups.kernels.Symmetrize.transform"><tt class="xref py py-obj docutils literal"><span class="pre">transform</span></tt></a>(X)</td>
+<td>Does nothing, so that it works nicely in pipelines.</td>
+</tr>
+</tbody>
+</table>
+<dl class="method">
+<dt id="skl_groups.kernels.Symmetrize.fit">
+<tt class="descname">fit</tt><big>(</big><em>X</em>, <em>y=None</em><big>)</big><a class="headerlink" href="#skl_groups.kernels.Symmetrize.fit" title="Permalink to this definition">¶</a></dt>
+<dd><p>Raises NotImplementedError.</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="skl_groups.kernels.Symmetrize.fit_transform">
+<tt class="descname">fit_transform</tt><big>(</big><em>X</em>, <em>y=None</em><big>)</big><a class="headerlink" href="#skl_groups.kernels.Symmetrize.fit_transform" title="Permalink to this definition">¶</a></dt>
+<dd><p>Symmetrizes X.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><p class="first"><strong>X</strong> : array, shape [n, n]</p>
+<blockquote>
+<div><p>The pairwise inputs to symmetrize.</p>
+</div></blockquote>
+</td>
+</tr>
+<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body"><p class="first"><strong>X</strong> : array, shape [n, n]</p>
+<blockquote class="last">
+<div><p>The symmetrized pairwise outputs.</p>
+</div></blockquote>
+</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="method">
+<dt id="skl_groups.kernels.Symmetrize.transform">
+<tt class="descname">transform</tt><big>(</big><em>X</em><big>)</big><a class="headerlink" href="#skl_groups.kernels.Symmetrize.transform" title="Permalink to this definition">¶</a></dt>
+<dd><p>Does nothing, so that it works nicely in pipelines.</p>
+</dd></dl>
+
+</dd></dl>
+
+</div>
+
+
+          </div>
+        </div>
+      </div>
+      <div class="sphinxsidebar">
+        <div class="sphinxsidebarwrapper">
+  <h4>Previous topic</h4>
+  <p class="topless"><a href="skl_groups.kernels.PairwisePicker.html"
+                        title="previous chapter">skl_groups.kernels.PairwisePicker</a></p>
+  <h4>Next topic</h4>
+  <p class="topless"><a href="skl_groups.kernels.ProjectPSD.html"
+                        title="next chapter">skl_groups.kernels.ProjectPSD</a></p>
+  <h3>This Page</h3>
+  <ul class="this-page-menu">
+    <li><a href="../_sources/skl_groups/skl_groups.kernels.Symmetrize.txt"
+           rel="nofollow">Show Source</a></li>
+  </ul>
+<div id="searchbox" style="display: none">
+  <h3>Quick search</h3>
+    <form class="search" action="../search.html" method="get">
+      <input type="text" name="q" />
+      <input type="submit" value="Go" />
+      <input type="hidden" name="check_keywords" value="yes" />
+      <input type="hidden" name="area" value="default" />
+    </form>
+    <p class="searchtip" style="font-size: 90%">
+    Enter search terms or a module, class or function name.
+    </p>
+</div>
+<script type="text/javascript">$('#searchbox').show(0);</script>
+        </div>
+      </div>
+      <div class="clearer"></div>
+    </div>
+    <div class="related">
+      <h3>Navigation</h3>
+      <ul>
+        <li class="right" style="margin-right: 10px">
+          <a href="../genindex.html" title="General Index"
+             >index</a></li>
+        <li class="right" >
+          <a href="skl_groups.kernels.ProjectPSD.html" title="skl_groups.kernels.ProjectPSD"
+             >next</a> |</li>
+        <li class="right" >
+          <a href="skl_groups.kernels.PairwisePicker.html" title="skl_groups.kernels.PairwisePicker"
+             >previous</a> |</li>
+        <li><a href="../index.html">skl-groups 0.1.0-dev documentation</a> &raquo;</li>
+          <li><a href="../reference.html" >API reference</a> &raquo;</li> 
+      </ul>
+    </div>
+    <div class="footer">
+        &copy; Copyright 2014, Dougal J. Sutherland.
+      Created using <a href="http://sphinx-doc.org/">Sphinx</a> 1.2.2.
+    </div>
+  </body>
+</html>

@@ -1,0 +1,434 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+  "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+
+
+<html xmlns="http://www.w3.org/1999/xhtml">
+  <head>
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+    
+    <title>skl_groups.summaries.L2DensityTransformer &mdash; skl-groups 0.1.0-dev documentation</title>
+    
+    <link rel="stylesheet" href="../_static/default.css" type="text/css" />
+    <link rel="stylesheet" href="../_static/pygments.css" type="text/css" />
+    
+    <script type="text/javascript">
+      var DOCUMENTATION_OPTIONS = {
+        URL_ROOT:    '../',
+        VERSION:     '0.1.0-dev',
+        COLLAPSE_INDEX: false,
+        FILE_SUFFIX: '.html',
+        HAS_SOURCE:  true
+      };
+    </script>
+    <script type="text/javascript" src="../_static/jquery.js"></script>
+    <script type="text/javascript" src="../_static/underscore.js"></script>
+    <script type="text/javascript" src="../_static/doctools.js"></script>
+    <script type="text/javascript" src="http://cdn.mathjax.org/mathjax/latest/MathJax.js?config=TeX-AMS-MML_HTMLorMML"></script>
+    <link rel="top" title="skl-groups 0.1.0-dev documentation" href="../index.html" />
+    <link rel="up" title="API reference" href="../reference.html" />
+    <link rel="next" title="skl_groups.divergences.KNNDivergenceEstimator" href="skl_groups.divergences.KNNDivergenceEstimator.html" />
+    <link rel="prev" title="skl_groups.summaries.BagOfWords" href="skl_groups.summaries.BagOfWords.html" /> 
+  </head>
+  <body>
+    <div class="related">
+      <h3>Navigation</h3>
+      <ul>
+        <li class="right" style="margin-right: 10px">
+          <a href="../genindex.html" title="General Index"
+             accesskey="I">index</a></li>
+        <li class="right" >
+          <a href="skl_groups.divergences.KNNDivergenceEstimator.html" title="skl_groups.divergences.KNNDivergenceEstimator"
+             accesskey="N">next</a> |</li>
+        <li class="right" >
+          <a href="skl_groups.summaries.BagOfWords.html" title="skl_groups.summaries.BagOfWords"
+             accesskey="P">previous</a> |</li>
+        <li><a href="../index.html">skl-groups 0.1.0-dev documentation</a> &raquo;</li>
+          <li><a href="../reference.html" accesskey="U">API reference</a> &raquo;</li> 
+      </ul>
+    </div>  
+
+    <div class="document">
+      <div class="documentwrapper">
+        <div class="bodywrapper">
+          <div class="body">
+            
+  <div class="section" id="skl-groups-summaries-l2densitytransformer">
+<h1>skl_groups.summaries.L2DensityTransformer<a class="headerlink" href="#skl-groups-summaries-l2densitytransformer" title="Permalink to this headline">¶</a></h1>
+<dl class="class">
+<dt id="skl_groups.summaries.L2DensityTransformer">
+<em class="property">class </em><tt class="descclassname">skl_groups.summaries.</tt><tt class="descname">L2DensityTransformer</tt><big>(</big><em>smoothness</em>, <em>basis='cosine'</em>, <em>do_bounds_check=True</em><big>)</big><a class="headerlink" href="#skl_groups.summaries.L2DensityTransformer" title="Permalink to this definition">¶</a></dt>
+<dd><p>Summarizes sets into a single vector, whose inner products estimate the
+L2 inner product between the density functions underlying each of the sets.</p>
+<p><em>IMPORTANT</em>: Assumes that inputs lie in [0, 1] - use
+<a class="reference internal" href="skl_groups.preprocessing.BagMinMaxScaler.html#skl_groups.preprocessing.BagMinMaxScaler" title="skl_groups.preprocessing.BagMinMaxScaler"><tt class="xref py py-class docutils literal"><span class="pre">skl_groups.preprocessing.BagMinMaxScaler</span></tt></a> to make this true.
+(TODO: add a truncating scaler to handle the test case as well.)</p>
+<p>Classifiers built off of this representation can scale to very large set
+sizes (since they&#8217;re summarized in a fixed-dimensional vector) and/or
+number of sets (since you can do a linear classifier on either them or
+an explicit kernel mapping). But the representation only works for very
+small number of dimensions: the dimensionality of the output is exponential
+in both the smoothness coefficient and the dimension of the input. Some
+specific numbers:</p>
+<table border="1" class="docutils">
+<colgroup>
+<col width="22%" />
+<col width="16%" />
+<col width="16%" />
+<col width="16%" />
+<col width="16%" />
+<col width="16%" />
+</colgroup>
+<thead valign="bottom">
+<tr class="row-odd"><th class="head">smoothness</th>
+<th class="head">d=1</th>
+<th class="head">d=2</th>
+<th class="head">d=3</th>
+<th class="head">d=4</th>
+<th class="head">d=5</th>
+</tr>
+</thead>
+<tbody valign="top">
+<tr class="row-even"><td>1</td>
+<td>2</td>
+<td>3</td>
+<td>4</td>
+<td>5</td>
+<td>6</td>
+</tr>
+<tr class="row-odd"><td>2</td>
+<td>3</td>
+<td>6</td>
+<td>11</td>
+<td>20</td>
+<td>36</td>
+</tr>
+<tr class="row-even"><td>3</td>
+<td>4</td>
+<td>11</td>
+<td>29</td>
+<td>70</td>
+<td>157</td>
+</tr>
+<tr class="row-odd"><td>4</td>
+<td>5</td>
+<td>17</td>
+<td>54</td>
+<td>165</td>
+<td>482</td>
+</tr>
+<tr class="row-even"><td>5</td>
+<td>6</td>
+<td>26</td>
+<td>99</td>
+<td>357</td>
+<td>1,203</td>
+</tr>
+<tr class="row-odd"><td>6</td>
+<td>7</td>
+<td>35</td>
+<td>163</td>
+<td>688</td>
+<td>2,673</td>
+</tr>
+<tr class="row-even"><td>7</td>
+<td>8</td>
+<td>45</td>
+<td>239</td>
+<td>1,154</td>
+<td>5,139</td>
+</tr>
+<tr class="row-odd"><td>8</td>
+<td>9</td>
+<td>58</td>
+<td>344</td>
+<td>1,867</td>
+<td>9,389</td>
+</tr>
+<tr class="row-even"><td>9</td>
+<td>10</td>
+<td>73</td>
+<td>486</td>
+<td>2,907</td>
+<td>15,930</td>
+</tr>
+<tr class="row-odd"><td>10</td>
+<td>11</td>
+<td>90</td>
+<td>648</td>
+<td>4,272</td>
+<td>25,810</td>
+</tr>
+<tr class="row-even"><td>11</td>
+<td>12</td>
+<td>106</td>
+<td>847</td>
+<td>6,070</td>
+<td>39,855</td>
+</tr>
+<tr class="row-odd"><td>12</td>
+<td>13</td>
+<td>123</td>
+<td>1,069</td>
+<td>8,357</td>
+<td>59,711</td>
+</tr>
+<tr class="row-even"><td>13</td>
+<td>14</td>
+<td>146</td>
+<td>1,355</td>
+<td>11,307</td>
+<td>86,346</td>
+</tr>
+<tr class="row-odd"><td>14</td>
+<td>15</td>
+<td>168</td>
+<td>1,680</td>
+<td>14,998</td>
+<td>122,467</td>
+</tr>
+<tr class="row-even"><td>15</td>
+<td>16</td>
+<td>193</td>
+<td>2,046</td>
+<td>19,470</td>
+<td>168,957</td>
+</tr>
+<tr class="row-odd"><td>16</td>
+<td>17</td>
+<td>216</td>
+<td>2,446</td>
+<td>24,809</td>
+<td>229,743</td>
+</tr>
+<tr class="row-even"><td>17</td>
+<td>18</td>
+<td>243</td>
+<td>2,911</td>
+<td>31,211</td>
+<td>305,153</td>
+</tr>
+<tr class="row-odd"><td>18</td>
+<td>19</td>
+<td>271</td>
+<td>3,443</td>
+<td>38,928</td>
+<td>400,844</td>
+</tr>
+<tr class="row-even"><td>19</td>
+<td>20</td>
+<td>302</td>
+<td>4,022</td>
+<td>47,816</td>
+<td>518,154</td>
+</tr>
+<tr class="row-odd"><td>20</td>
+<td>21</td>
+<td>335</td>
+<td>4,662</td>
+<td>58,201</td>
+<td>662,629</td>
+</tr>
+</tbody>
+</table>
+<p>For more on the estimator, see [1], which effectively uses a pipeline of
+<a class="reference internal" href="skl_groups.preprocessing.BagMinMaxScaler.html#skl_groups.preprocessing.BagMinMaxScaler" title="skl_groups.preprocessing.BagMinMaxScaler"><tt class="xref py py-class docutils literal"><span class="pre">skl_groups.preprocessing.BagMinMaxScaler</span></tt></a>, <a class="reference internal" href="#skl_groups.summaries.L2DensityTransformer" title="skl_groups.summaries.L2DensityTransformer"><tt class="xref py py-class docutils literal"><span class="pre">L2DensityTransformer</span></tt></a>,
+<a class="reference external" href="http://scikit-learn.org/stable/modules/generated/sklearn.kernel_approximation.RBFSampler.html#sklearn.kernel_approximation.RBFSampler" title="(in scikit-learn v0.14)"><tt class="xref py py-class docutils literal"><span class="pre">sklearn.kernel_approximation.RBFSampler</span></tt></a>,
+and then <a class="reference external" href="http://scikit-learn.org/stable/modules/generated/sklearn.linear_model.Ridge.html#sklearn.linear_model.Ridge" title="(in scikit-learn v0.14)"><tt class="xref py py-class docutils literal"><span class="pre">sklearn.linear_model.Ridge</span></tt></a>.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><p class="first"><strong>smoothness</strong> : positive int</p>
+<blockquote>
+<div><p>The smoothness assumption; lower values mean &#8220;smoother&#8221;, with respect
+to the underlying basis. Higher values make the dimensionality higher.</p>
+</div></blockquote>
+<p><strong>basis</strong> : &#8216;cosine&#8217;, optional, default &#8216;cosine&#8217;</p>
+<blockquote>
+<div><p>The underlying orthonormal function basis to use.
+&#8216;cosine&#8217;, the only current option, uses a Fourier basis of
+cosines with differently-scaled periods.</p>
+</div></blockquote>
+<p><strong>do_bounds_check</strong> : boolean, optional, default True</p>
+<blockquote class="last">
+<div><p>Whether to make sure that the data is in [0, 1] in transform().
+(If you skip this check, and the data isn&#8217;t in the right scale, you&#8217;ll
+get silently incorrect results.)</p>
+</div></blockquote>
+</td>
+</tr>
+</tbody>
+</table>
+<p class="rubric">References</p>
+<table class="docutils citation" frame="void" id="r8" rules="none">
+<colgroup><col class="label" /><col /></colgroup>
+<tbody valign="top">
+<tr><td class="label"><a class="fn-backref" href="#id1">[R8]</a></td><td>J. B. Oliva, B. Poczos, &amp; J. Schneider. (2014).
+Fast Distribution To Real Regression.
+In Proceedings of the 17th International Conference on
+Artificial Intelligence and Statistics (AISTATS).</td></tr>
+</tbody>
+</table>
+<p class="rubric">Attributes</p>
+<table border="1" class="docutils">
+<colgroup>
+<col width="3%" />
+<col width="97%" />
+</colgroup>
+<tbody valign="top">
+<tr class="row-odd"><td><cite>inds_</cite></td>
+<td>(integer array of shape [output_dim, input_dim]) The indices of the basis to use. Output dimension i is the product of the value of the <tt class="docutils literal"><span class="pre">inds_[i,</span> <span class="pre">j]</span></tt>&#8216;th basis function at the <tt class="docutils literal"><span class="pre">i</span></tt>&#8216;th input coordinate.</td>
+</tr>
+</tbody>
+</table>
+<dl class="method">
+<dt id="skl_groups.summaries.L2DensityTransformer.__init__">
+<tt class="descname">__init__</tt><big>(</big><em>smoothness</em>, <em>basis='cosine'</em>, <em>do_bounds_check=True</em><big>)</big><a class="headerlink" href="#skl_groups.summaries.L2DensityTransformer.__init__" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<p class="rubric">Methods</p>
+<table border="1" class="longtable docutils">
+<colgroup>
+<col width="10%" />
+<col width="90%" />
+</colgroup>
+<tbody valign="top">
+<tr class="row-odd"><td><a class="reference internal" href="#skl_groups.summaries.L2DensityTransformer.__init__" title="skl_groups.summaries.L2DensityTransformer.__init__"><tt class="xref py py-obj docutils literal"><span class="pre">__init__</span></tt></a>(smoothness[,&nbsp;basis,&nbsp;do_bounds_check])</td>
+<td></td>
+</tr>
+<tr class="row-even"><td><a class="reference internal" href="#skl_groups.summaries.L2DensityTransformer.fit" title="skl_groups.summaries.L2DensityTransformer.fit"><tt class="xref py py-obj docutils literal"><span class="pre">fit</span></tt></a>(X[,&nbsp;y])</td>
+<td>Picks the elements of the basis to use for the given data.</td>
+</tr>
+<tr class="row-odd"><td><tt class="xref py py-obj docutils literal"><span class="pre">fit_transform</span></tt>(X[,&nbsp;y])</td>
+<td>Fit to data, then transform it.</td>
+</tr>
+<tr class="row-even"><td><tt class="xref py py-obj docutils literal"><span class="pre">get_params</span></tt>([deep])</td>
+<td>Get parameters for this estimator.</td>
+</tr>
+<tr class="row-odd"><td><tt class="xref py py-obj docutils literal"><span class="pre">set_params</span></tt>(**params)</td>
+<td>Set the parameters of this estimator.</td>
+</tr>
+<tr class="row-even"><td><a class="reference internal" href="#skl_groups.summaries.L2DensityTransformer.transform" title="skl_groups.summaries.L2DensityTransformer.transform"><tt class="xref py py-obj docutils literal"><span class="pre">transform</span></tt></a>(X)</td>
+<td>Transform a list of bag features into its projection series representation.</td>
+</tr>
+</tbody>
+</table>
+<p class="rubric">Attributes</p>
+<table border="1" class="longtable docutils">
+<colgroup>
+<col width="10%" />
+<col width="90%" />
+</colgroup>
+<tbody valign="top">
+<tr class="row-odd"><td><tt class="xref py py-obj docutils literal"><span class="pre">dim_</span></tt></td>
+<td></td>
+</tr>
+</tbody>
+</table>
+<dl class="method">
+<dt id="skl_groups.summaries.L2DensityTransformer.fit">
+<tt class="descname">fit</tt><big>(</big><em>X</em>, <em>y=None</em><big>)</big><a class="headerlink" href="#skl_groups.summaries.L2DensityTransformer.fit" title="Permalink to this definition">¶</a></dt>
+<dd><p>Picks the elements of the basis to use for the given data.</p>
+<p>Only depends on the dimension of X. If it&#8217;s more convenient, you can
+pass a single integer for X, which is the dimension to use.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><p class="first"><strong>X</strong> : an integer, a <tt class="xref py py-class docutils literal"><span class="pre">Features</span></tt> instance, or a list of bag features</p>
+<blockquote class="last">
+<div><p>The input data, or just its dimension, since only the dimension is
+needed here.</p>
+</div></blockquote>
+</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="method">
+<dt id="skl_groups.summaries.L2DensityTransformer.transform">
+<tt class="descname">transform</tt><big>(</big><em>X</em><big>)</big><a class="headerlink" href="#skl_groups.summaries.L2DensityTransformer.transform" title="Permalink to this definition">¶</a></dt>
+<dd><p>Transform a list of bag features into its projection series
+representation.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><p class="first"><strong>X</strong> : <a class="reference internal" href="skl_groups.features.Features.html#skl_groups.features.Features" title="skl_groups.features.Features"><tt class="xref py py-class docutils literal"><span class="pre">skl_groups.features.Features</span></tt></a> or list of bag feature arrays</p>
+<blockquote>
+<div><p>New data to transform. The data should all lie in [0, 1];
+use <a class="reference internal" href="skl_groups.preprocessing.BagMinMaxScaler.html#skl_groups.preprocessing.BagMinMaxScaler" title="skl_groups.preprocessing.BagMinMaxScaler"><tt class="xref py py-class docutils literal"><span class="pre">skl_groups.preprocessing.BagMinMaxScaler</span></tt></a> if not.</p>
+</div></blockquote>
+</td>
+</tr>
+<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body"><p class="first"><strong>X_new</strong> : integer array, shape [len(X), kmeans.n_clusters]</p>
+<blockquote class="last">
+<div><p>X transformed into the new space.</p>
+</div></blockquote>
+</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+</dd></dl>
+
+</div>
+
+
+          </div>
+        </div>
+      </div>
+      <div class="sphinxsidebar">
+        <div class="sphinxsidebarwrapper">
+  <h4>Previous topic</h4>
+  <p class="topless"><a href="skl_groups.summaries.BagOfWords.html"
+                        title="previous chapter">skl_groups.summaries.BagOfWords</a></p>
+  <h4>Next topic</h4>
+  <p class="topless"><a href="skl_groups.divergences.KNNDivergenceEstimator.html"
+                        title="next chapter">skl_groups.divergences.KNNDivergenceEstimator</a></p>
+  <h3>This Page</h3>
+  <ul class="this-page-menu">
+    <li><a href="../_sources/skl_groups/skl_groups.summaries.L2DensityTransformer.txt"
+           rel="nofollow">Show Source</a></li>
+  </ul>
+<div id="searchbox" style="display: none">
+  <h3>Quick search</h3>
+    <form class="search" action="../search.html" method="get">
+      <input type="text" name="q" />
+      <input type="submit" value="Go" />
+      <input type="hidden" name="check_keywords" value="yes" />
+      <input type="hidden" name="area" value="default" />
+    </form>
+    <p class="searchtip" style="font-size: 90%">
+    Enter search terms or a module, class or function name.
+    </p>
+</div>
+<script type="text/javascript">$('#searchbox').show(0);</script>
+        </div>
+      </div>
+      <div class="clearer"></div>
+    </div>
+    <div class="related">
+      <h3>Navigation</h3>
+      <ul>
+        <li class="right" style="margin-right: 10px">
+          <a href="../genindex.html" title="General Index"
+             >index</a></li>
+        <li class="right" >
+          <a href="skl_groups.divergences.KNNDivergenceEstimator.html" title="skl_groups.divergences.KNNDivergenceEstimator"
+             >next</a> |</li>
+        <li class="right" >
+          <a href="skl_groups.summaries.BagOfWords.html" title="skl_groups.summaries.BagOfWords"
+             >previous</a> |</li>
+        <li><a href="../index.html">skl-groups 0.1.0-dev documentation</a> &raquo;</li>
+          <li><a href="../reference.html" >API reference</a> &raquo;</li> 
+      </ul>
+    </div>
+    <div class="footer">
+        &copy; Copyright 2014, Dougal J. Sutherland.
+      Created using <a href="http://sphinx-doc.org/">Sphinx</a> 1.2.2.
+    </div>
+  </body>
+</html>

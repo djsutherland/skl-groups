@@ -1,0 +1,27 @@
+skl_groups.kernels.PairwisePicker
+=================================
+
+.. currentmodule:: skl_groups.kernels
+
+.. autoclass:: PairwisePicker
+
+   
+   .. automethod:: __init__
+
+   
+   .. rubric:: Methods
+
+   .. autosummary::
+   
+      ~PairwisePicker.__init__
+      ~PairwisePicker.fit
+      ~PairwisePicker.fit_transform
+      ~PairwisePicker.get_params
+      ~PairwisePicker.set_params
+      ~PairwisePicker.transform
+   
+   
+
+   
+   
+   

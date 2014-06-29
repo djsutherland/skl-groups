@@ -1,0 +1,27 @@
+skl_groups.kernels.ShiftPSD
+===========================
+
+.. currentmodule:: skl_groups.kernels
+
+.. autoclass:: ShiftPSD
+
+   
+   .. automethod:: __init__
+
+   
+   .. rubric:: Methods
+
+   .. autosummary::
+   
+      ~ShiftPSD.__init__
+      ~ShiftPSD.fit
+      ~ShiftPSD.fit_transform
+      ~ShiftPSD.get_params
+      ~ShiftPSD.set_params
+      ~ShiftPSD.transform
+   
+   
+
+   
+   
+   

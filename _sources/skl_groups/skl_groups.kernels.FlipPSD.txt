@@ -1,0 +1,27 @@
+skl_groups.kernels.FlipPSD
+==========================
+
+.. currentmodule:: skl_groups.kernels
+
+.. autoclass:: FlipPSD
+
+   
+   .. automethod:: __init__
+
+   
+   .. rubric:: Methods
+
+   .. autosummary::
+   
+      ~FlipPSD.__init__
+      ~FlipPSD.fit
+      ~FlipPSD.fit_transform
+      ~FlipPSD.get_params
+      ~FlipPSD.set_params
+      ~FlipPSD.transform
+   
+   
+
+   
+   
+   

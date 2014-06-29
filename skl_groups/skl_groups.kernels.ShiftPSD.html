@@ -1,0 +1,241 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+  "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+
+
+<html xmlns="http://www.w3.org/1999/xhtml">
+  <head>
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+    
+    <title>skl_groups.kernels.ShiftPSD &mdash; skl-groups 0.1.0-dev documentation</title>
+    
+    <link rel="stylesheet" href="../_static/default.css" type="text/css" />
+    <link rel="stylesheet" href="../_static/pygments.css" type="text/css" />
+    
+    <script type="text/javascript">
+      var DOCUMENTATION_OPTIONS = {
+        URL_ROOT:    '../',
+        VERSION:     '0.1.0-dev',
+        COLLAPSE_INDEX: false,
+        FILE_SUFFIX: '.html',
+        HAS_SOURCE:  true
+      };
+    </script>
+    <script type="text/javascript" src="../_static/jquery.js"></script>
+    <script type="text/javascript" src="../_static/underscore.js"></script>
+    <script type="text/javascript" src="../_static/doctools.js"></script>
+    <script type="text/javascript" src="http://cdn.mathjax.org/mathjax/latest/MathJax.js?config=TeX-AMS-MML_HTMLorMML"></script>
+    <link rel="top" title="skl-groups 0.1.0-dev documentation" href="../index.html" />
+    <link rel="up" title="API reference" href="../reference.html" />
+    <link rel="next" title="skl_groups.kernels.SquarePSD" href="skl_groups.kernels.SquarePSD.html" />
+    <link rel="prev" title="skl_groups.kernels.FlipPSD" href="skl_groups.kernels.FlipPSD.html" /> 
+  </head>
+  <body>
+    <div class="related">
+      <h3>Navigation</h3>
+      <ul>
+        <li class="right" style="margin-right: 10px">
+          <a href="../genindex.html" title="General Index"
+             accesskey="I">index</a></li>
+        <li class="right" >
+          <a href="skl_groups.kernels.SquarePSD.html" title="skl_groups.kernels.SquarePSD"
+             accesskey="N">next</a> |</li>
+        <li class="right" >
+          <a href="skl_groups.kernels.FlipPSD.html" title="skl_groups.kernels.FlipPSD"
+             accesskey="P">previous</a> |</li>
+        <li><a href="../index.html">skl-groups 0.1.0-dev documentation</a> &raquo;</li>
+          <li><a href="../reference.html" accesskey="U">API reference</a> &raquo;</li> 
+      </ul>
+    </div>  
+
+    <div class="document">
+      <div class="documentwrapper">
+        <div class="bodywrapper">
+          <div class="body">
+            
+  <div class="section" id="skl-groups-kernels-shiftpsd">
+<h1>skl_groups.kernels.ShiftPSD<a class="headerlink" href="#skl-groups-kernels-shiftpsd" title="Permalink to this headline">¶</a></h1>
+<dl class="class">
+<dt id="skl_groups.kernels.ShiftPSD">
+<em class="property">class </em><tt class="descclassname">skl_groups.kernels.</tt><tt class="descname">ShiftPSD</tt><big>(</big><em>min_eig=0</em>, <em>copy=True</em>, <em>memory=Memory(cachedir=None)</em><big>)</big><a class="headerlink" href="#skl_groups.kernels.ShiftPSD" title="Permalink to this definition">¶</a></dt>
+<dd><p>Makes a pairwise square affinity matrix into a valid positive semidefinite
+kernel, by flipping the sign of any negative eigenvalues in its spectrum.</p>
+<p><cite>fit_transform()</cite> does the actual projection. If you <cite>transform</cite> onto data
+different than the data originally <cite>fit</cite> on (not necessarily square), then
+nothing will be changed, because the shift operation only affects self-
+similarities.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><p class="first"><strong>min_eig</strong> : float, optional, default 0</p>
+<blockquote>
+<div><p>The minimum eigenvalue for the projected matrix. Because of
+floating-point inaccuracies, don&#8217;t take this too literally.</p>
+</div></blockquote>
+<p><strong>copy</strong> : boolean, optional, default True</p>
+<blockquote>
+<div><p>Operate on a copy of the passed-in matrix; otherwise, the original
+matrix will be invalidated (for both <tt class="docutils literal"><span class="pre">fit()</span></tt> and <tt class="docutils literal"><span class="pre">transform()</span></tt>).</p>
+</div></blockquote>
+<p><strong>memory</strong> : Instance of joblib.Memory or string (optional)</p>
+<blockquote class="last">
+<div><p>Used to cache the eigendecomposition.
+By default, no caching is done. If a string is given, it is the
+path to the caching directory.</p>
+</div></blockquote>
+</td>
+</tr>
+</tbody>
+</table>
+<p class="rubric">Attributes</p>
+<table border="1" class="docutils">
+<colgroup>
+<col width="5%" />
+<col width="95%" />
+</colgroup>
+<tbody valign="top">
+<tr class="row-odd"><td><cite>train_</cite></td>
+<td>(array of shape [n, n]) The training similarities. Stored so that <cite>transform</cite> can check if it&#8217;s transforming the test data and act appropriately.</td>
+</tr>
+<tr class="row-even"><td><cite>shift_</cite></td>
+<td>(float) The amount to shift all the eigenvalues up by.</td>
+</tr>
+</tbody>
+</table>
+<dl class="method">
+<dt id="skl_groups.kernels.ShiftPSD.__init__">
+<tt class="descname">__init__</tt><big>(</big><em>min_eig=0</em>, <em>copy=True</em>, <em>memory=Memory(cachedir=None)</em><big>)</big><a class="headerlink" href="#skl_groups.kernels.ShiftPSD.__init__" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<p class="rubric">Methods</p>
+<table border="1" class="longtable docutils">
+<colgroup>
+<col width="10%" />
+<col width="90%" />
+</colgroup>
+<tbody valign="top">
+<tr class="row-odd"><td><a class="reference internal" href="#skl_groups.kernels.ShiftPSD.__init__" title="skl_groups.kernels.ShiftPSD.__init__"><tt class="xref py py-obj docutils literal"><span class="pre">__init__</span></tt></a>([min_eig,&nbsp;copy,&nbsp;memory])</td>
+<td></td>
+</tr>
+<tr class="row-even"><td><a class="reference internal" href="#skl_groups.kernels.ShiftPSD.fit" title="skl_groups.kernels.ShiftPSD.fit"><tt class="xref py py-obj docutils literal"><span class="pre">fit</span></tt></a>(X[,&nbsp;y])</td>
+<td>Learn the transformation to shifted eigenvalues.</td>
+</tr>
+<tr class="row-odd"><td><tt class="xref py py-obj docutils literal"><span class="pre">fit_transform</span></tt>(X[,&nbsp;y])</td>
+<td>Fit to data, then transform it.</td>
+</tr>
+<tr class="row-even"><td><tt class="xref py py-obj docutils literal"><span class="pre">get_params</span></tt>([deep])</td>
+<td>Get parameters for this estimator.</td>
+</tr>
+<tr class="row-odd"><td><tt class="xref py py-obj docutils literal"><span class="pre">set_params</span></tt>(**params)</td>
+<td>Set the parameters of this estimator.</td>
+</tr>
+<tr class="row-even"><td><a class="reference internal" href="#skl_groups.kernels.ShiftPSD.transform" title="skl_groups.kernels.ShiftPSD.transform"><tt class="xref py py-obj docutils literal"><span class="pre">transform</span></tt></a>(X)</td>
+<td>Transforms X according to the linear transformation corresponding to shifting the input eigenvalues to all be at least <tt class="docutils literal"><span class="pre">self.min_eig</span></tt>.</td>
+</tr>
+</tbody>
+</table>
+<dl class="method">
+<dt id="skl_groups.kernels.ShiftPSD.fit">
+<tt class="descname">fit</tt><big>(</big><em>X</em>, <em>y=None</em><big>)</big><a class="headerlink" href="#skl_groups.kernels.ShiftPSD.fit" title="Permalink to this definition">¶</a></dt>
+<dd><p>Learn the transformation to shifted eigenvalues. Only depends
+on the input dimension.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><p class="first"><strong>X</strong> : array, shape [n, n]</p>
+<blockquote class="last">
+<div><p>The <em>symmetric</em> input similarities.</p>
+</div></blockquote>
+</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="method">
+<dt id="skl_groups.kernels.ShiftPSD.transform">
+<tt class="descname">transform</tt><big>(</big><em>X</em><big>)</big><a class="headerlink" href="#skl_groups.kernels.ShiftPSD.transform" title="Permalink to this definition">¶</a></dt>
+<dd><p>Transforms X according to the linear transformation corresponding to
+shifting the input eigenvalues to all be at least <tt class="docutils literal"><span class="pre">self.min_eig</span></tt>.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><p class="first"><strong>X</strong> : array, shape [n_test, n]</p>
+<blockquote>
+<div><p>The test similarities to training points.</p>
+</div></blockquote>
+</td>
+</tr>
+<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body"><p class="first"><strong>Xt</strong> : array, shape [n_test, n]</p>
+<blockquote class="last">
+<div><p>The transformed test similarites to training points. Only different
+from X if X is the training data.</p>
+</div></blockquote>
+</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+</dd></dl>
+
+</div>
+
+
+          </div>
+        </div>
+      </div>
+      <div class="sphinxsidebar">
+        <div class="sphinxsidebarwrapper">
+  <h4>Previous topic</h4>
+  <p class="topless"><a href="skl_groups.kernels.FlipPSD.html"
+                        title="previous chapter">skl_groups.kernels.FlipPSD</a></p>
+  <h4>Next topic</h4>
+  <p class="topless"><a href="skl_groups.kernels.SquarePSD.html"
+                        title="next chapter">skl_groups.kernels.SquarePSD</a></p>
+  <h3>This Page</h3>
+  <ul class="this-page-menu">
+    <li><a href="../_sources/skl_groups/skl_groups.kernels.ShiftPSD.txt"
+           rel="nofollow">Show Source</a></li>
+  </ul>
+<div id="searchbox" style="display: none">
+  <h3>Quick search</h3>
+    <form class="search" action="../search.html" method="get">
+      <input type="text" name="q" />
+      <input type="submit" value="Go" />
+      <input type="hidden" name="check_keywords" value="yes" />
+      <input type="hidden" name="area" value="default" />
+    </form>
+    <p class="searchtip" style="font-size: 90%">
+    Enter search terms or a module, class or function name.
+    </p>
+</div>
+<script type="text/javascript">$('#searchbox').show(0);</script>
+        </div>
+      </div>
+      <div class="clearer"></div>
+    </div>
+    <div class="related">
+      <h3>Navigation</h3>
+      <ul>
+        <li class="right" style="margin-right: 10px">
+          <a href="../genindex.html" title="General Index"
+             >index</a></li>
+        <li class="right" >
+          <a href="skl_groups.kernels.SquarePSD.html" title="skl_groups.kernels.SquarePSD"
+             >next</a> |</li>
+        <li class="right" >
+          <a href="skl_groups.kernels.FlipPSD.html" title="skl_groups.kernels.FlipPSD"
+             >previous</a> |</li>
+        <li><a href="../index.html">skl-groups 0.1.0-dev documentation</a> &raquo;</li>
+          <li><a href="../reference.html" >API reference</a> &raquo;</li> 
+      </ul>
+    </div>
+    <div class="footer">
+        &copy; Copyright 2014, Dougal J. Sutherland.
+      Created using <a href="http://sphinx-doc.org/">Sphinx</a> 1.2.2.
+    </div>
+  </body>
+</html>

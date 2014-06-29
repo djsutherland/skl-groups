@@ -1,0 +1,28 @@
+skl_groups.preprocessing.BagNormalizer
+======================================
+
+.. currentmodule:: skl_groups.preprocessing
+
+.. autoclass:: BagNormalizer
+
+   
+   .. automethod:: __init__
+
+   
+   .. rubric:: Methods
+
+   .. autosummary::
+   
+      ~BagNormalizer.__init__
+      ~BagNormalizer.fit
+      ~BagNormalizer.fit_transform
+      ~BagNormalizer.get_params
+      ~BagNormalizer.inverse_transform
+      ~BagNormalizer.set_params
+      ~BagNormalizer.transform
+   
+   
+
+   
+   
+   

@@ -1,0 +1,27 @@
+skl_groups.kernels.SquarePSD
+============================
+
+.. currentmodule:: skl_groups.kernels
+
+.. autoclass:: SquarePSD
+
+   
+   .. automethod:: __init__
+
+   
+   .. rubric:: Methods
+
+   .. autosummary::
+   
+      ~SquarePSD.__init__
+      ~SquarePSD.fit
+      ~SquarePSD.fit_transform
+      ~SquarePSD.get_params
+      ~SquarePSD.set_params
+      ~SquarePSD.transform
+   
+   
+
+   
+   
+   

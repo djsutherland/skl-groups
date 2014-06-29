@@ -1,0 +1,27 @@
+skl_groups.summaries.BagMean
+============================
+
+.. currentmodule:: skl_groups.summaries
+
+.. autoclass:: BagMean
+
+   
+   .. automethod:: __init__
+
+   
+   .. rubric:: Methods
+
+   .. autosummary::
+   
+      ~BagMean.__init__
+      ~BagMean.fit
+      ~BagMean.fit_transform
+      ~BagMean.get_params
+      ~BagMean.set_params
+      ~BagMean.transform
+   
+   
+
+   
+   
+   

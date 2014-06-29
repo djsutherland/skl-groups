@@ -1,0 +1,27 @@
+skl_groups.kernels.ProjectPSD
+=============================
+
+.. currentmodule:: skl_groups.kernels
+
+.. autoclass:: ProjectPSD
+
+   
+   .. automethod:: __init__
+
+   
+   .. rubric:: Methods
+
+   .. autosummary::
+   
+      ~ProjectPSD.__init__
+      ~ProjectPSD.fit
+      ~ProjectPSD.fit_transform
+      ~ProjectPSD.get_params
+      ~ProjectPSD.set_params
+      ~ProjectPSD.transform
+   
+   
+
+   
+   
+   

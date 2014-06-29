@@ -1,0 +1,311 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+  "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+
+
+<html xmlns="http://www.w3.org/1999/xhtml">
+  <head>
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+    
+    <title>skl_groups.features.Features &mdash; skl-groups 0.1.0-dev documentation</title>
+    
+    <link rel="stylesheet" href="../_static/default.css" type="text/css" />
+    <link rel="stylesheet" href="../_static/pygments.css" type="text/css" />
+    
+    <script type="text/javascript">
+      var DOCUMENTATION_OPTIONS = {
+        URL_ROOT:    '../',
+        VERSION:     '0.1.0-dev',
+        COLLAPSE_INDEX: false,
+        FILE_SUFFIX: '.html',
+        HAS_SOURCE:  true
+      };
+    </script>
+    <script type="text/javascript" src="../_static/jquery.js"></script>
+    <script type="text/javascript" src="../_static/underscore.js"></script>
+    <script type="text/javascript" src="../_static/doctools.js"></script>
+    <script type="text/javascript" src="http://cdn.mathjax.org/mathjax/latest/MathJax.js?config=TeX-AMS-MML_HTMLorMML"></script>
+    <link rel="top" title="skl-groups 0.1.0-dev documentation" href="../index.html" />
+    <link rel="up" title="API reference" href="../reference.html" />
+    <link rel="next" title="skl_groups.preprocessing.BagMinMaxScaler" href="skl_groups.preprocessing.BagMinMaxScaler.html" />
+    <link rel="prev" title="skl_groups.kernels.SquarePSD" href="skl_groups.kernels.SquarePSD.html" /> 
+  </head>
+  <body>
+    <div class="related">
+      <h3>Navigation</h3>
+      <ul>
+        <li class="right" style="margin-right: 10px">
+          <a href="../genindex.html" title="General Index"
+             accesskey="I">index</a></li>
+        <li class="right" >
+          <a href="skl_groups.preprocessing.BagMinMaxScaler.html" title="skl_groups.preprocessing.BagMinMaxScaler"
+             accesskey="N">next</a> |</li>
+        <li class="right" >
+          <a href="skl_groups.kernels.SquarePSD.html" title="skl_groups.kernels.SquarePSD"
+             accesskey="P">previous</a> |</li>
+        <li><a href="../index.html">skl-groups 0.1.0-dev documentation</a> &raquo;</li>
+          <li><a href="../reference.html" accesskey="U">API reference</a> &raquo;</li> 
+      </ul>
+    </div>  
+
+    <div class="document">
+      <div class="documentwrapper">
+        <div class="bodywrapper">
+          <div class="body">
+            
+  <div class="section" id="skl-groups-features-features">
+<h1>skl_groups.features.Features<a class="headerlink" href="#skl-groups-features-features" title="Permalink to this headline">¶</a></h1>
+<dl class="class">
+<dt id="skl_groups.features.Features">
+<em class="property">class </em><tt class="descclassname">skl_groups.features.</tt><tt class="descname">Features</tt><big>(</big><em>bags</em>, <em>n_pts=None</em>, <em>stack=False</em>, <em>copy=False</em>, <em>bare=False</em>, <em>**meta</em><big>)</big><a class="reference internal" href="../_modules/skl_groups/features.html#Features"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#skl_groups.features.Features" title="Permalink to this definition">¶</a></dt>
+<dd><p>A wrapper class for storing bags of features. (A <em>bag</em> is a set of feature
+vectors corresponding to a single &#8220;object.&#8221;)</p>
+<dl class="docutils">
+<dt>Supports storing data in two major ways:</dt>
+<dd><ul class="first last simple">
+<li>As a set of pointers to a numpy array per bag. This is the default,
+because it usually doesn&#8217;t require copying all of your data. Note that
+the sub-arrays are not enforced to be row-major or even contiguous.</li>
+<li>As a single big row-major array. This lets you do certain things more
+easily (e.g. run PCA).</li>
+</ul>
+</dd>
+</dl>
+<p>The main usage API is the same for both versions; you can distinguish them
+with the <cite>stacked</cite> property, and convert from pointers to stacked with the
+<cite>make_stacked()</cite> method.</p>
+<p>Supports the following operations:</p>
+<ul class="simple">
+<li><tt class="docutils literal"><span class="pre">len(features)</span></tt> gives the number of bags.</li>
+<li><tt class="docutils literal"><span class="pre">for</span> <span class="pre">bag</span> <span class="pre">in</span> <span class="pre">features:</span></tt> loops over bags.</li>
+<li><tt class="docutils literal"><span class="pre">features[4]</span></tt> gives the fifth bag.</li>
+<li><tt class="docutils literal"><span class="pre">features[[4,</span> <span class="pre">8,</span> <span class="pre">7]]</span></tt> makes a new Features object with only the        passed indices, preserving metadata.</li>
+<li><tt class="docutils literal"><span class="pre">feats1</span> <span class="pre">==</span> <span class="pre">feats2</span></tt> checks that all of the features <cite>and metadata</cite> are       the same.</li>
+<li><tt class="docutils literal"><span class="pre">feats1</span> <span class="pre">+</span> <span class="pre">feats2</span></tt> concatenates the two Features objects. Metadata is       preserved if both features have that key, thrown out if not.</li>
+</ul>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><p class="first"><strong>bags</strong> : list of numpy arrays, single array, or Features object</p>
+<blockquote>
+<div><p>The feature data. If a list of numpy arrays, should be one array per 
+bag, each of shape [n_pts, dim], where dim is consistent between bags
+but n_pts need not be (though it cannot ever be 0). If a single numpy
+array, it should be of shape [sum(n_pts), dim] and contain the features
+from the first bag, then the next bag, .... In this case you must also
+pass n_pts. If a Features object, &#8220;copies&#8221; it (but only actually copies
+any data if <tt class="docutils literal"><span class="pre">copy=True</span></tt>).</p>
+</div></blockquote>
+<p><strong>n_pts</strong> : array-like of positive integers, only if bags is a single array</p>
+<blockquote>
+<div><p>If bags is passed as a single array, a list of positive integers
+defining the size of each bag.</p>
+</div></blockquote>
+<p><strong>stack</strong> : boolean, optional, default False</p>
+<blockquote>
+<div><p>If true, stack the features. Otherwise, only stack them if a stacked
+array of features is passed in.</p>
+</div></blockquote>
+<p><strong>copy</strong> : boolean, optional, default False</p>
+<blockquote>
+<div><p>If true, always make a copy of the data (so that direct modifications)
+don&#8217;t modify the original arrays. If false, make a copy only if
+necessary (i.e. stack=True for an unstacked argument).</p>
+</div></blockquote>
+<p><strong>bare</strong> : boolean, optional, default False</p>
+<blockquote>
+<div><p>If true, and <tt class="docutils literal"><span class="pre">bags</span></tt> is a Features instance, don&#8217;t include its
+metadata.</p>
+</div></blockquote>
+<p><strong>any other keyword argument</strong> : array-like with first dimension num_bags</p>
+<blockquote class="last">
+<div><p>Metadata for each bag. Just stored along with the features, nothing
+in particular done with it. (If <tt class="docutils literal"><span class="pre">bags</span></tt> is a Features instance, its
+metadata is merged with any keyword arguments, with keywords taking
+precedence.)</p>
+</div></blockquote>
+</td>
+</tr>
+</tbody>
+</table>
+<p class="rubric">Attributes</p>
+<table border="1" class="docutils">
+<colgroup>
+<col width="10%" />
+<col width="90%" />
+</colgroup>
+<tbody valign="top">
+<tr class="row-odd"><td>features</td>
+<td>(list of arrays of shape <tt class="docutils literal"><span class="pre">[n_pts[i],</span> <span class="pre">dim]</span></tt>) A list of the contained features. If <tt class="docutils literal"><span class="pre">stacked</span></tt>, each array is a slice of <tt class="docutils literal"><span class="pre">stacked_features</span></tt>.</td>
+</tr>
+<tr class="row-even"><td>stacked</td>
+<td>(boolean) Whether the features are stacked.</td>
+</tr>
+<tr class="row-odd"><td>stacked_features</td>
+<td>(array of shape <tt class="docutils literal"><span class="pre">[sum(n_pts),</span> <span class="pre">dim]</span></tt>) All of the features, concatenated together. Only present if <tt class="docutils literal"><span class="pre">stacked</span></tt>.</td>
+</tr>
+<tr class="row-even"><td>n_pts</td>
+<td>(integer array of shape <tt class="docutils literal"><span class="pre">[len(self)]</span></tt>) The number of points in each bag.</td>
+</tr>
+<tr class="row-odd"><td>meta</td>
+<td>(dictionary mapping strings to arrays of shape <tt class="docutils literal"><span class="pre">[len(self)]</span></tt>) The stored metadata. <tt class="docutils literal"><span class="pre">meta['foo']</span></tt> is also accessible as <tt class="docutils literal"><span class="pre">self.foo</span></tt>.</td>
+</tr>
+</tbody>
+</table>
+<dl class="method">
+<dt id="skl_groups.features.Features.__init__">
+<tt class="descname">__init__</tt><big>(</big><em>bags</em>, <em>n_pts=None</em>, <em>stack=False</em>, <em>copy=False</em>, <em>bare=False</em>, <em>**meta</em><big>)</big><a class="reference internal" href="../_modules/skl_groups/features.html#Features.__init__"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#skl_groups.features.Features.__init__" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<p class="rubric">Methods</p>
+<table border="1" class="longtable docutils">
+<colgroup>
+<col width="10%" />
+<col width="90%" />
+</colgroup>
+<tbody valign="top">
+<tr class="row-odd"><td><a class="reference internal" href="#skl_groups.features.Features.__init__" title="skl_groups.features.Features.__init__"><tt class="xref py py-obj docutils literal"><span class="pre">__init__</span></tt></a>(bags[,&nbsp;n_pts,&nbsp;stack,&nbsp;copy,&nbsp;bare])</td>
+<td></td>
+</tr>
+<tr class="row-even"><td><a class="reference internal" href="#skl_groups.features.Features.bare" title="skl_groups.features.Features.bare"><tt class="xref py py-obj docutils literal"><span class="pre">bare</span></tt></a>()</td>
+<td>Make a Features object with no metadata; points to the same features.</td>
+</tr>
+<tr class="row-odd"><td><a class="reference internal" href="#skl_groups.features.Features.copy" title="skl_groups.features.Features.copy"><tt class="xref py py-obj docutils literal"><span class="pre">copy</span></tt></a>([stack,&nbsp;copy_meta,&nbsp;memo])</td>
+<td>Copies the Feature object.</td>
+</tr>
+<tr class="row-even"><td><a class="reference internal" href="#skl_groups.features.Features.make_stacked" title="skl_groups.features.Features.make_stacked"><tt class="xref py py-obj docutils literal"><span class="pre">make_stacked</span></tt></a>()</td>
+<td>If unstacked, convert to stacked.</td>
+</tr>
+</tbody>
+</table>
+<p class="rubric">Attributes</p>
+<table border="1" class="longtable docutils">
+<colgroup>
+<col width="10%" />
+<col width="90%" />
+</colgroup>
+<tbody valign="top">
+<tr class="row-odd"><td><a class="reference internal" href="#skl_groups.features.Features.dim" title="skl_groups.features.Features.dim"><tt class="xref py py-obj docutils literal"><span class="pre">dim</span></tt></a></td>
+<td>The dimensionality of the features.</td>
+</tr>
+<tr class="row-even"><td><a class="reference internal" href="#skl_groups.features.Features.dtype" title="skl_groups.features.Features.dtype"><tt class="xref py py-obj docutils literal"><span class="pre">dtype</span></tt></a></td>
+<td>The data type of the feature vectors.</td>
+</tr>
+<tr class="row-odd"><td><a class="reference internal" href="#skl_groups.features.Features.total_points" title="skl_groups.features.Features.total_points"><tt class="xref py py-obj docutils literal"><span class="pre">total_points</span></tt></a></td>
+<td>The total number of points in all bags.</td>
+</tr>
+</tbody>
+</table>
+<dl class="method">
+<dt id="skl_groups.features.Features.bare">
+<tt class="descname">bare</tt><big>(</big><big>)</big><a class="reference internal" href="../_modules/skl_groups/features.html#Features.bare"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#skl_groups.features.Features.bare" title="Permalink to this definition">¶</a></dt>
+<dd><p>Make a Features object with no metadata; points to the same features.</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="skl_groups.features.Features.copy">
+<tt class="descname">copy</tt><big>(</big><em>stack=False</em>, <em>copy_meta=False</em>, <em>memo=None</em><big>)</big><a class="reference internal" href="../_modules/skl_groups/features.html#Features.copy"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#skl_groups.features.Features.copy" title="Permalink to this definition">¶</a></dt>
+<dd><p>Copies the Feature object. Makes a copy of the features array.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><p class="first"><strong>stack</strong> : boolean, optional, default False</p>
+<blockquote>
+<div><p>Whether to stack the copy if this one is unstacked.</p>
+</div></blockquote>
+<p><strong>copy_meta</strong> : boolean, optional, default False</p>
+<blockquote class="last">
+<div><p>Also copy the metadata. If False, metadata in both points to the
+same object.</p>
+</div></blockquote>
+</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="attribute">
+<dt id="skl_groups.features.Features.dim">
+<tt class="descname">dim</tt><a class="reference internal" href="../_modules/skl_groups/features.html#Features.dim"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#skl_groups.features.Features.dim" title="Permalink to this definition">¶</a></dt>
+<dd><p>The dimensionality of the features.</p>
+</dd></dl>
+
+<dl class="attribute">
+<dt id="skl_groups.features.Features.dtype">
+<tt class="descname">dtype</tt><a class="reference internal" href="../_modules/skl_groups/features.html#Features.dtype"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#skl_groups.features.Features.dtype" title="Permalink to this definition">¶</a></dt>
+<dd><p>The data type of the feature vectors.</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="skl_groups.features.Features.make_stacked">
+<tt class="descname">make_stacked</tt><big>(</big><big>)</big><a class="reference internal" href="../_modules/skl_groups/features.html#Features.make_stacked"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#skl_groups.features.Features.make_stacked" title="Permalink to this definition">¶</a></dt>
+<dd><p>If unstacked, convert to stacked. If stacked, do nothing.</p>
+</dd></dl>
+
+<dl class="attribute">
+<dt id="skl_groups.features.Features.total_points">
+<tt class="descname">total_points</tt><a class="reference internal" href="../_modules/skl_groups/features.html#Features.total_points"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#skl_groups.features.Features.total_points" title="Permalink to this definition">¶</a></dt>
+<dd><p>The total number of points in all bags.</p>
+</dd></dl>
+
+</dd></dl>
+
+</div>
+
+
+          </div>
+        </div>
+      </div>
+      <div class="sphinxsidebar">
+        <div class="sphinxsidebarwrapper">
+  <h4>Previous topic</h4>
+  <p class="topless"><a href="skl_groups.kernels.SquarePSD.html"
+                        title="previous chapter">skl_groups.kernels.SquarePSD</a></p>
+  <h4>Next topic</h4>
+  <p class="topless"><a href="skl_groups.preprocessing.BagMinMaxScaler.html"
+                        title="next chapter">skl_groups.preprocessing.BagMinMaxScaler</a></p>
+  <h3>This Page</h3>
+  <ul class="this-page-menu">
+    <li><a href="../_sources/skl_groups/skl_groups.features.Features.txt"
+           rel="nofollow">Show Source</a></li>
+  </ul>
+<div id="searchbox" style="display: none">
+  <h3>Quick search</h3>
+    <form class="search" action="../search.html" method="get">
+      <input type="text" name="q" />
+      <input type="submit" value="Go" />
+      <input type="hidden" name="check_keywords" value="yes" />
+      <input type="hidden" name="area" value="default" />
+    </form>
+    <p class="searchtip" style="font-size: 90%">
+    Enter search terms or a module, class or function name.
+    </p>
+</div>
+<script type="text/javascript">$('#searchbox').show(0);</script>
+        </div>
+      </div>
+      <div class="clearer"></div>
+    </div>
+    <div class="related">
+      <h3>Navigation</h3>
+      <ul>
+        <li class="right" style="margin-right: 10px">
+          <a href="../genindex.html" title="General Index"
+             >index</a></li>
+        <li class="right" >
+          <a href="skl_groups.preprocessing.BagMinMaxScaler.html" title="skl_groups.preprocessing.BagMinMaxScaler"
+             >next</a> |</li>
+        <li class="right" >
+          <a href="skl_groups.kernels.SquarePSD.html" title="skl_groups.kernels.SquarePSD"
+             >previous</a> |</li>
+        <li><a href="../index.html">skl-groups 0.1.0-dev documentation</a> &raquo;</li>
+          <li><a href="../reference.html" >API reference</a> &raquo;</li> 
+      </ul>
+    </div>
+    <div class="footer">
+        &copy; Copyright 2014, Dougal J. Sutherland.
+      Created using <a href="http://sphinx-doc.org/">Sphinx</a> 1.2.2.
+    </div>
+  </body>
+</html>

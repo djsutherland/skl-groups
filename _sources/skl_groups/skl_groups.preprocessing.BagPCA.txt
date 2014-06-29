@@ -1,0 +1,28 @@
+skl_groups.preprocessing.BagPCA
+===============================
+
+.. currentmodule:: skl_groups.preprocessing
+
+.. autoclass:: BagPCA
+
+   
+   .. automethod:: __init__
+
+   
+   .. rubric:: Methods
+
+   .. autosummary::
+   
+      ~BagPCA.__init__
+      ~BagPCA.fit
+      ~BagPCA.fit_transform
+      ~BagPCA.get_params
+      ~BagPCA.inverse_transform
+      ~BagPCA.set_params
+      ~BagPCA.transform
+   
+   
+
+   
+   
+   

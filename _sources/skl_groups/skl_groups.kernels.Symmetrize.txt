@@ -1,0 +1,27 @@
+skl_groups.kernels.Symmetrize
+=============================
+
+.. currentmodule:: skl_groups.kernels
+
+.. autoclass:: Symmetrize
+
+   
+   .. automethod:: __init__
+
+   
+   .. rubric:: Methods
+
+   .. autosummary::
+   
+      ~Symmetrize.__init__
+      ~Symmetrize.fit
+      ~Symmetrize.fit_transform
+      ~Symmetrize.get_params
+      ~Symmetrize.set_params
+      ~Symmetrize.transform
+   
+   
+
+   
+   
+   

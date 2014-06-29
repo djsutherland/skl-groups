@@ -1,0 +1,28 @@
+skl_groups.preprocessing.BagMinMaxScaler
+========================================
+
+.. currentmodule:: skl_groups.preprocessing
+
+.. autoclass:: BagMinMaxScaler
+
+   
+   .. automethod:: __init__
+
+   
+   .. rubric:: Methods
+
+   .. autosummary::
+   
+      ~BagMinMaxScaler.__init__
+      ~BagMinMaxScaler.fit
+      ~BagMinMaxScaler.fit_transform
+      ~BagMinMaxScaler.get_params
+      ~BagMinMaxScaler.inverse_transform
+      ~BagMinMaxScaler.set_params
+      ~BagMinMaxScaler.transform
+   
+   
+
+   
+   
+   
