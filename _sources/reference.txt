@@ -64,6 +64,7 @@ Utilities to convert generic affinities into valid kernels.
 
     kernels.PairwisePicker
     kernels.Symmetrize
+    kernels.RBFize
     kernels.ProjectPSD
     kernels.FlipPSD
     kernels.ShiftPSD

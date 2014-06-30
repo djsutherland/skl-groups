@@ -7,7 +7,7 @@
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   
-  <title>skl_groups.kernels.ShiftPSD &mdash; skl-groups 0.1.0-dev documentation</title>
+  <title>skl_groups.kernels.RBFize &mdash; skl-groups 0.1.0-dev documentation</title>
   
 
   
@@ -30,8 +30,8 @@
   
     <link rel="top" title="skl-groups 0.1.0-dev documentation" href="../index.html"/>
         <link rel="up" title="API reference" href="../reference.html"/>
-        <link rel="next" title="skl_groups.kernels.SquarePSD" href="skl_groups.kernels.SquarePSD.html"/>
-        <link rel="prev" title="skl_groups.kernels.FlipPSD" href="skl_groups.kernels.FlipPSD.html"/> 
+        <link rel="next" title="skl_groups.kernels.ProjectPSD" href="skl_groups.kernels.ProjectPSD.html"/>
+        <link rel="prev" title="skl_groups.kernels.Symmetrize" href="skl_groups.kernels.Symmetrize.html"/> 
 
   
   <script src="https://cdnjs.cloudflare.com/ajax/libs/modernizr/2.6.2/modernizr.min.js"></script>
@@ -101,10 +101,10 @@
       
           <li><a href="../reference.html">API reference</a> &raquo;</li>
       
-    <li>skl_groups.kernels.ShiftPSD</li>
+    <li>skl_groups.kernels.RBFize</li>
       <li class="wy-breadcrumbs-aside">
         
-          <a href="../_sources/skl_groups/skl_groups.kernels.ShiftPSD.txt" rel="nofollow"> View page source</a>
+          <a href="../_sources/skl_groups/skl_groups.kernels.RBFize.txt" rel="nofollow"> View page source</a>
         
       </li>
   </ul>
@@ -112,59 +112,70 @@
 </div>
           <div role="main">
             
-  <div class="section" id="skl-groups-kernels-shiftpsd">
-<h1>skl_groups.kernels.ShiftPSD<a class="headerlink" href="#skl-groups-kernels-shiftpsd" title="Permalink to this headline">¶</a></h1>
+  <div class="section" id="skl-groups-kernels-rbfize">
+<h1>skl_groups.kernels.RBFize<a class="headerlink" href="#skl-groups-kernels-rbfize" title="Permalink to this headline">¶</a></h1>
 <dl class="class">
-<dt id="skl_groups.kernels.ShiftPSD">
-<em class="property">class </em><tt class="descclassname">skl_groups.kernels.</tt><tt class="descname">ShiftPSD</tt><big>(</big><em>min_eig=0</em>, <em>copy=True</em>, <em>memory=Memory(cachedir=None)</em><big>)</big><a class="headerlink" href="#skl_groups.kernels.ShiftPSD" title="Permalink to this definition">¶</a></dt>
-<dd><p>Makes a pairwise square affinity matrix into a valid positive semidefinite
-kernel, by flipping the sign of any negative eigenvalues in its spectrum.</p>
-<p><cite>fit_transform()</cite> does the actual projection. If you <cite>transform</cite> onto data
-different than the data originally <cite>fit</cite> on (not necessarily square), then
-nothing will be changed, because the shift operation only affects self-
-similarities.</p>
+<dt id="skl_groups.kernels.RBFize">
+<em class="property">class </em><tt class="descclassname">skl_groups.kernels.</tt><tt class="descname">RBFize</tt><big>(</big><em>gamma=1</em>, <em>scale_by_median=False</em>, <em>squared=False</em>, <em>copy=True</em><big>)</big><a class="headerlink" href="#skl_groups.kernels.RBFize" title="Permalink to this definition">¶</a></dt>
+<dd><p>Turns a distance matrix into an RBF kernel:
+<span class="math">\(K(x, y) = \exp\left( - \gamma \lVert x - y \rVert^2 \right)\)</span>.</p>
+<p>For the output to be a valid kernel, the inputs should either be
+Euclidean distances, e.g. the output of
+<a class="reference external" href="http://scikit-learn.org/stable/modules/generated/sklearn.metrics.pairwise.euclidean_distances.html#sklearn.metrics.pairwise.euclidean_distances" title="(in scikit-learn v0.14)"><tt class="xref py py-func docutils literal"><span class="pre">sklearn.metrics.pairwise.euclidean_distances()</span></tt></a>,
+or be isometrically embeddable into a Euclidean space.
+If not, you should ensure that the result is positive semidefinite before
+using it as a kernel, for example via <a class="reference internal" href="skl_groups.kernels.ProjectPSD.html#skl_groups.kernels.ProjectPSD" title="skl_groups.kernels.ProjectPSD"><tt class="xref py py-class docutils literal"><span class="pre">ProjectPSD</span></tt></a>.</p>
 <table class="docutils field-list" frame="void" rules="none">
 <col class="field-name" />
 <col class="field-body" />
 <tbody valign="top">
-<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><p class="first"><strong>min_eig</strong> : float, optional, default 0</p>
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><p class="first"><strong>gamma</strong> : float, optional, default 1</p>
 <blockquote>
-<div><p>The minimum eigenvalue for the projected matrix. Because of
-floating-point inaccuracies, don&#8217;t take this too literally.</p>
+<div><p>The <span class="math">\(\gamma\)</span> value to use in the kernel.</p>
+<p>Defaults to 1, but this is not a very good value to use;
+two reasonable heuristics are 1 / feature dimension
+or 1 / the median distance value.
+You probably want to cross-validate on a range of possible values;
+see also <tt class="xref py py-attr docutils literal"><span class="pre">scale_by_median</span></tt>.</p>
+</div></blockquote>
+<p><strong>scale_by_median</strong> : boolean, optional, default False</p>
+<blockquote>
+<div><p>If True, actually use the median input distance times <tt class="xref py py-attr docutils literal"><span class="pre">gamma</span></tt>.</p>
+</div></blockquote>
+<p><strong>squared</strong> : boolean, optional, default False</p>
+<blockquote>
+<div><p>Whether the inputs are treated as distances or squared distances.</p>
 </div></blockquote>
 <p><strong>copy</strong> : boolean, optional, default True</p>
-<blockquote>
-<div><p>Operate on a copy of the passed-in matrix; otherwise, the original
-matrix will be invalidated (for both <tt class="docutils literal"><span class="pre">fit()</span></tt> and <tt class="docutils literal"><span class="pre">transform()</span></tt>).</p>
-</div></blockquote>
-<p><strong>memory</strong> : Instance of joblib.Memory or string (optional)</p>
 <blockquote class="last">
-<div><p>Used to cache the eigendecomposition.
-By default, no caching is done. If a string is given, it is the
-path to the caching directory.</p>
+<div><p>If False, data passed to <a class="reference internal" href="#skl_groups.kernels.RBFize.transform" title="skl_groups.kernels.RBFize.transform"><tt class="xref py py-meth docutils literal"><span class="pre">transform()</span></tt></a> is overwritten.</p>
 </div></blockquote>
 </td>
 </tr>
 </tbody>
 </table>
+<div class="admonition seealso">
+<p class="first admonition-title">See also</p>
+<dl class="last docutils">
+<dt><a class="reference external" href="http://scikit-learn.org/stable/modules/generated/sklearn.metrics.pairwise.rbf_kernel.html#sklearn.metrics.pairwise.rbf_kernel" title="(in scikit-learn v0.14)"><tt class="xref py py-obj docutils literal"><span class="pre">sklearn.metrics.pairwise.rbf_kernel</span></tt></a></dt>
+<dd>computes this from feature vectors</dd>
+</dl>
+</div>
 <p class="rubric">Attributes</p>
 <table border="1" class="docutils">
 <colgroup>
-<col width="5%" />
-<col width="95%" />
+<col width="11%" />
+<col width="89%" />
 </colgroup>
 <tbody valign="top">
-<tr class="row-odd"><td><cite>train_</cite></td>
-<td>(array of shape [n, n]) The training similarities. Stored so that <cite>transform</cite> can check if it&#8217;s transforming the test data and act appropriately.</td>
-</tr>
-<tr class="row-even"><td><cite>shift_</cite></td>
-<td>(float) The amount to shift all the eigenvalues up by.</td>
+<tr class="row-odd"><td><cite>median_</cite></td>
+<td>(float) If <tt class="xref py py-attr docutils literal"><span class="pre">scale_by_median</span></tt>, the median distance. Otherwise, not set.</td>
 </tr>
 </tbody>
 </table>
 <dl class="method">
-<dt id="skl_groups.kernels.ShiftPSD.__init__">
-<tt class="descname">__init__</tt><big>(</big><em>min_eig=0</em>, <em>copy=True</em>, <em>memory=Memory(cachedir=None)</em><big>)</big><a class="headerlink" href="#skl_groups.kernels.ShiftPSD.__init__" title="Permalink to this definition">¶</a></dt>
+<dt id="skl_groups.kernels.RBFize.__init__">
+<tt class="descname">__init__</tt><big>(</big><em>gamma=1</em>, <em>scale_by_median=False</em>, <em>squared=False</em>, <em>copy=True</em><big>)</big><a class="headerlink" href="#skl_groups.kernels.RBFize.__init__" title="Permalink to this definition">¶</a></dt>
 <dd></dd></dl>
 
 <p class="rubric">Methods</p>
@@ -174,11 +185,11 @@ path to the caching directory.</p>
 <col width="90%" />
 </colgroup>
 <tbody valign="top">
-<tr class="row-odd"><td><a class="reference internal" href="#skl_groups.kernels.ShiftPSD.__init__" title="skl_groups.kernels.ShiftPSD.__init__"><tt class="xref py py-obj docutils literal"><span class="pre">__init__</span></tt></a>([min_eig,&nbsp;copy,&nbsp;memory])</td>
+<tr class="row-odd"><td><a class="reference internal" href="#skl_groups.kernels.RBFize.__init__" title="skl_groups.kernels.RBFize.__init__"><tt class="xref py py-obj docutils literal"><span class="pre">__init__</span></tt></a>([gamma,&nbsp;scale_by_median,&nbsp;squared,&nbsp;copy])</td>
 <td></td>
 </tr>
-<tr class="row-even"><td><a class="reference internal" href="#skl_groups.kernels.ShiftPSD.fit" title="skl_groups.kernels.ShiftPSD.fit"><tt class="xref py py-obj docutils literal"><span class="pre">fit</span></tt></a>(X[,&nbsp;y])</td>
-<td>Learn the transformation to shifted eigenvalues.</td>
+<tr class="row-even"><td><a class="reference internal" href="#skl_groups.kernels.RBFize.fit" title="skl_groups.kernels.RBFize.fit"><tt class="xref py py-obj docutils literal"><span class="pre">fit</span></tt></a>(X[,&nbsp;y])</td>
+<td>If scale_by_median, find <tt class="xref py py-attr docutils literal"><span class="pre">median_</span></tt>; otherwise, do nothing.</td>
 </tr>
 <tr class="row-odd"><td><tt class="xref py py-obj docutils literal"><span class="pre">fit_transform</span></tt>(X[,&nbsp;y])</td>
 <td>Fit to data, then transform it.</td>
@@ -189,23 +200,22 @@ path to the caching directory.</p>
 <tr class="row-odd"><td><tt class="xref py py-obj docutils literal"><span class="pre">set_params</span></tt>(**params)</td>
 <td>Set the parameters of this estimator.</td>
 </tr>
-<tr class="row-even"><td><a class="reference internal" href="#skl_groups.kernels.ShiftPSD.transform" title="skl_groups.kernels.ShiftPSD.transform"><tt class="xref py py-obj docutils literal"><span class="pre">transform</span></tt></a>(X)</td>
-<td>Transforms X according to the linear transformation corresponding to shifting the input eigenvalues to all be at least <tt class="docutils literal"><span class="pre">self.min_eig</span></tt>.</td>
+<tr class="row-even"><td><a class="reference internal" href="#skl_groups.kernels.RBFize.transform" title="skl_groups.kernels.RBFize.transform"><tt class="xref py py-obj docutils literal"><span class="pre">transform</span></tt></a>(X)</td>
+<td>Turns distances into RBF values.</td>
 </tr>
 </tbody>
 </table>
 <dl class="method">
-<dt id="skl_groups.kernels.ShiftPSD.fit">
-<tt class="descname">fit</tt><big>(</big><em>X</em>, <em>y=None</em><big>)</big><a class="headerlink" href="#skl_groups.kernels.ShiftPSD.fit" title="Permalink to this definition">¶</a></dt>
-<dd><p>Learn the transformation to shifted eigenvalues. Only depends
-on the input dimension.</p>
+<dt id="skl_groups.kernels.RBFize.fit">
+<tt class="descname">fit</tt><big>(</big><em>X</em>, <em>y=None</em><big>)</big><a class="headerlink" href="#skl_groups.kernels.RBFize.fit" title="Permalink to this definition">¶</a></dt>
+<dd><p>If scale_by_median, find <tt class="xref py py-attr docutils literal"><span class="pre">median_</span></tt>; otherwise, do nothing.</p>
 <table class="docutils field-list" frame="void" rules="none">
 <col class="field-name" />
 <col class="field-body" />
 <tbody valign="top">
-<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><p class="first"><strong>X</strong> : array, shape [n, n]</p>
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><p class="first"><strong>X</strong> : array</p>
 <blockquote class="last">
-<div><p>The <em>symmetric</em> input similarities.</p>
+<div><p>The raw pairwise distances.</p>
 </div></blockquote>
 </td>
 </tr>
@@ -214,24 +224,22 @@ on the input dimension.</p>
 </dd></dl>
 
 <dl class="method">
-<dt id="skl_groups.kernels.ShiftPSD.transform">
-<tt class="descname">transform</tt><big>(</big><em>X</em><big>)</big><a class="headerlink" href="#skl_groups.kernels.ShiftPSD.transform" title="Permalink to this definition">¶</a></dt>
-<dd><p>Transforms X according to the linear transformation corresponding to
-shifting the input eigenvalues to all be at least <tt class="docutils literal"><span class="pre">self.min_eig</span></tt>.</p>
+<dt id="skl_groups.kernels.RBFize.transform">
+<tt class="descname">transform</tt><big>(</big><em>X</em><big>)</big><a class="headerlink" href="#skl_groups.kernels.RBFize.transform" title="Permalink to this definition">¶</a></dt>
+<dd><p>Turns distances into RBF values.</p>
 <table class="docutils field-list" frame="void" rules="none">
 <col class="field-name" />
 <col class="field-body" />
 <tbody valign="top">
-<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><p class="first"><strong>X</strong> : array, shape [n_test, n]</p>
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><p class="first"><strong>X</strong> : array</p>
 <blockquote>
-<div><p>The test similarities to training points.</p>
+<div><p>The raw pairwise distances.</p>
 </div></blockquote>
 </td>
 </tr>
-<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body"><p class="first"><strong>Xt</strong> : array, shape [n_test, n]</p>
+<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body"><p class="first"><strong>X_rbf</strong> : array of same shape as X</p>
 <blockquote class="last">
-<div><p>The transformed test similarites to training points. Only different
-from X if X is the training data.</p>
+<div><p>The distances in X passed through the RBF kernel.</p>
 </div></blockquote>
 </td>
 </tr>
@@ -249,10 +257,10 @@ from X if X is the training data.</p>
   
     <div class="rst-footer-buttons" role="navigation" aria-label="footer navigation">
       
-        <a href="skl_groups.kernels.SquarePSD.html" class="btn btn-neutral float-right" title="skl_groups.kernels.SquarePSD"/>Next <span class="fa fa-arrow-circle-right"></span></a>
+        <a href="skl_groups.kernels.ProjectPSD.html" class="btn btn-neutral float-right" title="skl_groups.kernels.ProjectPSD"/>Next <span class="fa fa-arrow-circle-right"></span></a>
       
       
-        <a href="skl_groups.kernels.FlipPSD.html" class="btn btn-neutral" title="skl_groups.kernels.FlipPSD"><span class="fa fa-arrow-circle-left"></span> Previous</a>
+        <a href="skl_groups.kernels.Symmetrize.html" class="btn btn-neutral" title="skl_groups.kernels.Symmetrize"><span class="fa fa-arrow-circle-left"></span> Previous</a>
       
     </div>
   

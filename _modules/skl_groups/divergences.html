@@ -108,19 +108,19 @@
 </div>
           <div role="main">
             
-  <h1>Source code for skl_groups.divergences</h1><div class="highlight"><pre>
-<span class="sd">&#39;&#39;&#39;</span>
-<span class="sd">Methods that assume feature sets are samples from some probability distribution</span>
-<span class="sd">and estimate divergences, distances, and so on between those distributions.</span>
-<span class="sd">&#39;&#39;&#39;</span>
-<span class="kn">from</span> <span class="nn">..utils</span> <span class="kn">import</span> <span class="n">NoImportStub</span>
+  <h1>Source code for skl_groups.divergences</h1><pre>
+&#x27;&#x27;&#x27;
+Methods that assume feature sets are samples from some probability distribution
+and estimate divergences, distances, and so on between those distributions.
+&#x27;&#x27;&#x27;
+from ..utils import NoImportStub
 
-<span class="k">try</span><span class="p">:</span>
-    <span class="kn">from</span> <span class="nn">.knn</span> <span class="kn">import</span> <span class="n">KNNDivergenceEstimator</span>
-<span class="k">except</span> <span class="ne">ImportError</span> <span class="k">as</span> <span class="n">e</span><span class="p">:</span>
-    <span class="kn">import</span> <span class="nn">sys</span>
-    <span class="n">KNNDivergenceEstimator</span> <span class="o">=</span> <span class="n">NoImportStub</span><span class="p">(</span><span class="n">sys</span><span class="o">.</span><span class="n">exc_info</span><span class="p">())</span>
-</pre></div>
+try:
+    from .knn import KNNDivergenceEstimator
+except ImportError as e:
+    import sys
+    KNNDivergenceEstimator = NoImportStub(sys.exc_info())
+</pre>
 
           </div>
           <footer>

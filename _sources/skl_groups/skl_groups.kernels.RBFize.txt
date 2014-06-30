@@ -1,0 +1,27 @@
+skl_groups.kernels.RBFize
+=========================
+
+.. currentmodule:: skl_groups.kernels
+
+.. autoclass:: RBFize
+
+   
+   .. automethod:: __init__
+
+   
+   .. rubric:: Methods
+
+   .. autosummary::
+   
+      ~RBFize.__init__
+      ~RBFize.fit
+      ~RBFize.fit_transform
+      ~RBFize.get_params
+      ~RBFize.set_params
+      ~RBFize.transform
+   
+   
+
+   
+   
+   

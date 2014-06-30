@@ -58,7 +58,7 @@
         
         
             <ul class="current">
-<li class="toctree-l1"><a class="reference internal" href="index.html">Introduction</a></li>
+<li class="toctree-l1"><a class="reference internal" href="index.html">Overview</a></li>
 <li class="toctree-l1"><a class="reference internal" href="who.html">Who this package is for</a></li>
 <li class="toctree-l1"><a class="reference internal" href="installation.html">Installation</a><ul>
 <li class="toctree-l2"><a class="reference internal" href="installation.html#flann">FLANN</a></li>
@@ -203,16 +203,19 @@ and estimate divergences, distances, and so on between those distributions.</p>
 <tr class="row-even"><td><a class="reference internal" href="skl_groups/skl_groups.kernels.Symmetrize.html#skl_groups.kernels.Symmetrize" title="skl_groups.kernels.Symmetrize"><tt class="xref py py-obj docutils literal"><span class="pre">kernels.Symmetrize</span></tt></a></td>
 <td>Symmetrizes pairwise affinity/distance/whatever matrices, by taking the mean of itself and its transpose.</td>
 </tr>
-<tr class="row-odd"><td><a class="reference internal" href="skl_groups/skl_groups.kernels.ProjectPSD.html#skl_groups.kernels.ProjectPSD" title="skl_groups.kernels.ProjectPSD"><tt class="xref py py-obj docutils literal"><span class="pre">kernels.ProjectPSD</span></tt></a></td>
+<tr class="row-odd"><td><a class="reference internal" href="skl_groups/skl_groups.kernels.RBFize.html#skl_groups.kernels.RBFize" title="skl_groups.kernels.RBFize"><tt class="xref py py-obj docutils literal"><span class="pre">kernels.RBFize</span></tt></a></td>
+<td>Turns a distance matrix into an RBF kernel: <span class="math">\(K(x, y) = \exp\left( - \gamma \lVert x - y \rVert^2 \right)\)</span>.</td>
+</tr>
+<tr class="row-even"><td><a class="reference internal" href="skl_groups/skl_groups.kernels.ProjectPSD.html#skl_groups.kernels.ProjectPSD" title="skl_groups.kernels.ProjectPSD"><tt class="xref py py-obj docutils literal"><span class="pre">kernels.ProjectPSD</span></tt></a></td>
 <td>Projects a pairwise square symmetric affinity matrix to be positive semidefinite, by discarding any negative eigenvalues from its spectrum.</td>
 </tr>
-<tr class="row-even"><td><a class="reference internal" href="skl_groups/skl_groups.kernels.FlipPSD.html#skl_groups.kernels.FlipPSD" title="skl_groups.kernels.FlipPSD"><tt class="xref py py-obj docutils literal"><span class="pre">kernels.FlipPSD</span></tt></a></td>
+<tr class="row-odd"><td><a class="reference internal" href="skl_groups/skl_groups.kernels.FlipPSD.html#skl_groups.kernels.FlipPSD" title="skl_groups.kernels.FlipPSD"><tt class="xref py py-obj docutils literal"><span class="pre">kernels.FlipPSD</span></tt></a></td>
 <td>Makes a pairwise symmetric square affinity matrix into a valid positive semidefinite kernel, by flipping the sign of any negative eigenvalues in its spectrum.</td>
 </tr>
-<tr class="row-odd"><td><a class="reference internal" href="skl_groups/skl_groups.kernels.ShiftPSD.html#skl_groups.kernels.ShiftPSD" title="skl_groups.kernels.ShiftPSD"><tt class="xref py py-obj docutils literal"><span class="pre">kernels.ShiftPSD</span></tt></a></td>
+<tr class="row-even"><td><a class="reference internal" href="skl_groups/skl_groups.kernels.ShiftPSD.html#skl_groups.kernels.ShiftPSD" title="skl_groups.kernels.ShiftPSD"><tt class="xref py py-obj docutils literal"><span class="pre">kernels.ShiftPSD</span></tt></a></td>
 <td>Makes a pairwise square affinity matrix into a valid positive semidefinite kernel, by flipping the sign of any negative eigenvalues in its spectrum.</td>
 </tr>
-<tr class="row-even"><td><a class="reference internal" href="skl_groups/skl_groups.kernels.SquarePSD.html#skl_groups.kernels.SquarePSD" title="skl_groups.kernels.SquarePSD"><tt class="xref py py-obj docutils literal"><span class="pre">kernels.SquarePSD</span></tt></a></td>
+<tr class="row-odd"><td><a class="reference internal" href="skl_groups/skl_groups.kernels.SquarePSD.html#skl_groups.kernels.SquarePSD" title="skl_groups.kernels.SquarePSD"><tt class="xref py py-obj docutils literal"><span class="pre">kernels.SquarePSD</span></tt></a></td>
 <td>Makes a pairwise symmetric square affinity matrix into a valid positive semidefinite kernel by squaring its eigenvalues (via S -&gt; S S^T).</td>
 </tr>
 </tbody>
