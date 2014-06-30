@@ -16,10 +16,26 @@ Note that skl-groups is not currently tested on Windows (or FreeBSD, or anything
 other than recent versions of OSX, Arch, and CentOS). If you try it, let us
 know.
 
-skl-groups is not yet available via the standard Python package distribution
-mechanisms, because it's too early to be tagging released versions. (Soon.)
 
-In the meantime, you can install it by getting the code from
+Release versions
+----------------
+
+The released version of skl-groups is available via pypi::
+
+    $ pip install skl-groups
+
+or, if you use Anaconda, via my binstar channel::
+
+    $ conda install -c http://conda.binstar.org/dougal skl-groups
+
+At this point, there's nothing special about the releases other than that
+they're easier to install.
+
+
+Development version
+-------------------
+
+You can install a development version by getting the code from
 `the repository <https://github.com/dougalsutherland/skl-groups/issues>`_,
 either with::
 
@@ -51,6 +67,8 @@ If you're using Anaconda, the best way to get it is::
 
     $ conda install -c http://conda.binstar.org/dougal cyflann
 
+(which is included as a requirement in the skl-groups release package).
+
 Otherwise, check your package manager or install it from source.
 
 
@@ -63,13 +81,23 @@ have faster C implementations in the
 `skl-groups-accel <https://github.com/dougalsutherland/skl-groups-accel/>`_
 package, which is kept separate to make the "base" skl-groups easier to install.
 
-skl-groups-accel requires
+If you're using the conda package, skl-groups-accel is actually included in
+skl-groups, because requirements are so much easier in conda-land, and you
+don't have to do anything.
+
+Otherwise, skl-groups-accel requires
 `cyflann <https://github.com/dougalsutherland/cyflann/>`_
 (pyflann is insufficient – in fact, this code is why cyflann was written)
 and a recent version of `cython <http://cython.org/>`_
 as well as a functioning C compiler with OpenMP support
-(i.e. gcc, not clang, `for now <http://clang-omp.github.io>`_).
-Once you have that, get it with::
+(i.e. gcc, not clang, `for now <http://clang-omp.github.io>`_;
+you may need to ``export CC=gcc`` or similar).
+
+Once you have that, you can get a release version with::
+
+    $ pip install skl-groups-accel
+
+or install the development version the same way as before, getting the code with::
 
     $ git clone https://github.com/dougalsutherland/skl-groups-accel.git
 
