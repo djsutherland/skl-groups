@@ -118,233 +118,233 @@
 </div>
           <div role="main">
             
-  <h1>Source code for skl_groups.preprocessing</h1><pre>
-from sklearn.base import BaseEstimator, TransformerMixin
-from sklearn.decomposition import PCA, RandomizedPCA
-from sklearn.preprocessing import MinMaxScaler, StandardScaler, Normalizer
+  <h1>Source code for skl_groups.preprocessing</h1><div class="highlight"><pre>
+<span class="kn">from</span> <span class="nn">sklearn.base</span> <span class="kn">import</span> <span class="n">BaseEstimator</span><span class="p">,</span> <span class="n">TransformerMixin</span>
+<span class="kn">from</span> <span class="nn">sklearn.decomposition</span> <span class="kn">import</span> <span class="n">PCA</span><span class="p">,</span> <span class="n">RandomizedPCA</span>
+<span class="kn">from</span> <span class="nn">sklearn.preprocessing</span> <span class="kn">import</span> <span class="n">MinMaxScaler</span><span class="p">,</span> <span class="n">StandardScaler</span><span class="p">,</span> <span class="n">Normalizer</span>
 
-from .features import Features
+<span class="kn">from</span> <span class="nn">.features</span> <span class="kn">import</span> <span class="n">Features</span>
 
-# TODO: support inplace transformations here
+<span class="c"># TODO: support inplace transformations here</span>
 
-<div class="viewcode-block" id="BagPreprocesser"><a class="viewcode-back" href="../../skl_groups/skl_groups.preprocessing.BagPreprocesser.html#skl_groups.preprocessing.BagPreprocesser">[docs]</a>class BagPreprocesser(BaseEstimator, TransformerMixin):
-    &#x27;&#x27;&#x27;
-    Applies a preprocessing estimator to each column of the bags, independently.
-    This is a reasonable thing to do for some cases
-    (especially :class:`sklearn.preprocessing.StandardScaler`,
-    :class:`sklearn.preprocessing.MinMaxScaler`,
-    :class:`sklearn.decomposition.PCA`).
-    It&#x27;s not a reasonable thing to do for things that rely on interactions
-    between points, or that change the number of output points. (Changing
-    the dimension is okay.)
+<div class="viewcode-block" id="BagPreprocesser"><a class="viewcode-back" href="../../skl_groups/skl_groups.preprocessing.BagPreprocesser.html#skl_groups.preprocessing.BagPreprocesser">[docs]</a><span class="k">class</span> <span class="nc">BagPreprocesser</span><span class="p">(</span><span class="n">BaseEstimator</span><span class="p">,</span> <span class="n">TransformerMixin</span><span class="p">):</span>
+    <span class="sd">&#39;&#39;&#39;</span>
+<span class="sd">    Applies a preprocessing estimator to each column of the bags, independently.</span>
+<span class="sd">    This is a reasonable thing to do for some cases</span>
+<span class="sd">    (especially :class:`sklearn.preprocessing.StandardScaler`,</span>
+<span class="sd">    :class:`sklearn.preprocessing.MinMaxScaler`,</span>
+<span class="sd">    :class:`sklearn.decomposition.PCA`).</span>
+<span class="sd">    It&#39;s not a reasonable thing to do for things that rely on interactions</span>
+<span class="sd">    between points, or that change the number of output points. (Changing</span>
+<span class="sd">    the dimension is okay.)</span>
 
-    Parameters
-    ----------
-    transformer : an sklearn transformer
-        The transformer to apply to the stacked features. Must return the
-        same number of features.
-    &#x27;&#x27;&#x27;
-<div class="viewcode-block" id="BagPreprocesser.__init__"><a class="viewcode-back" href="../../skl_groups/skl_groups.preprocessing.BagPreprocesser.html#skl_groups.preprocessing.BagPreprocesser.__init__">[docs]</a>    def __init__(self, transformer):
-        t = transformer
-        if (not (hasattr(t, &quot;fit&quot;) or hasattr(t, &#x27;fit_transform&#x27;)) or
-                not hasattr(t, &quot;transform&quot;)):
-            raise TypeError(&quot;The transformer doesn&#x27;t have appropriate methods.&quot;)
-        self.transformer = t
+<span class="sd">    Parameters</span>
+<span class="sd">    ----------</span>
+<span class="sd">    transformer : an sklearn transformer</span>
+<span class="sd">        The transformer to apply to the stacked features. Must return the</span>
+<span class="sd">        same number of features.</span>
+<span class="sd">    &#39;&#39;&#39;</span>
+<div class="viewcode-block" id="BagPreprocesser.__init__"><a class="viewcode-back" href="../../skl_groups/skl_groups.preprocessing.BagPreprocesser.html#skl_groups.preprocessing.BagPreprocesser.__init__">[docs]</a>    <span class="k">def</span> <span class="nf">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">transformer</span><span class="p">):</span>
+        <span class="n">t</span> <span class="o">=</span> <span class="n">transformer</span>
+        <span class="k">if</span> <span class="p">(</span><span class="ow">not</span> <span class="p">(</span><span class="nb">hasattr</span><span class="p">(</span><span class="n">t</span><span class="p">,</span> <span class="s">&quot;fit&quot;</span><span class="p">)</span> <span class="ow">or</span> <span class="nb">hasattr</span><span class="p">(</span><span class="n">t</span><span class="p">,</span> <span class="s">&#39;fit_transform&#39;</span><span class="p">))</span> <span class="ow">or</span>
+                <span class="ow">not</span> <span class="nb">hasattr</span><span class="p">(</span><span class="n">t</span><span class="p">,</span> <span class="s">&quot;transform&quot;</span><span class="p">)):</span>
+            <span class="k">raise</span> <span class="ne">TypeError</span><span class="p">(</span><span class="s">&quot;The transformer doesn&#39;t have appropriate methods.&quot;</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">transformer</span> <span class="o">=</span> <span class="n">t</span>
 </div>
-    def _check_inputs(self, X):
-        if isinstance(X, Features):
-            X.make_stacked()
-        else:
-            X = Features(X, stack=True)
-        return X
+    <span class="k">def</span> <span class="nf">_check_inputs</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">X</span><span class="p">):</span>
+        <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">X</span><span class="p">,</span> <span class="n">Features</span><span class="p">):</span>
+            <span class="n">X</span><span class="o">.</span><span class="n">make_stacked</span><span class="p">()</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="n">X</span> <span class="o">=</span> <span class="n">Features</span><span class="p">(</span><span class="n">X</span><span class="p">,</span> <span class="n">stack</span><span class="o">=</span><span class="bp">True</span><span class="p">)</span>
+        <span class="k">return</span> <span class="n">X</span>
 
-    def _gather_outputs(self, old, new):
-        if new.shape[0] != old.total_points:
-            msg = &quot;Transformer changed number of points from {} to {}&quot;
-            raise ValueError(msg.format(old.total_points, new.shape[0]))
-        return Features(new, old.n_pts, **old.meta)
+    <span class="k">def</span> <span class="nf">_gather_outputs</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">old</span><span class="p">,</span> <span class="n">new</span><span class="p">):</span>
+        <span class="k">if</span> <span class="n">new</span><span class="o">.</span><span class="n">shape</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span> <span class="o">!=</span> <span class="n">old</span><span class="o">.</span><span class="n">total_points</span><span class="p">:</span>
+            <span class="n">msg</span> <span class="o">=</span> <span class="s">&quot;Transformer changed number of points from {} to {}&quot;</span>
+            <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="n">msg</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">old</span><span class="o">.</span><span class="n">total_points</span><span class="p">,</span> <span class="n">new</span><span class="o">.</span><span class="n">shape</span><span class="p">[</span><span class="mi">0</span><span class="p">]))</span>
+        <span class="k">return</span> <span class="n">Features</span><span class="p">(</span><span class="n">new</span><span class="p">,</span> <span class="n">old</span><span class="o">.</span><span class="n">n_pts</span><span class="p">,</span> <span class="o">**</span><span class="n">old</span><span class="o">.</span><span class="n">meta</span><span class="p">)</span>
 
-<div class="viewcode-block" id="BagPreprocesser.fit"><a class="viewcode-back" href="../../skl_groups/skl_groups.preprocessing.BagPreprocesser.html#skl_groups.preprocessing.BagPreprocesser.fit">[docs]</a>    def fit(self, X, y=None, **params):
-        &#x27;&#x27;&#x27;
-        Fit the transformer on the stacked points.
+<div class="viewcode-block" id="BagPreprocesser.fit"><a class="viewcode-back" href="../../skl_groups/skl_groups.preprocessing.BagPreprocesser.html#skl_groups.preprocessing.BagPreprocesser.fit">[docs]</a>    <span class="k">def</span> <span class="nf">fit</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">X</span><span class="p">,</span> <span class="n">y</span><span class="o">=</span><span class="bp">None</span><span class="p">,</span> <span class="o">**</span><span class="n">params</span><span class="p">):</span>
+        <span class="sd">&#39;&#39;&#39;</span>
+<span class="sd">        Fit the transformer on the stacked points.</span>
 
-        Parameters
-        ----------
-        X : :class:`Features` or list of arrays of shape ``[n_samples[i], n_features]``
-            Training set. If a Features object, it will be stacked.
+<span class="sd">        Parameters</span>
+<span class="sd">        ----------</span>
+<span class="sd">        X : :class:`Features` or list of arrays of shape ``[n_samples[i], n_features]``</span>
+<span class="sd">            Training set. If a Features object, it will be stacked.</span>
 
-        any other keyword argument :
-            Passed on as keyword arguments to the transformer&#x27;s ``fit()``.
-        &#x27;&#x27;&#x27;
-        X = self._check_inputs(X)
-        self.transformer.fit(X.stacked_features, y, **params)
-        return self
+<span class="sd">        any other keyword argument :</span>
+<span class="sd">            Passed on as keyword arguments to the transformer&#39;s ``fit()``.</span>
+<span class="sd">        &#39;&#39;&#39;</span>
+        <span class="n">X</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_check_inputs</span><span class="p">(</span><span class="n">X</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">transformer</span><span class="o">.</span><span class="n">fit</span><span class="p">(</span><span class="n">X</span><span class="o">.</span><span class="n">stacked_features</span><span class="p">,</span> <span class="n">y</span><span class="p">,</span> <span class="o">**</span><span class="n">params</span><span class="p">)</span>
+        <span class="k">return</span> <span class="bp">self</span>
 </div>
-<div class="viewcode-block" id="BagPreprocesser.transform"><a class="viewcode-back" href="../../skl_groups/skl_groups.preprocessing.BagPreprocesser.html#skl_groups.preprocessing.BagPreprocesser.transform">[docs]</a>    def transform(self, X, **params):
-        &#x27;&#x27;&#x27;
-        Transform the stacked points.
+<div class="viewcode-block" id="BagPreprocesser.transform"><a class="viewcode-back" href="../../skl_groups/skl_groups.preprocessing.BagPreprocesser.html#skl_groups.preprocessing.BagPreprocesser.transform">[docs]</a>    <span class="k">def</span> <span class="nf">transform</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">X</span><span class="p">,</span> <span class="o">**</span><span class="n">params</span><span class="p">):</span>
+        <span class="sd">&#39;&#39;&#39;</span>
+<span class="sd">        Transform the stacked points.</span>
 
-        Parameters
-        ----------
-        X : :class:`Features` or list of bag feature arrays
-            New data to transform.
+<span class="sd">        Parameters</span>
+<span class="sd">        ----------</span>
+<span class="sd">        X : :class:`Features` or list of bag feature arrays</span>
+<span class="sd">            New data to transform.</span>
 
-        any other keyword argument :
-            Passed on as keyword arguments to the transformer&#x27;s ``transform()``.
+<span class="sd">        any other keyword argument :</span>
+<span class="sd">            Passed on as keyword arguments to the transformer&#39;s ``transform()``.</span>
 
-        Returns
-        -------
-        X_new : :class:`Features`
-            Transformed features.
-        &#x27;&#x27;&#x27;
-        X = self._check_inputs(X)
-        X_new = self.transformer.transform(X.stacked_features, **params)
-        return self._gather_outputs(X, X_new)
+<span class="sd">        Returns</span>
+<span class="sd">        -------</span>
+<span class="sd">        X_new : :class:`Features`</span>
+<span class="sd">            Transformed features.</span>
+<span class="sd">        &#39;&#39;&#39;</span>
+        <span class="n">X</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_check_inputs</span><span class="p">(</span><span class="n">X</span><span class="p">)</span>
+        <span class="n">X_new</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">transformer</span><span class="o">.</span><span class="n">transform</span><span class="p">(</span><span class="n">X</span><span class="o">.</span><span class="n">stacked_features</span><span class="p">,</span> <span class="o">**</span><span class="n">params</span><span class="p">)</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_gather_outputs</span><span class="p">(</span><span class="n">X</span><span class="p">,</span> <span class="n">X_new</span><span class="p">)</span>
 </div>
-<div class="viewcode-block" id="BagPreprocesser.fit_transform"><a class="viewcode-back" href="../../skl_groups/skl_groups.preprocessing.BagPreprocesser.html#skl_groups.preprocessing.BagPreprocesser.fit_transform">[docs]</a>    def fit_transform(self, X, y=None, **params):
-        &#x27;&#x27;&#x27;
-        Fit and transform the stacked points.
+<div class="viewcode-block" id="BagPreprocesser.fit_transform"><a class="viewcode-back" href="../../skl_groups/skl_groups.preprocessing.BagPreprocesser.html#skl_groups.preprocessing.BagPreprocesser.fit_transform">[docs]</a>    <span class="k">def</span> <span class="nf">fit_transform</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">X</span><span class="p">,</span> <span class="n">y</span><span class="o">=</span><span class="bp">None</span><span class="p">,</span> <span class="o">**</span><span class="n">params</span><span class="p">):</span>
+        <span class="sd">&#39;&#39;&#39;</span>
+<span class="sd">        Fit and transform the stacked points.</span>
 
-        Parameters
-        ----------
-        X : :class:`Features` or list of bag feature arrays
-            Data to train on and transform.
+<span class="sd">        Parameters</span>
+<span class="sd">        ----------</span>
+<span class="sd">        X : :class:`Features` or list of bag feature arrays</span>
+<span class="sd">            Data to train on and transform.</span>
 
-        any other keyword argument :
-            Passed on as keyword arguments to the transformer&#x27;s ``transform()``.
+<span class="sd">        any other keyword argument :</span>
+<span class="sd">            Passed on as keyword arguments to the transformer&#39;s ``transform()``.</span>
 
-        Returns
-        -------
-        X_new : :class:`Features`
-            Transformed features.
-        &#x27;&#x27;&#x27;
-        X = self._check_inputs(X)
-        X_new = self.transformer.fit_transform(X.stacked_features, y, **params)
-        return self._gather_outputs(X, X_new)
+<span class="sd">        Returns</span>
+<span class="sd">        -------</span>
+<span class="sd">        X_new : :class:`Features`</span>
+<span class="sd">            Transformed features.</span>
+<span class="sd">        &#39;&#39;&#39;</span>
+        <span class="n">X</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_check_inputs</span><span class="p">(</span><span class="n">X</span><span class="p">)</span>
+        <span class="n">X_new</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">transformer</span><span class="o">.</span><span class="n">fit_transform</span><span class="p">(</span><span class="n">X</span><span class="o">.</span><span class="n">stacked_features</span><span class="p">,</span> <span class="n">y</span><span class="p">,</span> <span class="o">**</span><span class="n">params</span><span class="p">)</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_gather_outputs</span><span class="p">(</span><span class="n">X</span><span class="p">,</span> <span class="n">X_new</span><span class="p">)</span>
 </div>
-<div class="viewcode-block" id="BagPreprocesser.inverse_transform"><a class="viewcode-back" href="../../skl_groups/skl_groups.preprocessing.BagPreprocesser.html#skl_groups.preprocessing.BagPreprocesser.inverse_transform">[docs]</a>    def inverse_transform(self, X, **params):
-        &#x27;&#x27;&#x27;
-        Transform data back to its original space, i.e., return an input
-        X_original whose transform would (maybe approximately) be X.
+<div class="viewcode-block" id="BagPreprocesser.inverse_transform"><a class="viewcode-back" href="../../skl_groups/skl_groups.preprocessing.BagPreprocesser.html#skl_groups.preprocessing.BagPreprocesser.inverse_transform">[docs]</a>    <span class="k">def</span> <span class="nf">inverse_transform</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">X</span><span class="p">,</span> <span class="o">**</span><span class="n">params</span><span class="p">):</span>
+        <span class="sd">&#39;&#39;&#39;</span>
+<span class="sd">        Transform data back to its original space, i.e., return an input</span>
+<span class="sd">        X_original whose transform would (maybe approximately) be X.</span>
 
-        Parameters
-        ----------
-        X : :class:`Features` or list of bag feature arrays
-            Data to train on and transform.
+<span class="sd">        Parameters</span>
+<span class="sd">        ----------</span>
+<span class="sd">        X : :class:`Features` or list of bag feature arrays</span>
+<span class="sd">            Data to train on and transform.</span>
 
-        any other keyword argument :
-            Passed on as keyword arguments to the transformer&#x27;s 
-            ``inverse_transform()``.
+<span class="sd">        any other keyword argument :</span>
+<span class="sd">            Passed on as keyword arguments to the transformer&#39;s </span>
+<span class="sd">            ``inverse_transform()``.</span>
 
-        Returns
-        -------
-        X_original : :class:`Features`
-        &#x27;&#x27;&#x27;
-        X = self._check_inputs(X)
-        Xo = self.transformer.inverse_transform(X.stacked_features, **params)
-        return self._gather_outputs(X, Xo)
+<span class="sd">        Returns</span>
+<span class="sd">        -------</span>
+<span class="sd">        X_original : :class:`Features`</span>
+<span class="sd">        &#39;&#39;&#39;</span>
+        <span class="n">X</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_check_inputs</span><span class="p">(</span><span class="n">X</span><span class="p">)</span>
+        <span class="n">Xo</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">transformer</span><span class="o">.</span><span class="n">inverse_transform</span><span class="p">(</span><span class="n">X</span><span class="o">.</span><span class="n">stacked_features</span><span class="p">,</span> <span class="o">**</span><span class="n">params</span><span class="p">)</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_gather_outputs</span><span class="p">(</span><span class="n">X</span><span class="p">,</span> <span class="n">Xo</span><span class="p">)</span>
 
 </div></div>
-<div class="viewcode-block" id="BagStandardizer"><a class="viewcode-back" href="../../skl_groups/skl_groups.preprocessing.BagStandardizer.html#skl_groups.preprocessing.BagStandardizer">[docs]</a>class BagStandardizer(BagPreprocesser):
-    &#x27;&#x27;&#x27;
-    Standardizes each feature dimension to have zero mean and unit variance,
-    regardless of the bag it falls into.
+<div class="viewcode-block" id="BagStandardizer"><a class="viewcode-back" href="../../skl_groups/skl_groups.preprocessing.BagStandardizer.html#skl_groups.preprocessing.BagStandardizer">[docs]</a><span class="k">class</span> <span class="nc">BagStandardizer</span><span class="p">(</span><span class="n">BagPreprocesser</span><span class="p">):</span>
+    <span class="sd">&#39;&#39;&#39;</span>
+<span class="sd">    Standardizes each feature dimension to have zero mean and unit variance,</span>
+<span class="sd">    regardless of the bag it falls into.</span>
 
-    This is just :class:`BagPreprocesser` with
-    :class:`sklearn.preprocessing.StandardScaler`.
-    &#x27;&#x27;&#x27;
-<div class="viewcode-block" id="BagStandardizer.__init__"><a class="viewcode-back" href="../../skl_groups/skl_groups.preprocessing.BagStandardizer.html#skl_groups.preprocessing.BagStandardizer.__init__">[docs]</a>    def __init__(self):
-        super(BagStandardizer, self).__init__(StandardScaler())
-
-</div></div>
-<div class="viewcode-block" id="BagMinMaxScaler"><a class="viewcode-back" href="../../skl_groups/skl_groups.preprocessing.BagMinMaxScaler.html#skl_groups.preprocessing.BagMinMaxScaler">[docs]</a>class BagMinMaxScaler(BagPreprocesser):
-    &#x27;&#x27;&#x27;
-    Linearly scales each feature dimension to lie within the given range, for
-    example [0, 1].
-
-    This is just :class:`BagPreprocesser` with
-    :class:`sklearn.preprocessing.MinMaxScaler`.
-
-    Parameters
-    ----------
-    feature_range : tuple (min, max), default = (0, 1)
-        Desired range of the transformed data.
-    &#x27;&#x27;&#x27;
-<div class="viewcode-block" id="BagMinMaxScaler.__init__"><a class="viewcode-back" href="../../skl_groups/skl_groups.preprocessing.BagMinMaxScaler.html#skl_groups.preprocessing.BagMinMaxScaler.__init__">[docs]</a>    def __init__(self, feature_range=(0, 1)):
-        super(BagMinMaxScaler, self).__init__(MinMaxScaler(feature_range))
+<span class="sd">    This is just :class:`BagPreprocesser` with</span>
+<span class="sd">    :class:`sklearn.preprocessing.StandardScaler`.</span>
+<span class="sd">    &#39;&#39;&#39;</span>
+<div class="viewcode-block" id="BagStandardizer.__init__"><a class="viewcode-back" href="../../skl_groups/skl_groups.preprocessing.BagStandardizer.html#skl_groups.preprocessing.BagStandardizer.__init__">[docs]</a>    <span class="k">def</span> <span class="nf">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="nb">super</span><span class="p">(</span><span class="n">BagStandardizer</span><span class="p">,</span> <span class="bp">self</span><span class="p">)</span><span class="o">.</span><span class="n">__init__</span><span class="p">(</span><span class="n">StandardScaler</span><span class="p">())</span>
 
 </div></div>
-<div class="viewcode-block" id="BagNormalizer"><a class="viewcode-back" href="../../skl_groups/skl_groups.preprocessing.BagNormalizer.html#skl_groups.preprocessing.BagNormalizer">[docs]</a>class BagNormalizer(BagPreprocesser):
-    &#x27;&#x27;&#x27;
-    Normalizes each sample individually to have unit norm (l1 or l2).
+<div class="viewcode-block" id="BagMinMaxScaler"><a class="viewcode-back" href="../../skl_groups/skl_groups.preprocessing.BagMinMaxScaler.html#skl_groups.preprocessing.BagMinMaxScaler">[docs]</a><span class="k">class</span> <span class="nc">BagMinMaxScaler</span><span class="p">(</span><span class="n">BagPreprocesser</span><span class="p">):</span>
+    <span class="sd">&#39;&#39;&#39;</span>
+<span class="sd">    Linearly scales each feature dimension to lie within the given range, for</span>
+<span class="sd">    example [0, 1].</span>
 
-    This is just :class:`BagPreprocesser` with
-    :class:`sklearn.preprocessing.Normalizer`.
+<span class="sd">    This is just :class:`BagPreprocesser` with</span>
+<span class="sd">    :class:`sklearn.preprocessing.MinMaxScaler`.</span>
 
-    Parameters
-    ----------
-    norm : &#x27;l1&#x27; or &#x27;l2&#x27;, optional, default &#x27;l2&#x27;
-        The norm to use to normalize each nonzero sample.
-    &#x27;&#x27;&#x27;
-<div class="viewcode-block" id="BagNormalizer.__init__"><a class="viewcode-back" href="../../skl_groups/skl_groups.preprocessing.BagNormalizer.html#skl_groups.preprocessing.BagNormalizer.__init__">[docs]</a>    def __init__(self, norm=&#x27;l2&#x27;):
-        super(BagNormalizer, self).__init__(Normalizer(norm))
+<span class="sd">    Parameters</span>
+<span class="sd">    ----------</span>
+<span class="sd">    feature_range : tuple (min, max), default = (0, 1)</span>
+<span class="sd">        Desired range of the transformed data.</span>
+<span class="sd">    &#39;&#39;&#39;</span>
+<div class="viewcode-block" id="BagMinMaxScaler.__init__"><a class="viewcode-back" href="../../skl_groups/skl_groups.preprocessing.BagMinMaxScaler.html#skl_groups.preprocessing.BagMinMaxScaler.__init__">[docs]</a>    <span class="k">def</span> <span class="nf">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">feature_range</span><span class="o">=</span><span class="p">(</span><span class="mi">0</span><span class="p">,</span> <span class="mi">1</span><span class="p">)):</span>
+        <span class="nb">super</span><span class="p">(</span><span class="n">BagMinMaxScaler</span><span class="p">,</span> <span class="bp">self</span><span class="p">)</span><span class="o">.</span><span class="n">__init__</span><span class="p">(</span><span class="n">MinMaxScaler</span><span class="p">(</span><span class="n">feature_range</span><span class="p">))</span>
 
 </div></div>
-DEFAULT_VARFRAC = 0.7
-<div class="viewcode-block" id="BagPCA"><a class="viewcode-back" href="../../skl_groups/skl_groups.preprocessing.BagPCA.html#skl_groups.preprocessing.BagPCA">[docs]</a>class BagPCA(BagPreprocesser):
-    &#x27;&#x27;&#x27;
-    Runs principal components analysis to reduce the dimensionality of the
-    features.
+<div class="viewcode-block" id="BagNormalizer"><a class="viewcode-back" href="../../skl_groups/skl_groups.preprocessing.BagNormalizer.html#skl_groups.preprocessing.BagNormalizer">[docs]</a><span class="k">class</span> <span class="nc">BagNormalizer</span><span class="p">(</span><span class="n">BagPreprocesser</span><span class="p">):</span>
+    <span class="sd">&#39;&#39;&#39;</span>
+<span class="sd">    Normalizes each sample individually to have unit norm (l1 or l2).</span>
 
-    This is just :class:`BagPreprocesser` with
-    either :class:`sklearn.decomposition.PCA`
-    or :class:`sklearn.decomposition.RandomizedPCA`.
+<span class="sd">    This is just :class:`BagPreprocesser` with</span>
+<span class="sd">    :class:`sklearn.preprocessing.Normalizer`.</span>
 
-    Parameters
-    ----------
-    k : int, optional
-        The dimensionality to reduce to.
+<span class="sd">    Parameters</span>
+<span class="sd">    ----------</span>
+<span class="sd">    norm : &#39;l1&#39; or &#39;l2&#39;, optional, default &#39;l2&#39;</span>
+<span class="sd">        The norm to use to normalize each nonzero sample.</span>
+<span class="sd">    &#39;&#39;&#39;</span>
+<div class="viewcode-block" id="BagNormalizer.__init__"><a class="viewcode-back" href="../../skl_groups/skl_groups.preprocessing.BagNormalizer.html#skl_groups.preprocessing.BagNormalizer.__init__">[docs]</a>    <span class="k">def</span> <span class="nf">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">norm</span><span class="o">=</span><span class="s">&#39;l2&#39;</span><span class="p">):</span>
+        <span class="nb">super</span><span class="p">(</span><span class="n">BagNormalizer</span><span class="p">,</span> <span class="bp">self</span><span class="p">)</span><span class="o">.</span><span class="n">__init__</span><span class="p">(</span><span class="n">Normalizer</span><span class="p">(</span><span class="n">norm</span><span class="p">))</span>
 
-    mle_components : boolean, optional, default False
-        Use Minka&#x27;s MLE for determining the number of components.
+</div></div>
+<span class="n">DEFAULT_VARFRAC</span> <span class="o">=</span> <span class="mf">0.7</span>
+<div class="viewcode-block" id="BagPCA"><a class="viewcode-back" href="../../skl_groups/skl_groups.preprocessing.BagPCA.html#skl_groups.preprocessing.BagPCA">[docs]</a><span class="k">class</span> <span class="nc">BagPCA</span><span class="p">(</span><span class="n">BagPreprocesser</span><span class="p">):</span>
+    <span class="sd">&#39;&#39;&#39;</span>
+<span class="sd">    Runs principal components analysis to reduce the dimensionality of the</span>
+<span class="sd">    features.</span>
 
-    varfrac : float in (0, 1], optional, default 0.7
-        Use enough components to cover this fraction of the variance.
-        Only one of {k, mle_components, varfrac} can be passed.
+<span class="sd">    This is just :class:`BagPreprocesser` with</span>
+<span class="sd">    either :class:`sklearn.decomposition.PCA`</span>
+<span class="sd">    or :class:`sklearn.decomposition.RandomizedPCA`.</span>
 
-    randomize : boolean, optional, default False
-        Use a randomized PCA. This can be faster and less memory-intensive for
-        large inputs, but is approximate and requires specifying an explicit
-        number of components.
+<span class="sd">    Parameters</span>
+<span class="sd">    ----------</span>
+<span class="sd">    k : int, optional</span>
+<span class="sd">        The dimensionality to reduce to.</span>
 
-    whiten : boolean, optional, default False
-        Whether to whiten the outputs, by dividing the components by the
-        singular values. This removes some information, but makes the variance
-        of the outputs the identity matrix.
-    &#x27;&#x27;&#x27;
-<div class="viewcode-block" id="BagPCA.__init__"><a class="viewcode-back" href="../../skl_groups/skl_groups.preprocessing.BagPCA.html#skl_groups.preprocessing.BagPCA.__init__">[docs]</a>    def __init__(self, k=None, mle_components=False, varfrac=None,
-                 randomize=False, whiten=False):
-        n_specs = sum(1 for x in [k, mle_components, varfrac] if x)
-        if n_specs &gt; 1:
-            msg = &quot;can&#x27;t specify number of components in more than one way&quot;
-            raise TypeError(msg)
-        if n_specs == 0:
-            varfrac = DEFAULT_VARFRAC
+<span class="sd">    mle_components : boolean, optional, default False</span>
+<span class="sd">        Use Minka&#39;s MLE for determining the number of components.</span>
 
-        if randomize:
-            if k is None:
-                raise TypeError(&quot;can&#x27;t do random PCA without a specific k&quot;)
-            pca = RandomizedPCA(k, whiten=whiten)
-        else:
-            if k is not None:
-                n_components = k
-            elif mle_components:
-                n_components = &#x27;mle&#x27;
-            elif varfrac is not None:
-                n_components = varfrac
-            pca = PCA(n_components, whiten=whiten)
-        super(BagPCA, self).__init__(pca)</div></div>
-</pre>
+<span class="sd">    varfrac : float in (0, 1], optional, default 0.7</span>
+<span class="sd">        Use enough components to cover this fraction of the variance.</span>
+<span class="sd">        Only one of {k, mle_components, varfrac} can be passed.</span>
+
+<span class="sd">    randomize : boolean, optional, default False</span>
+<span class="sd">        Use a randomized PCA. This can be faster and less memory-intensive for</span>
+<span class="sd">        large inputs, but is approximate and requires specifying an explicit</span>
+<span class="sd">        number of components.</span>
+
+<span class="sd">    whiten : boolean, optional, default False</span>
+<span class="sd">        Whether to whiten the outputs, by dividing the components by the</span>
+<span class="sd">        singular values. This removes some information, but makes the variance</span>
+<span class="sd">        of the outputs the identity matrix.</span>
+<span class="sd">    &#39;&#39;&#39;</span>
+<div class="viewcode-block" id="BagPCA.__init__"><a class="viewcode-back" href="../../skl_groups/skl_groups.preprocessing.BagPCA.html#skl_groups.preprocessing.BagPCA.__init__">[docs]</a>    <span class="k">def</span> <span class="nf">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">k</span><span class="o">=</span><span class="bp">None</span><span class="p">,</span> <span class="n">mle_components</span><span class="o">=</span><span class="bp">False</span><span class="p">,</span> <span class="n">varfrac</span><span class="o">=</span><span class="bp">None</span><span class="p">,</span>
+                 <span class="n">randomize</span><span class="o">=</span><span class="bp">False</span><span class="p">,</span> <span class="n">whiten</span><span class="o">=</span><span class="bp">False</span><span class="p">):</span>
+        <span class="n">n_specs</span> <span class="o">=</span> <span class="nb">sum</span><span class="p">(</span><span class="mi">1</span> <span class="k">for</span> <span class="n">x</span> <span class="ow">in</span> <span class="p">[</span><span class="n">k</span><span class="p">,</span> <span class="n">mle_components</span><span class="p">,</span> <span class="n">varfrac</span><span class="p">]</span> <span class="k">if</span> <span class="n">x</span><span class="p">)</span>
+        <span class="k">if</span> <span class="n">n_specs</span> <span class="o">&gt;</span> <span class="mi">1</span><span class="p">:</span>
+            <span class="n">msg</span> <span class="o">=</span> <span class="s">&quot;can&#39;t specify number of components in more than one way&quot;</span>
+            <span class="k">raise</span> <span class="ne">TypeError</span><span class="p">(</span><span class="n">msg</span><span class="p">)</span>
+        <span class="k">if</span> <span class="n">n_specs</span> <span class="o">==</span> <span class="mi">0</span><span class="p">:</span>
+            <span class="n">varfrac</span> <span class="o">=</span> <span class="n">DEFAULT_VARFRAC</span>
+
+        <span class="k">if</span> <span class="n">randomize</span><span class="p">:</span>
+            <span class="k">if</span> <span class="n">k</span> <span class="ow">is</span> <span class="bp">None</span><span class="p">:</span>
+                <span class="k">raise</span> <span class="ne">TypeError</span><span class="p">(</span><span class="s">&quot;can&#39;t do random PCA without a specific k&quot;</span><span class="p">)</span>
+            <span class="n">pca</span> <span class="o">=</span> <span class="n">RandomizedPCA</span><span class="p">(</span><span class="n">k</span><span class="p">,</span> <span class="n">whiten</span><span class="o">=</span><span class="n">whiten</span><span class="p">)</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="k">if</span> <span class="n">k</span> <span class="ow">is</span> <span class="ow">not</span> <span class="bp">None</span><span class="p">:</span>
+                <span class="n">n_components</span> <span class="o">=</span> <span class="n">k</span>
+            <span class="k">elif</span> <span class="n">mle_components</span><span class="p">:</span>
+                <span class="n">n_components</span> <span class="o">=</span> <span class="s">&#39;mle&#39;</span>
+            <span class="k">elif</span> <span class="n">varfrac</span> <span class="ow">is</span> <span class="ow">not</span> <span class="bp">None</span><span class="p">:</span>
+                <span class="n">n_components</span> <span class="o">=</span> <span class="n">varfrac</span>
+            <span class="n">pca</span> <span class="o">=</span> <span class="n">PCA</span><span class="p">(</span><span class="n">n_components</span><span class="p">,</span> <span class="n">whiten</span><span class="o">=</span><span class="n">whiten</span><span class="p">)</span>
+        <span class="nb">super</span><span class="p">(</span><span class="n">BagPCA</span><span class="p">,</span> <span class="bp">self</span><span class="p">)</span><span class="o">.</span><span class="n">__init__</span><span class="p">(</span><span class="n">pca</span><span class="p">)</span></div></div>
+</pre></div>
 
           </div>
           <footer>

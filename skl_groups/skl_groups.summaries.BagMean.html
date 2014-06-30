@@ -135,10 +135,11 @@ embedding, you can compute an explicit embedding of the mean map kernel
 (MMK, also known as maximum mean discrepancy or MMD) by first doing the
 kernel embedding and then taking the mean.</p>
 <p>For example, using an approximate RBF kernel:</p>
-<div class="highlight-python"><pre>get_rbf_mmk = Pipeline([
-    (&#x27;rbf&#x27;, sklearn.kernel_approximation.RBFSampler()),
-    (&#x27;mean&#x27;, BagMean()),
-])</pre>
+<div class="highlight-python"><div class="highlight"><pre><span class="n">get_rbf_mmk</span> <span class="o">=</span> <span class="n">Pipeline</span><span class="p">([</span>
+    <span class="p">(</span><span class="s">&#39;rbf&#39;</span><span class="p">,</span> <span class="n">sklearn</span><span class="o">.</span><span class="n">kernel_approximation</span><span class="o">.</span><span class="n">RBFSampler</span><span class="p">()),</span>
+    <span class="p">(</span><span class="s">&#39;mean&#39;</span><span class="p">,</span> <span class="n">BagMean</span><span class="p">()),</span>
+<span class="p">])</span>
+</pre></div>
 </div>
 <dl class="method">
 <dt id="skl_groups.summaries.BagMean.__init__">
