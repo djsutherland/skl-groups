@@ -9,7 +9,8 @@ pairwise similarity/etc matrices that can be turned into kernels for use in
 scikit-learn.
 
 For an introduction to the package, why you might want to use it, and how to
-do so, see `the documentation <https://dougalsutherland.github.io/skl-groups>`_.
+do so, check out
+`the documentation <https://dougalsutherland.github.io/skl-groups/>`_.
 
 skl-groups is currently in early stages of development; feel free to get in
 touch (dsutherl@cs.cmu.edu) if you're interested.
