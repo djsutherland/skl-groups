@@ -11,6 +11,6 @@ Indices and tables
 ==================
 
 * :ref:`genindex`
-* :ref:`modindex`
-* :ref:`search`
+
+.. * :ref:`modindex` -- isn't generated, dunno why not
 
