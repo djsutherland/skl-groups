@@ -1,5 +1,5 @@
-Documentation for skl-groups
-============================
+Introduction
+============
 
 skl-groups is a package that extends the Python machine learning toolkit
 `scikit-learn <http://scikit-learn.org/>`_ with support for operating on
@@ -25,23 +25,20 @@ etc, please feel free to give feedback on anything via the
 `GitHub issues page <https://github.com/dougalsutherland/skl-groups/issues/>`_
 or by `email <dsutherl@cs.cmu.edu>`_.
 
-
 Contents
 --------
 
 .. toctree::
    :maxdepth: 2
 
+   self
    who
    installation
-   intro
+   tutorial
    reference
+   todo
 
-
-Indices and tables
-==================
-
-* :ref:`genindex`
+There's also an :ref:`genindex`.
 
 .. * :ref:`modindex` -- isn't generated, dunno why not
 

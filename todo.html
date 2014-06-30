@@ -7,7 +7,7 @@
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   
-  <title>Introduction &mdash; skl-groups 0.1.0-dev documentation</title>
+  <title>Planned improvements &mdash; skl-groups 0.1.0-dev documentation</title>
   
 
   
@@ -28,8 +28,8 @@
   
 
   
-    <link rel="top" title="skl-groups 0.1.0-dev documentation" href="#"/>
-        <link rel="next" title="Who this package is for" href="who.html"/> 
+    <link rel="top" title="skl-groups 0.1.0-dev documentation" href="index.html"/>
+        <link rel="prev" title="skl_groups.kernels.SquarePSD" href="skl_groups/skl_groups.kernels.SquarePSD.html"/> 
 
   
   <script src="https://cdnjs.cloudflare.com/ajax/libs/modernizr/2.6.2/modernizr.min.js"></script>
@@ -43,7 +43,7 @@
     
     <nav data-toggle="wy-nav-shift" class="wy-nav-side">
       <div class="wy-side-nav-search">
-        <a href="#" class="fa fa-home"> skl-groups</a>
+        <a href="index.html" class="fa fa-home"> skl-groups</a>
         <div role="search">
   <form id ="rtd-search-form" class="wy-form" action="search.html" method="get">
     <input type="text" name="q" placeholder="Search docs" />
@@ -57,7 +57,7 @@
         
         
             <ul class="current">
-<li class="toctree-l1 current"><a class="current reference internal" href="">Introduction</a></li>
+<li class="toctree-l1"><a class="reference internal" href="index.html">Introduction</a></li>
 <li class="toctree-l1"><a class="reference internal" href="who.html">Who this package is for</a></li>
 <li class="toctree-l1"><a class="reference internal" href="installation.html">Installation</a><ul>
 <li class="toctree-l2"><a class="reference internal" href="installation.html#flann">FLANN</a></li>
@@ -73,7 +73,7 @@
 <li class="toctree-l2"><a class="reference internal" href="reference.html#kernel-utilities">Kernel utilities</a></li>
 </ul>
 </li>
-<li class="toctree-l1"><a class="reference internal" href="todo.html">Planned improvements</a></li>
+<li class="toctree-l1 current"><a class="current reference internal" href="">Planned improvements</a></li>
 </ul>
 
         
@@ -86,7 +86,7 @@
       
       <nav class="wy-nav-top" role="navigation" aria-label="top navigation">
         <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
-        <a href="#">skl-groups</a>
+        <a href="index.html">skl-groups</a>
       </nav>
 
 
@@ -95,12 +95,12 @@
         <div class="rst-content">
           <div role="navigation" aria-label="breadcrumbs navigation">
   <ul class="wy-breadcrumbs">
-    <li><a href="#">Docs</a> &raquo;</li>
+    <li><a href="index.html">Docs</a> &raquo;</li>
       
-    <li>Introduction</li>
+    <li>Planned improvements</li>
       <li class="wy-breadcrumbs-aside">
         
-          <a href="_sources/index.txt" rel="nofollow"> View page source</a>
+          <a href="_sources/todo.txt" rel="nofollow"> View page source</a>
         
       </li>
   </ul>
@@ -108,56 +108,33 @@
 </div>
           <div role="main">
             
-  <div class="section" id="introduction">
-<h1>Introduction<a class="headerlink" href="#introduction" title="Permalink to this headline">¶</a></h1>
-<p>skl-groups is a package that extends the Python machine learning toolkit
-<a class="reference external" href="http://scikit-learn.org/">scikit-learn</a> with support for operating on
-sets (&#8220;groups&#8221;) as features. What does that mean? Well, then you can do
-all the standard machine learning tasks on:</p>
+  <div class="section" id="planned-improvements">
+<h1>Planned improvements<a class="headerlink" href="#planned-improvements" title="Permalink to this headline">¶</a></h1>
+<p>skl-groups is a young package (the
+<a class="reference external" href="https://github.com/dougalsutherland/skl-groups/commit/e0e2013a">first commit</a>
+was on June 9, 2014, though it&#8217;s partially based on the previously-existing
+<a class="reference external" href="https://github.com/dougalsutherland/py-sdm">py-sdm</a> package that saw a bit
+of real-world use).
+Here are some of the things we plan to improve:</p>
 <ul class="simple">
-<li>galaxy clusters that are made of individual galaxies</li>
-<li>images treated as sets of local patches</li>
-<li>the set of tweets from a given area and time</li>
-<li>the set of internet browsing traffic from a geographic country for a day</li>
-<li>the set of velocity vectors from a region of a vector field</li>
-<li>...lots of other things! <a class="reference external" href="mailto:dsutherl&#37;&#52;&#48;cs&#46;cmu&#46;edu">Get in touch</a> to talk about
-how to frame your learning problem, or give it a shot yourself.</li>
+<li>Better support for parameter tuning and cross-validation (high-priority).</li>
+<li>Preconstructed pipelines to do &#8220;standard&#8221; operations, like
+<a class="reference internal" href="skl_groups/skl_groups.divergences.KNNDivergenceEstimator.html#skl_groups.divergences.KNNDivergenceEstimator" title="skl_groups.divergences.KNNDivergenceEstimator"><tt class="xref py py-class docutils literal"><span class="pre">skl_groups.divergences.KNNDivergenceEstimator</span></tt></a> followed by
+<a class="reference internal" href="skl_groups/skl_groups.kernels.PairwisePicker.html#skl_groups.kernels.PairwisePicker" title="skl_groups.kernels.PairwisePicker"><tt class="xref py py-class docutils literal"><span class="pre">skl_groups.kernels.PairwisePicker</span></tt></a>,
+<a class="reference internal" href="skl_groups/skl_groups.kernels.Symmetrize.html#skl_groups.kernels.Symmetrize" title="skl_groups.kernels.Symmetrize"><tt class="xref py py-class docutils literal"><span class="pre">skl_groups.kernels.Symmetrize</span></tt></a>,
+<tt class="xref py py-class docutils literal"><span class="pre">skl_groups.kernels.RBFize</span></tt>,
+<a class="reference internal" href="skl_groups/skl_groups.kernels.ProjectPSD.html#skl_groups.kernels.ProjectPSD" title="skl_groups.kernels.ProjectPSD"><tt class="xref py py-class docutils literal"><span class="pre">skl_groups.kernels.ProjectPSD</span></tt></a>,
+then <a class="reference external" href="http://scikit-learn.org/stable/modules/generated/sklearn.svm.SVC.html#sklearn.svm.SVC" title="(in scikit-learn v0.14)"><tt class="xref py py-class docutils literal"><span class="pre">sklearn.svm.SVC</span></tt></a>,
+with appropriate parameter tuning and so on.
+(A replacement for <tt class="xref py py-class docutils literal"><span class="pre">sdm.SDC</span></tt> and friends.)</li>
+<li>Add more algorithms, in particular the mean-map kernel, new KDE-based
+divergence estimators with finite-sample convergence guarantees, and
+Fisher vectors.</li>
+<li>Command-line helpers to perform common tasks.</li>
+<li>Better user documentation.</li>
+<li>Everything else on the
+<a class="reference external" href="https://github.com/dougalsutherland/skl-groups/issues">issues list</a>.</li>
 </ul>
-<p>The canonical source for the documentation is
-<a class="reference external" href="https://dougalsutherland.github.io/skl-groups/">here</a>,
-and the source code, issue tracker, etc. is
-<a class="reference external" href="https://github.com/dougalsutherland/skl-groups">on GitHub</a>.
-skl-groups is currently in fairly early stages of development, and so not
-everything will necessarily work as smoothly as it could.
-We&#8217;re working on that, but as you use the package / read this documentation /
-etc, please feel free to give feedback on anything via the
-<a class="reference external" href="https://github.com/dougalsutherland/skl-groups/issues/">GitHub issues page</a>
-or by <a class="reference external" href="mailto:dsutherl&#37;&#52;&#48;cs&#46;cmu&#46;edu">email</a>.</p>
-<div class="section" id="contents">
-<h2>Contents<a class="headerlink" href="#contents" title="Permalink to this headline">¶</a></h2>
-<div class="toctree-wrapper compound">
-<ul class="current">
-<li class="toctree-l1 current"><a class="current reference internal" href="">Introduction</a></li>
-<li class="toctree-l1"><a class="reference internal" href="who.html">Who this package is for</a></li>
-<li class="toctree-l1"><a class="reference internal" href="installation.html">Installation</a><ul>
-<li class="toctree-l2"><a class="reference internal" href="installation.html#flann">FLANN</a></li>
-<li class="toctree-l2"><a class="reference internal" href="installation.html#accelerated-version">Accelerated version</a></li>
-</ul>
-</li>
-<li class="toctree-l1"><a class="reference internal" href="tutorial.html">Quick tutorial</a></li>
-<li class="toctree-l1"><a class="reference internal" href="reference.html">API reference</a><ul>
-<li class="toctree-l2"><a class="reference internal" href="reference.html#features-representation">Features representation</a></li>
-<li class="toctree-l2"><a class="reference internal" href="reference.html#preprocessing">Preprocessing</a></li>
-<li class="toctree-l2"><a class="reference internal" href="reference.html#summaries">Summaries</a></li>
-<li class="toctree-l2"><a class="reference internal" href="reference.html#divergences">Divergences</a></li>
-<li class="toctree-l2"><a class="reference internal" href="reference.html#kernel-utilities">Kernel utilities</a></li>
-</ul>
-</li>
-<li class="toctree-l1"><a class="reference internal" href="todo.html">Planned improvements</a></li>
-</ul>
-</div>
-<p>There&#8217;s also an <a class="reference internal" href="genindex.html"><em>Index</em></a>.</p>
-</div>
 </div>
 
 
@@ -166,8 +143,8 @@ or by <a class="reference external" href="mailto:dsutherl&#37;&#52;&#48;cs&#46;c
   
     <div class="rst-footer-buttons" role="navigation" aria-label="footer navigation">
       
-        <a href="who.html" class="btn btn-neutral float-right" title="Who this package is for"/>Next <span class="fa fa-arrow-circle-right"></span></a>
       
+        <a href="skl_groups/skl_groups.kernels.SquarePSD.html" class="btn btn-neutral" title="skl_groups.kernels.SquarePSD"><span class="fa fa-arrow-circle-left"></span> Previous</a>
       
     </div>
   
