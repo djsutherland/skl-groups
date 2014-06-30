@@ -27,7 +27,8 @@ Get reasonably recent versions of numpy, scipy, and scikit-learn, then run::
 
     python setup.py install
 
-to install skl-groups.
+to install skl-groups. Once the package is a little more mature, it will also
+be available through pip or conda, but not just yet.
 
 If you want to use the kNN divergence estimator, you'll need to have
 `FLANN <http://people.cs.ubc.ca/~mariusm/index.php/FLANN/FLANN>`_
