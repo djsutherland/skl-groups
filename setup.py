@@ -50,6 +50,7 @@ setup(
     packages=[
         'skl_groups',
         'skl_groups.divergences',
+        'skl_groups.kernels',
         'skl_groups.summaries',
         'skl_groups.tests',
     ],
