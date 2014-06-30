@@ -16,7 +16,10 @@ work on other platforms; let me know if you try it.
 
 To install, first install skl-groups,
 `cyflann <https://github.com/dougalsutherland/cyflann/>`_,
-and a recent version of Cython. Then run::
+and a recent version of Cython.
+You'll also want to use a compiler with OpenMP support, i.e. gcc instead of
+clang (`for now <https://clang-omp.github.io/>`_); if clang is your default,
+make sure to set ``CC=gcc`` (or whatever). Then run::
 
     python setup.py install
 
