@@ -188,14 +188,14 @@ class KNNDivergenceEstimator(BaseEstimator, TransformerMixin):
 
     References
     ----------
-    .. [1] Q. Wang, S. Kulkarni, & S. Verdu. (2009).
+    .. [1] Q. Wang, S. Kulkarni, & S. Verdu (2009).
            Divergence Estimation for Multidimensional Densities Via
            k-Nearest-Neighbor Distances.
            IEEE Transactions on Information Theory, 55(5), 2392-2405.
-    .. [2] B. Poczos, L. Xiong, D. J. Sutherland, & J. Schneider. (2012).
+    .. [2] B. Poczos, L. Xiong, D. J. Sutherland, & J. Schneider (2012).
            Nonparametric kernel estimators for image classification.
-           In Computer Vision and Pattern Recognition (CVPR) (pp. 2989-2996).
-    .. [3] H. Hino & N. Murata. (2013).
+           In Computer Vision and Pattern Recognition (CVPR).
+    .. [3] H. Hino & N. Murata (2013).
            Information estimators for weighted observations.
            Neural Networks.
     '''

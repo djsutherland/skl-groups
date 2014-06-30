@@ -11,11 +11,20 @@ from ..features import Features
 
 class BagOfWords(BaseEstimator, TransformerMixin):
     '''
-    Transforms a list of bags of features (e.g. a :class:`Features` instance)
-    into the bag of words representation:
+    Transforms feature sets into the bag of words representation:
 
     1. Run k-means on the set of all points from all bags, to get codewords.
     2. Represent each bag by the count of points assigned to each codeword.
+
+    This approach is common in computer vision and, when the number of codewords
+    is tuned correctly, can provide a good single summary vector of the
+    distribution of inputs for many types of learning tasks.
+
+    It is often helpful to either take the square root of the output vectors
+    or compare them with :func:`sklearn.metrics.pairwise.chi2_kernel`, which
+    have similar effects and both approximate a more realistic non-iid model
+    [1]_.
+
 
     Parameters
     ----------
@@ -33,6 +42,12 @@ class BagOfWords(BaseEstimator, TransformerMixin):
     ----------
     `kmeans_fit_` : KMeans estimator
         A fit version of the `kmeans` parameter.
+
+    References
+    ----------
+    .. [1] R. Cinbis, J. Verbeek, & C. Schmid (2012).
+           Image categorization using Fisher kernels on non-iid image models.
+           In Computer Vision and Pattern Recognition (CVPR).
     '''
     def __init__(self, kmeans):
         self.kmeans = kmeans
@@ -76,7 +91,7 @@ class BagOfWords(BaseEstimator, TransformerMixin):
 
         Parameters
         ----------
-        X : :class:`Features` or list of arrays of shape ``[n_samples[i], n_features]``
+        X : :class:`skl_groups.features.Features` or list of arrays of shape ``[n_samples[i], n_features]``
             Training set. If a Features object, it will be stacked.
         '''
         self.kmeans_fit_ = copy(self.kmeans)
@@ -90,7 +105,7 @@ class BagOfWords(BaseEstimator, TransformerMixin):
 
         Parameters
         ----------
-        X : :class:`Features` or list of bag feature arrays
+        X : :class:`skl_groups.features.Features` or list of bag feature arrays
             New data to transform.
 
         Returns
@@ -111,7 +126,7 @@ class BagOfWords(BaseEstimator, TransformerMixin):
 
         Parameters
         ----------
-        X : :class:`Features` or list of bag feature arrays
+        X : :class:`skl_groups.features.Features` or list of bag feature arrays
             New data to transform.
 
         Returns

@@ -52,8 +52,9 @@ class L2DensityTransformer(BaseEstimator, TransformerMixin):
             20       21      335    4,662   58,201  662,629
     ==========  =======  =======  =======  =======  =======
 
-    For more on the estimator, see [1], which effectively uses a pipeline of
-    :class:`skl_groups.preprocessing.BagMinMaxScaler`, :class:`L2DensityTransformer`,
+    For more on the estimator, see [1]_, which effectively uses a pipeline of
+    :class:`skl_groups.preprocessing.BagMinMaxScaler`,
+    :class:`L2DensityTransformer`,
     :class:`sklearn.kernel_approximation.RBFSampler`,
     and then :class:`sklearn.linear_model.Ridge`.
 
@@ -82,7 +83,7 @@ class L2DensityTransformer(BaseEstimator, TransformerMixin):
 
     References
     ----------
-    .. [1] J. B. Oliva, B. Poczos, & J. Schneider. (2014).
+    .. [1] J. B. Oliva, B. Poczos, & J. Schneider (2014).
            Fast Distribution To Real Regression.
            In Proceedings of the 17th International Conference on
            Artificial Intelligence and Statistics (AISTATS).
