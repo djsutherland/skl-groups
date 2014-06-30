@@ -64,7 +64,15 @@
 <li class="toctree-l2"><a class="reference internal" href="../../installation.html#accelerated-version">Accelerated version</a></li>
 </ul>
 </li>
-<li class="toctree-l1"><a class="reference internal" href="../../tutorial.html">Quick tutorial</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../tutorial.html">Quick tutorial</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="../../tutorial.html#motivation">Motivation</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../tutorial.html#feature-representation">Feature representation</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../tutorial.html#means">Means</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../tutorial.html#bag-of-words">Bag of Words</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../tutorial.html#divergences">Divergences</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../tutorial.html#l2-density-transformer">L2 density transformer</a></li>
+</ul>
+</li>
 <li class="toctree-l1"><a class="reference internal" href="../../reference.html">API reference</a><ul>
 <li class="toctree-l2"><a class="reference internal" href="../../reference.html#features-representation">Features representation</a></li>
 <li class="toctree-l2"><a class="reference internal" href="../../reference.html#preprocessing">Preprocessing</a></li>
@@ -127,11 +135,13 @@ from .utils import as_integer_type
     vectors corresponding to a single &quot;object.&quot;)
 
     Supports storing data in two major ways:
-      - As a set of pointers to a numpy array per bag. This is the default,
-        because it usually doesn&#x27;t require copying all of your data. Note that
-        the sub-arrays are not enforced to be row-major or even contiguous.
-      - As a single big row-major array. This lets you do certain things more
-        easily (e.g. run PCA).
+
+    - As a list of pointers to a numpy array per bag. This is the default,
+      because it usually doesn&#x27;t require copying all of your data. Note that
+      the sub-arrays are not enforced to be row-major or even contiguous.
+
+    - As a single big row-major array. This lets you do certain things more
+      easily (e.g. run PCA).
 
     The main usage API is the same for both versions; you can distinguish them
     with the `stacked` property, and convert from pointers to stacked with the

@@ -65,7 +65,15 @@
 <li class="toctree-l2"><a class="reference internal" href="installation.html#accelerated-version">Accelerated version</a></li>
 </ul>
 </li>
-<li class="toctree-l1 current"><a class="current reference internal" href="">Quick tutorial</a></li>
+<li class="toctree-l1 current"><a class="current reference internal" href="">Quick tutorial</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="#motivation">Motivation</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#feature-representation">Feature representation</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#means">Means</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#bag-of-words">Bag of Words</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#divergences">Divergences</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#l2-density-transformer">L2 density transformer</a></li>
+</ul>
+</li>
 <li class="toctree-l1"><a class="reference internal" href="reference.html">API reference</a><ul>
 <li class="toctree-l2"><a class="reference internal" href="reference.html#features-representation">Features representation</a></li>
 <li class="toctree-l2"><a class="reference internal" href="reference.html#preprocessing">Preprocessing</a></li>
@@ -111,6 +119,126 @@
             
   <div class="section" id="quick-tutorial">
 <h1>Quick tutorial<a class="headerlink" href="#quick-tutorial" title="Permalink to this headline">¶</a></h1>
+<div class="section" id="motivation">
+<h2>Motivation<a class="headerlink" href="#motivation" title="Permalink to this headline">¶</a></h2>
+<p>Let&#8217;s say we have a bunch of labeled data.
+Given a new set of data, we want to be able to predict its label.
+This is the standard machine learning problem setting of
+classification (if the labels are distinct classes)
+or regression (if the labels are continuous values).</p>
+<p>Most algorithms to solve these problems operate by
+extracting feature vectors from the underlying data,
+and then finding regions in feature space that correspond to the classes,
+or smooth-ish functions in that space that match the regression problem.</p>
+<p>For example, if you&#8217;re classifying emails as spam or not spam,
+you might choose one feature dimension that
+corresponds to the number of times that the word &#8220;account&#8221; is used,
+another for the number of times &#8220;pharmacy&#8221; appears,
+another for whether the sender is in your address book,
+and so on.</p>
+<p>These choices are very important:
+even the fanciest learning algorithm can&#8217;t do anything with the wrong features,
+and even the simplest can often do very well with the right ones.</p>
+<p>But sometime it&#8217;s not easy to summarize your data in a single, fixed-length vector.
+One particular case where it&#8217;s difficult: if your data is really comprised of a set of points.</p>
+<img alt="_images/set-example.png" src="_images/set-example.png" />
+<p>The test set obviously belongs to the &#8220;-&#8221; class.
+How can we get that answer with machine learning?</p>
+</div>
+<div class="section" id="feature-representation">
+<h2>Feature representation<a class="headerlink" href="#feature-representation" title="Permalink to this headline">¶</a></h2>
+<p>In scikit-learn, where objects are represented by feature vectors,
+most learning methods take in a 2d array
+(<a class="reference external" href="http://docs.scipy.org/doc/numpy/reference/generated/numpy.ndarray.html#numpy.ndarray" title="(in NumPy v1.8)"><tt class="xref py py-class docutils literal"><span class="pre">numpy.ndarray</span></tt></a> or sometimes <a class="reference external" href="http://docs.scipy.org/doc/scipy/reference/sparse.html#module-scipy.sparse" title="(in SciPy v0.14.0)"><tt class="xref py py-mod docutils literal"><span class="pre">scipy.sparse</span></tt></a>)
+of shape <tt class="docutils literal"><span class="pre">(n,</span> <span class="pre">n_features)</span></tt>
+where each of the <tt class="docutils literal"><span class="pre">n</span></tt> rows represents a different vector.</p>
+<p>In skl-groups, each object is instead a set of vectors.
+We represent that as a Python <a class="reference external" href="http://docs.python.org/3/library/stdtypes.html#list" title="(in Python v3.4)"><tt class="xref py py-class docutils literal"><span class="pre">list</span></tt></a> of arrays,
+where each array is of shape <tt class="docutils literal"><span class="pre">(n_pts[i],</span> <span class="pre">n_features)</span></tt>.
+The feature dimensionality must be consistent between different sets,
+but the number of points in each set can vary.
+(This is why we use a list; numpy arrays don&#8217;t support &#8220;ragged&#8221; arrays like this.)</p>
+<p>Internally, most methods convert these lists into
+<a class="reference internal" href="skl_groups/skl_groups.features.Features.html#skl_groups.features.Features" title="skl_groups.features.Features"><tt class="xref py py-class docutils literal"><span class="pre">features.Features</span></tt></a> objects,
+which provide a convenient way to access the data consistently,
+and can optionally store any metadata you like along with each bag.</p>
+</div>
+<div class="section" id="means">
+<h2>Means<a class="headerlink" href="#means" title="Permalink to this headline">¶</a></h2>
+<p>Perhaps the most obvious way to summarize a set of vectors is their mean,
+which we can get with <a class="reference internal" href="skl_groups/skl_groups.summaries.BagMean.html#skl_groups.summaries.BagMean" title="skl_groups.summaries.BagMean"><tt class="xref py py-class docutils literal"><span class="pre">summaries.BagMean</span></tt></a>.
+BagMean will turn a list of features into a single array,
+which we can then plug into our favorite <a class="reference external" href="http://scikit-learn.org/stable/supervised_learning.html#supervised-learning" title="(in scikit-learn v0.14)"><em class="xref std std-ref">sklearn classifier</em></a> (or regressor, clusterer, whatever).</p>
+<p>Unfortunately, in our toy example, the mean isn&#8217;t enough to distinguish
+between the two classes.</p>
+<p>In this particular case,
+the covariance matrix &#8220;flattened&#8221; into a vector would probably be good enough.
+That&#8217;s not generally useful enough to have an implementation in skl_groups,
+but it&#8217;d be easy enough to implement yourself by tweaking the source of BagMean.</p>
+</div>
+<div class="section" id="bag-of-words">
+<h2>Bag of Words<a class="headerlink" href="#bag-of-words" title="Permalink to this headline">¶</a></h2>
+<p>Maybe the next-most-popular way to summarize a set of features is through
+&#8220;bag of words.&#8221;</p>
+<p>In natural language processing,
+a common way to get a basic understanding of document is to simply
+take the counts of each word used in a document, and stack those into a vector
+(see <a class="reference external" href="http://scikit-learn.org/stable/modules/feature_extraction.html#text-feature-extraction" title="(in scikit-learn v0.14)"><em class="xref std std-ref">the sklearn docs</em></a>).
+Computer vision researchers perform an analogous process with arbitrary feature vectors:
+&#8220;quantize&#8221; the inputs into a set of <em>codewords</em>,
+i.e. points where you can reasonably replace each of the input vectors with a
+codeword without losing too much information,
+and then represent each set by the count of each codeword.</p>
+<div class="admonition-todo admonition" id="index-0">
+<p class="first admonition-title">Todo</p>
+<p class="last">visual example with the image</p>
+</div>
+<p>We can perform this in skl_groups with the <a class="reference internal" href="skl_groups/skl_groups.summaries.BagOfWords.html#skl_groups.summaries.BagOfWords" title="skl_groups.summaries.BagOfWords"><tt class="xref py py-class docutils literal"><span class="pre">summaries.BagOfWords</span></tt></a> estimator.</p>
+</div>
+<div class="section" id="divergences">
+<h2>Divergences<a class="headerlink" href="#divergences" title="Permalink to this headline">¶</a></h2>
+<p>There&#8217;s a wide class of machine learning algorithms which can run based only
+on a particular kind of similarity function between objects,
+known as <a class="reference external" href="https://en.wikipedia.org/wiki/Kernel_method">kernel methods</a>.
+The best-known of these is the support vector machine (<a class="reference external" href="http://scikit-learn.org/stable/modules/svm.html#svm" title="(in scikit-learn v0.14)"><em class="xref std std-ref">SVM</em></a>),
+but there are many others as well.
+So, if we can come up with a <em>kernel</em> between sets,
+we can run our SVMs or other kernel methods directly on the input sets.</p>
+<p>One way to do that goes like this:
+Suppose that the sets we&#8217;re given are <a class="reference external" href="https://en.wikipedia.org/wiki/Independent_and_identically_distributed_random_variables">independent and identically distributed (iid)</a>
+samples from some unknown probability distribution.
+Then, we can use these samples to statistically estimate a &#8220;distance&#8221; between those underlying probability distributions.
+Some of the options for these distances are:</p>
+<ul class="simple">
+<li>the <a class="reference external" href="https://en.wikipedia.org/wiki/KL_divergence">Kullback–Leibler (KL) divergence</a></li>
+<li>the <a class="reference external" href="https://en.wikipedia.org/wiki/Renyi_divergence#R.C3.A9nyi_divergence">Rényi  divergence</a></li>
+<li>the <span class="math">\(L_2\)</span> distance: <span class="math">\(\int (p(x) - q(x))^2 dx\)</span> where <span class="math">\(p\)</span> and <span class="math">\(q\)</span> are the probability densities</li>
+<li>the <a class="reference external" href="https://en.wikipedia.org/wiki/Jensen%E2%80%93Shannon_divergence">Jensen–Shannon divergence</a></li>
+<li>the <a class="reference external" href="https://en.wikipedia.org/wiki/Hellinger_distance">Hellinger distance</a></li>
+</ul>
+<p>We can estimate all of these distances with
+<a class="reference internal" href="skl_groups/skl_groups.divergences.KNNDivergenceEstimator.html#skl_groups.divergences.KNNDivergenceEstimator" title="skl_groups.divergences.KNNDivergenceEstimator"><tt class="xref py py-class docutils literal"><span class="pre">divergences.KNNDivergenceEstimator</span></tt></a>.
+To use a kernel, we can put it in a <a class="reference external" href="http://scikit-learn.org/stable/modules/generated/sklearn.pipeline.Pipeline.html#sklearn.pipeline.Pipeline" title="(in scikit-learn v0.14)"><tt class="xref py py-class docutils literal"><span class="pre">sklearn.pipeline.Pipeline</span></tt></a>
+with
+<a class="reference internal" href="skl_groups/skl_groups.kernels.PairwisePicker.html#skl_groups.kernels.PairwisePicker" title="skl_groups.kernels.PairwisePicker"><tt class="xref py py-class docutils literal"><span class="pre">kernels.PairwisePicker</span></tt></a>,
+<a class="reference internal" href="skl_groups/skl_groups.kernels.Symmetrize.html#skl_groups.kernels.Symmetrize" title="skl_groups.kernels.Symmetrize"><tt class="xref py py-class docutils literal"><span class="pre">kernels.Symmetrize</span></tt></a>,
+<a class="reference internal" href="skl_groups/skl_groups.kernels.RBFize.html#skl_groups.kernels.RBFize" title="skl_groups.kernels.RBFize"><tt class="xref py py-class docutils literal"><span class="pre">kernels.RBFize</span></tt></a>,
+<a class="reference internal" href="skl_groups/skl_groups.kernels.ProjectPSD.html#skl_groups.kernels.ProjectPSD" title="skl_groups.kernels.ProjectPSD"><tt class="xref py py-class docutils literal"><span class="pre">kernels.ProjectPSD</span></tt></a>
+and then put it in an SVM.</p>
+<div class="admonition-todo admonition" id="index-1">
+<p class="first admonition-title">Todo</p>
+<p class="last">Making this less work for the user is high-priority.</p>
+</div>
+</div>
+<div class="section" id="l2-density-transformer">
+<h2>L2 density transformer<a class="headerlink" href="#l2-density-transformer" title="Permalink to this headline">¶</a></h2>
+<p><a class="reference internal" href="skl_groups/skl_groups.divergences.KNNDivergenceEstimator.html#skl_groups.divergences.KNNDivergenceEstimator" title="skl_groups.divergences.KNNDivergenceEstimator"><tt class="xref py py-class docutils literal"><span class="pre">divergences.KNNDivergenceEstimator</span></tt></a> can get computationally expensive
+if you have a lot of points in your sets or if you have a lot of sets.
+If your source data is low-dimensional (no more than 5),
+one way around that problem is to use <a class="reference internal" href="skl_groups/skl_groups.summaries.L2DensityTransformer.html#skl_groups.summaries.L2DensityTransformer" title="skl_groups.summaries.L2DensityTransformer"><tt class="xref py py-class docutils literal"><span class="pre">summaries.L2DensityTransformer</span></tt></a>,
+which transforms bags of features into vectors whose inner product
+is an estimate of the <span class="math">\(L_2\)</span> distance between the underlying densities.</p>
+</div>
 </div>
 
 

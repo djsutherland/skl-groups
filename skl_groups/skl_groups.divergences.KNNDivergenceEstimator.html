@@ -66,7 +66,15 @@
 <li class="toctree-l2"><a class="reference internal" href="../installation.html#accelerated-version">Accelerated version</a></li>
 </ul>
 </li>
-<li class="toctree-l1"><a class="reference internal" href="../tutorial.html">Quick tutorial</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../tutorial.html">Quick tutorial</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="../tutorial.html#motivation">Motivation</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../tutorial.html#feature-representation">Feature representation</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../tutorial.html#means">Means</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../tutorial.html#bag-of-words">Bag of Words</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../tutorial.html#divergences">Divergences</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../tutorial.html#l2-density-transformer">L2 density transformer</a></li>
+</ul>
+</li>
 <li class="toctree-l1 current"><a class="reference internal" href="../reference.html">API reference</a><ul class="current">
 <li class="toctree-l2"><a class="reference internal" href="../reference.html#features-representation">Features representation</a></li>
 <li class="toctree-l2"><a class="reference internal" href="../reference.html#preprocessing">Preprocessing</a></li>
@@ -124,27 +132,31 @@ technical assumptions are made), and estimates various distances between
 them. The valid divergence functions are, where p and q refer to the density
 functions for two bags:</p>
 <ul class="simple">
-<li>&#8216;kl&#8217;: The Kullback-Liebler divergence, which acts like a distance and has
-some attractive information-theoretic properties as well as often giving
-good results on machine learning problems in practice. Values are
-nonnegative but can go to infinity.
+<li>&#8216;kl&#8217;: The <a class="reference external" href="https://en.wikipedia.org/wiki/KL_divergence">Kullback-Liebler divergence</a>,
+which acts like a distance and has some attractive information-theoretic
+properties as well as often giving good results on machine learning
+problems in practice. Values are nonnegative but can go to infinity.
 <span class="math">\(\int p(x) \log\left( \frac{p(x)}{q(x)} \right) dx\)</span>.
 Estimated as in <a class="reference internal" href="#r6" id="id1">[R6]</a>.</li>
-<li>&#8216;renyi:.8&#8217; or any other number (other than 1): The Renyi-alpha divergence,
+<li>&#8216;renyi:.8&#8217; or any other number (other than 1): The
+<a class="reference external" href="https://en.wikipedia.org/wiki/Renyi_divergence#R.C3.A9nyi_divergence">Renyi-alpha divergence</a>,
 <span class="math">\(\frac{1}{\alpha - 1} \log \int p(x) \left( \frac{p(x)}{q(x)} \right)^{\alpha - 1} dx\)</span>.
 Converges to &#8216;kl&#8217; as <span class="math">\(\alpha\)</span> goes to 1.
 Values are nonnegative, but can go to infinity.
 Estimated as in <a class="reference internal" href="#r7" id="id2">[R7]</a>.</li>
-<li>&#8216;tsallis:.8&#8217; or any other number (other than 1): The Tsallis-alpha divergence,
+<li>&#8216;tsallis:.8&#8217; or any other number (other than 1): The 
+<a class="reference external" href="https://en.wikipedia.org/wiki/Tsallis_entropy">Tsallis-alpha divergence</a>,
 <span class="math">\(\frac{1}{\alpha - 1} \left( \int p(x) \left(\frac{p(x)}{q(x)} \right)^{\alpha - 1} dx - 1 \right)\)</span>.
 Converges to <cite>kl</cite> as <span class="math">\(\alpha\)</span> goes to 1.
 Values are nonnegative, but can go to infinity.
 Estimated as in <a class="reference internal" href="#r7" id="id3">[R7]</a>.</li>
-<li>&#8216;hellinger&#8217;: The Hellinger distance, which is a true distance (i.e. it is
-symmetric and its true value satisfies the triangle inequality) and is
-between 0 and 1. Defined by <span class="math">\(\sqrt{1 - \int \sqrt{p(x) q(x)} dx}\)</span>.
+<li>&#8216;hellinger&#8217;: The <a class="reference external" href="https://en.wikipedia.org/wiki/Hellinger_distance">Hellinger distance</a>,
+which is a true distance (i.e. it is symmetric and its true value
+satisfies the triangle inequality) and is between 0 and 1.
+Defined by <span class="math">\(\sqrt{1 - \int \sqrt{p(x) q(x)} dx}\)</span>.
 Estimated as in <a class="reference internal" href="#r7" id="id4">[R7]</a>.</li>
-<li>&#8216;bc&#8217;: The Bhattacharyya coefficient, <cite>:math:int sqrt{p(x) q(x)} dx</cite>.
+<li>&#8216;bc&#8217;: The <a class="reference external" href="https://en.wikipedia.org/wiki/Bhattacharyya_coefficient">Bhattacharyya coefficient</a>,
+<span class="math">\(\int \sqrt{p(x) q(x)} dx\)</span>.
 This is an affinity rather than a distance and is between 0 and 1.
 Estimated as in <a class="reference internal" href="#r7" id="id5">[R7]</a>.</li>
 <li>&#8216;l2&#8217;: The <span class="math">\(L_2\)</span> distance between density functions
@@ -153,7 +165,8 @@ Estimated as in <a class="reference internal" href="#r7" id="id6">[R7]</a>.
 A true distance function (symmetric and satisfies the triangle inequality.)</li>
 <li>&#8216;linear&#8217;: <span class="math">\(\int p(x) q(x) dx\)</span>.
 Estimated as in <a class="reference internal" href="#r7" id="id7">[R7]</a>.</li>
-<li>&#8216;jensen-shannon&#8217; or &#8216;js&#8217;: The Jensen-Shannon divergence.
+<li>&#8216;jensen-shannon&#8217; or &#8216;js&#8217;: The
+<a class="reference external" href="https://en.wikipedia.org/wiki/Jensen%E2%80%93Shannon_divergence">Jensen-Shannon divergence</a>.
 Equal to <span class="math">\(\frac{1}{2} D(p \| M) + \tfrac{1}{2} D(q \| M)\)</span>,
 where D is the Kullback-Liebler divergence
 and M is an equal mixture between p and q,
@@ -163,6 +176,9 @@ Symmetric, its square root satisfies the triangle inequality,
 and is between 0 and <span class="math">\(\ln 2\)</span>.
 Estimated using <a class="reference internal" href="#r8" id="id8">[R8]</a>.</li>
 </ul>
+<p>Note that even for the true distance functions,
+resulting kernels will not necessarily be positive semidefinite
+due to estimation error.</p>
 <table class="docutils field-list" frame="void" rules="none">
 <col class="field-name" />
 <col class="field-body" />
