@@ -7,7 +7,7 @@
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   
-  <title>Documentation for skl-groups &mdash; skl-groups 0.1.0-dev documentation</title>
+  <title>Who this package is for &mdash; skl-groups 0.1.0-dev documentation</title>
   
 
   
@@ -28,8 +28,9 @@
   
 
   
-    <link rel="top" title="skl-groups 0.1.0-dev documentation" href="#"/>
-        <link rel="next" title="Who this package is for" href="who.html"/> 
+    <link rel="top" title="skl-groups 0.1.0-dev documentation" href="index.html"/>
+        <link rel="next" title="Installation" href="installation.html"/>
+        <link rel="prev" title="Documentation for skl-groups" href="index.html"/> 
 
   
   <script src="https://cdnjs.cloudflare.com/ajax/libs/modernizr/2.6.2/modernizr.min.js"></script>
@@ -43,7 +44,7 @@
     
     <nav data-toggle="wy-nav-shift" class="wy-nav-side">
       <div class="wy-side-nav-search">
-        <a href="#" class="fa fa-home"> skl-groups</a>
+        <a href="index.html" class="fa fa-home"> skl-groups</a>
         <div role="search">
   <form id ="rtd-search-form" class="wy-form" action="search.html" method="get">
     <input type="text" name="q" placeholder="Search docs" />
@@ -56,8 +57,8 @@
       <div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="main navigation">
         
         
-            <ul>
-<li class="toctree-l1"><a class="reference internal" href="who.html">Who this package is for</a></li>
+            <ul class="current">
+<li class="toctree-l1 current"><a class="current reference internal" href="">Who this package is for</a></li>
 <li class="toctree-l1"><a class="reference internal" href="installation.html">Installation</a><ul>
 <li class="toctree-l2"><a class="reference internal" href="installation.html#flann">FLANN</a></li>
 <li class="toctree-l2"><a class="reference internal" href="installation.html#accelerated-version">Accelerated version</a></li>
@@ -84,7 +85,7 @@
       
       <nav class="wy-nav-top" role="navigation" aria-label="top navigation">
         <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
-        <a href="#">skl-groups</a>
+        <a href="index.html">skl-groups</a>
       </nav>
 
 
@@ -93,12 +94,12 @@
         <div class="rst-content">
           <div role="navigation" aria-label="breadcrumbs navigation">
   <ul class="wy-breadcrumbs">
-    <li><a href="#">Docs</a> &raquo;</li>
+    <li><a href="index.html">Docs</a> &raquo;</li>
       
-    <li>Documentation for skl-groups</li>
+    <li>Who this package is for</li>
       <li class="wy-breadcrumbs-aside">
         
-          <a href="_sources/index.txt" rel="nofollow"> View page source</a>
+          <a href="_sources/who.txt" rel="nofollow"> View page source</a>
         
       </li>
   </ul>
@@ -106,59 +107,26 @@
 </div>
           <div role="main">
             
-  <div class="section" id="documentation-for-skl-groups">
-<h1>Documentation for skl-groups<a class="headerlink" href="#documentation-for-skl-groups" title="Permalink to this headline">¶</a></h1>
-<p>skl-groups is a package that extends the Python machine learning toolkit
-<a class="reference external" href="http://scikit-learn.org/">scikit-learn</a> with support for operating on
-sets (&#8220;groups&#8221;) as features. What does that mean? Well, then you can do
-all the standard machine learning tasks on:</p>
+  <div class="section" id="who-this-package-is-for">
+<h1>Who this package is for<a class="headerlink" href="#who-this-package-is-for" title="Permalink to this headline">¶</a></h1>
+<p>This documentation is written assuming that you&#8217;re familiar with Python,
+numpy, and the basic structure of scikit-learn. The explanations of methods
+also assume a certain amount of mathematical familiarity with the math behind
+machine learning techniques, though hopefully not too much; that&#8217;s what the
+paper references are for.</p>
+<p>Our goals for the not-too-distant future hope to alleviate this in two ways:</p>
 <ul class="simple">
-<li>galaxy clusters that are made of individual galaxies</li>
-<li>images treated as sets of local patches</li>
-<li>the set of tweets from a given area and time</li>
-<li>the set of internet browsing traffic from a geographic country for a day</li>
-<li>the set of velocity vectors from a region of a vector field</li>
-<li>...lots of other things! <a class="reference external" href="mailto:dsutherl&#37;&#52;&#48;cs&#46;cmu&#46;edu">Get in touch</a> to talk about
-how to frame your learning problem, or give it a shot yourself.</li>
+<li>A set of simple command-line tools to avoid having to write any Python code
+for basic tasks; you can set up your inputs in, say, an HDF5 file or a
+directory structure of images, and then run some commands to process them
+and get predictions or whatever you&#8217;re looking for out.</li>
+<li>Better introductions to and descriptions of the methods for people who aren&#8217;t
+machine learning researchers to understand what the methods are doing, why
+you would pick one over another, and so on.</li>
 </ul>
-<p>The canonical source for the documentation is
-<a class="reference external" href="https://dougalsutherland.github.io/skl-groups/">here</a>,
-and the source code, issue tracker, etc. is
-<a class="reference external" href="https://github.com/dougalsutherland/skl-groups">on GitHub</a>.
-skl-groups is currently in fairly early stages of development, and so not
-everything will necessarily work as smoothly as it could.
-We&#8217;re working on that, but as you use the package / read this documentation /
-etc, please feel free to give feedback on anything via the
-<a class="reference external" href="https://github.com/dougalsutherland/skl-groups/issues/">GitHub issues page</a>
-or by <a class="reference external" href="mailto:dsutherl&#37;&#52;&#48;cs&#46;cmu&#46;edu">email</a>.</p>
-<div class="section" id="contents">
-<h2>Contents<a class="headerlink" href="#contents" title="Permalink to this headline">¶</a></h2>
-<div class="toctree-wrapper compound">
-<ul>
-<li class="toctree-l1"><a class="reference internal" href="who.html">Who this package is for</a></li>
-<li class="toctree-l1"><a class="reference internal" href="installation.html">Installation</a><ul>
-<li class="toctree-l2"><a class="reference internal" href="installation.html#flann">FLANN</a></li>
-<li class="toctree-l2"><a class="reference internal" href="installation.html#accelerated-version">Accelerated version</a></li>
-</ul>
-</li>
-<li class="toctree-l1"><a class="reference internal" href="intro.html">Introduction</a></li>
-<li class="toctree-l1"><a class="reference internal" href="reference.html">API reference</a><ul>
-<li class="toctree-l2"><a class="reference internal" href="reference.html#features-representation">Features representation</a></li>
-<li class="toctree-l2"><a class="reference internal" href="reference.html#preprocessing">Preprocessing</a></li>
-<li class="toctree-l2"><a class="reference internal" href="reference.html#summaries">Summaries</a></li>
-<li class="toctree-l2"><a class="reference internal" href="reference.html#divergences">Divergences</a></li>
-<li class="toctree-l2"><a class="reference internal" href="reference.html#kernel-utilities">Kernel utilities</a></li>
-</ul>
-</li>
-</ul>
-</div>
-</div>
-</div>
-<div class="section" id="indices-and-tables">
-<h1>Indices and tables<a class="headerlink" href="#indices-and-tables" title="Permalink to this headline">¶</a></h1>
-<ul class="simple">
-<li><a class="reference internal" href="genindex.html"><em>Index</em></a></li>
-</ul>
+<p>If you try out the package, we&#8217;d also very much appreciate any feedback on your
+user experience, either by email or on the
+<a class="reference external" href="https://github.com/dougalsutherland/skl-groups/issues">GitHub Issues page</a>.</p>
 </div>
 
 
@@ -167,8 +135,10 @@ or by <a class="reference external" href="mailto:dsutherl&#37;&#52;&#48;cs&#46;c
   
     <div class="rst-footer-buttons" role="navigation" aria-label="footer navigation">
       
-        <a href="who.html" class="btn btn-neutral float-right" title="Who this package is for"/>Next <span class="fa fa-arrow-circle-right"></span></a>
+        <a href="installation.html" class="btn btn-neutral float-right" title="Installation"/>Next <span class="fa fa-arrow-circle-right"></span></a>
       
+      
+        <a href="index.html" class="btn btn-neutral" title="Documentation for skl-groups"><span class="fa fa-arrow-circle-left"></span> Previous</a>
       
     </div>
   

@@ -59,6 +59,13 @@
         
         
             <ul class="current">
+<li class="toctree-l1"><a class="reference internal" href="../who.html">Who this package is for</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../installation.html">Installation</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="../installation.html#flann">FLANN</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../installation.html#accelerated-version">Accelerated version</a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="../intro.html">Introduction</a></li>
 <li class="toctree-l1 current"><a class="reference internal" href="../reference.html">API reference</a><ul class="current">
 <li class="toctree-l2"><a class="reference internal" href="../reference.html#features-representation">Features representation</a></li>
 <li class="toctree-l2"><a class="reference internal" href="../reference.html#preprocessing">Preprocessing</a></li>
@@ -108,12 +115,18 @@
 <dl class="class">
 <dt id="skl_groups.summaries.BagOfWords">
 <em class="property">class </em><tt class="descclassname">skl_groups.summaries.</tt><tt class="descname">BagOfWords</tt><big>(</big><em>kmeans</em><big>)</big><a class="headerlink" href="#skl_groups.summaries.BagOfWords" title="Permalink to this definition">¶</a></dt>
-<dd><p>Transforms a list of bags of features (e.g. a <tt class="xref py py-class docutils literal"><span class="pre">Features</span></tt> instance)
-into the bag of words representation:</p>
+<dd><p>Transforms feature sets into the bag of words representation:</p>
 <ol class="arabic simple">
 <li>Run k-means on the set of all points from all bags, to get codewords.</li>
 <li>Represent each bag by the count of points assigned to each codeword.</li>
 </ol>
+<p>This approach is common in computer vision and, when the number of codewords
+is tuned correctly, can provide a good single summary vector of the
+distribution of inputs for many types of learning tasks.</p>
+<p>It is often helpful to either take the square root of the output vectors
+or compare them with <a class="reference external" href="http://scikit-learn.org/stable/modules/generated/sklearn.metrics.pairwise.chi2_kernel.html#sklearn.metrics.pairwise.chi2_kernel" title="(in scikit-learn v0.14)"><tt class="xref py py-func docutils literal"><span class="pre">sklearn.metrics.pairwise.chi2_kernel()</span></tt></a>, which
+have similar effects and both approximate a more realistic non-iid model
+<a class="reference internal" href="#r9" id="id1">[R9]</a>.</p>
 <table class="docutils field-list" frame="void" rules="none">
 <col class="field-name" />
 <col class="field-body" />
@@ -131,6 +144,15 @@ we&#8217;ll copy it, not modify it.</p>
 </div></blockquote>
 </td>
 </tr>
+</tbody>
+</table>
+<p class="rubric">References</p>
+<table class="docutils citation" frame="void" id="r9" rules="none">
+<colgroup><col class="label" /><col /></colgroup>
+<tbody valign="top">
+<tr><td class="label">[R9]</td><td><em>(<a class="fn-backref" href="#id1">1</a>, <a class="fn-backref" href="#id2">2</a>)</em> R. Cinbis, J. Verbeek, &amp; C. Schmid (2012).
+Image categorization using Fisher kernels on non-iid image models.
+In Computer Vision and Pattern Recognition (CVPR).</td></tr>
 </tbody>
 </table>
 <p class="rubric">Attributes</p>
@@ -206,7 +228,7 @@ we&#8217;ll copy it, not modify it.</p>
 <col class="field-name" />
 <col class="field-body" />
 <tbody valign="top">
-<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><p class="first"><strong>X</strong> : <tt class="xref py py-class docutils literal"><span class="pre">Features</span></tt> or list of arrays of shape <tt class="docutils literal"><span class="pre">[n_samples[i],</span> <span class="pre">n_features]</span></tt></p>
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><p class="first"><strong>X</strong> : <a class="reference internal" href="skl_groups.features.Features.html#skl_groups.features.Features" title="skl_groups.features.Features"><tt class="xref py py-class docutils literal"><span class="pre">skl_groups.features.Features</span></tt></a> or list of arrays of shape <tt class="docutils literal"><span class="pre">[n_samples[i],</span> <span class="pre">n_features]</span></tt></p>
 <blockquote class="last">
 <div><p>Training set. If a Features object, it will be stacked.</p>
 </div></blockquote>
@@ -226,7 +248,7 @@ but more efficient.</p>
 <col class="field-name" />
 <col class="field-body" />
 <tbody valign="top">
-<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><p class="first"><strong>X</strong> : <tt class="xref py py-class docutils literal"><span class="pre">Features</span></tt> or list of bag feature arrays</p>
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><p class="first"><strong>X</strong> : <a class="reference internal" href="skl_groups.features.Features.html#skl_groups.features.Features" title="skl_groups.features.Features"><tt class="xref py py-class docutils literal"><span class="pre">skl_groups.features.Features</span></tt></a> or list of bag feature arrays</p>
 <blockquote>
 <div><p>New data to transform.</p>
 </div></blockquote>
@@ -256,7 +278,7 @@ but more efficient.</p>
 <col class="field-name" />
 <col class="field-body" />
 <tbody valign="top">
-<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><p class="first"><strong>X</strong> : <tt class="xref py py-class docutils literal"><span class="pre">Features</span></tt> or list of bag feature arrays</p>
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><p class="first"><strong>X</strong> : <a class="reference internal" href="skl_groups.features.Features.html#skl_groups.features.Features" title="skl_groups.features.Features"><tt class="xref py py-class docutils literal"><span class="pre">skl_groups.features.Features</span></tt></a> or list of bag feature arrays</p>
 <blockquote>
 <div><p>New data to transform.</p>
 </div></blockquote>

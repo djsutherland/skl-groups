@@ -59,6 +59,13 @@
         
         
             <ul class="current">
+<li class="toctree-l1"><a class="reference internal" href="../who.html">Who this package is for</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../installation.html">Installation</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="../installation.html#flann">FLANN</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../installation.html#accelerated-version">Accelerated version</a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="../intro.html">Introduction</a></li>
 <li class="toctree-l1 current"><a class="reference internal" href="../reference.html">API reference</a><ul class="current">
 <li class="toctree-l2"><a class="reference internal" href="../reference.html#features-representation">Features representation</a></li>
 <li class="toctree-l2"><a class="reference internal" href="../reference.html#preprocessing">Preprocessing</a></li>
@@ -120,30 +127,30 @@ some attractive information-theoretic properties as well as often giving
 good results on machine learning problems in practice. Values are
 nonnegative but can go to infinity.
 <span class="math">\(\int p(x) \log\left( \frac{p(x)}{q(x)} \right) dx\)</span>.
-Estimated as in <a class="reference internal" href="#r5" id="id1">[R5]</a>.</li>
+Estimated as in <a class="reference internal" href="#r6" id="id1">[R6]</a>.</li>
 <li>&#8216;renyi:.8&#8217; or any other number (other than 1): The Renyi-alpha divergence,
 <span class="math">\(\frac{1}{\alpha - 1} \log \int p(x) \left( \frac{p(x)}{q(x)} \right)^{\alpha - 1} dx\)</span>.
 Converges to &#8216;kl&#8217; as <span class="math">\(\alpha\)</span> goes to 1.
 Values are nonnegative, but can go to infinity.
-Estimated as in <a class="reference internal" href="#r6" id="id2">[R6]</a>.</li>
+Estimated as in <a class="reference internal" href="#r7" id="id2">[R7]</a>.</li>
 <li>&#8216;tsallis:.8&#8217; or any other number (other than 1): The Tsallis-alpha divergence,
 <span class="math">\(\frac{1}{\alpha - 1} \left( \int p(x) \left(\frac{p(x)}{q(x)} \right)^{\alpha - 1} dx - 1 \right)\)</span>.
 Converges to <cite>kl</cite> as <span class="math">\(\alpha\)</span> goes to 1.
 Values are nonnegative, but can go to infinity.
-Estimated as in <a class="reference internal" href="#r6" id="id3">[R6]</a>.</li>
+Estimated as in <a class="reference internal" href="#r7" id="id3">[R7]</a>.</li>
 <li>&#8216;hellinger&#8217;: The Hellinger distance, which is a true distance (i.e. it is
 symmetric and its true value satisfies the triangle inequality) and is
 between 0 and 1. Defined by <span class="math">\(\sqrt{1 - \int \sqrt{p(x) q(x)} dx}\)</span>.
-Estimated as in <a class="reference internal" href="#r6" id="id4">[R6]</a>.</li>
+Estimated as in <a class="reference internal" href="#r7" id="id4">[R7]</a>.</li>
 <li>&#8216;bc&#8217;: The Bhattacharyya coefficient, <cite>:math:int sqrt{p(x) q(x)} dx</cite>.
 This is an affinity rather than a distance and is between 0 and 1.
-Estimated as in <a class="reference internal" href="#r6" id="id5">[R6]</a>.</li>
+Estimated as in <a class="reference internal" href="#r7" id="id5">[R7]</a>.</li>
 <li>&#8216;l2&#8217;: The <span class="math">\(L_2\)</span> distance between density functions
 <span class="math">\(\sqrt{ \int (p(x) - q(x))^2 dx }\)</span>.
-Estimated as in <a class="reference internal" href="#r6" id="id6">[R6]</a>.
+Estimated as in <a class="reference internal" href="#r7" id="id6">[R7]</a>.
 A true distance function (symmetric and satisfies the triangle inequality.)</li>
 <li>&#8216;linear&#8217;: <span class="math">\(\int p(x) q(x) dx\)</span>.
-Estimated as in <a class="reference internal" href="#r6" id="id7">[R6]</a>.</li>
+Estimated as in <a class="reference internal" href="#r7" id="id7">[R7]</a>.</li>
 <li>&#8216;jensen-shannon&#8217; or &#8216;js&#8217;: The Jensen-Shannon divergence.
 Equal to <span class="math">\(\frac{1}{2} D(p \| M) + \tfrac{1}{2} D(q \| M)\)</span>,
 where D is the Kullback-Liebler divergence
@@ -152,7 +159,7 @@ or equivalently <span class="math">\(H[M] - \frac{1}{2} H[p] - \frac{1}{2} H[q]\
 where H is the Shannon entropy.
 Symmetric, its square root satisfies the triangle inequality,
 and is between 0 and <span class="math">\(\ln 2\)</span>.
-Estimated using <a class="reference internal" href="#r7" id="id8">[R7]</a>.</li>
+Estimated using <a class="reference internal" href="#r8" id="id8">[R8]</a>.</li>
 </ul>
 <table class="docutils field-list" frame="void" rules="none">
 <col class="field-name" />
@@ -169,7 +176,7 @@ alpha, e.g. <tt class="docutils literal"><span class="pre">['renyi:.9',</span> <
 <div><p>The Ks to use for the K-nearest-neighbor estimator.
 If you have very small bags (sizes less than, say, 25), try 1 or 2;
 if large, say more than 1000, try 4 or 5.
-Must be less than the smallest bag size; for the proof of <a class="reference internal" href="#r6" id="id9">[R6]</a> to work,
+Must be less than the smallest bag size; for the proof of <a class="reference internal" href="#r7" id="id9">[R7]</a> to work,
 should be at least 3 for most divergence functions.
 Jensen-Shannon treats this parameter a little differently.</p>
 </div></blockquote>
@@ -224,36 +231,36 @@ path to the caching directory.</p>
 </tbody>
 </table>
 <p class="rubric">Notes</p>
-<p>The convergence proof in <a class="reference internal" href="#r5" id="id10">[R5]</a> is incorrect. The estimator seems to work
+<p>The convergence proof in <a class="reference internal" href="#r6" id="id10">[R6]</a> is incorrect. The estimator seems to work
 well, in practice, though.</p>
 <p>The Jensen-Shannon estimation is performed by using the estimator of
-<a class="reference internal" href="#r7" id="id11">[R7]</a> to get <span class="math">\(H[\frac{1}{2}(X + Y)]\)</span>, by combining the two samples
+<a class="reference internal" href="#r8" id="id11">[R8]</a> to get <span class="math">\(H[\frac{1}{2}(X + Y)]\)</span>, by combining the two samples
 and assigning weights such that the total weight from each sample is equal,
 and subtracting the mean of <span class="math">\(H[X]\)</span> and <span class="math">\(H[Y]\)</span> according to the
 same estimator (with equally-weighted points). The <tt class="docutils literal"><span class="pre">K</span></tt> parameter is
-used for the value of <span class="math">\(M = n \alpha\)</span> in <a class="reference internal" href="#r7" id="id12">[R7]</a>.</p>
+used for the value of <span class="math">\(M = n \alpha\)</span> in <a class="reference internal" href="#r8" id="id12">[R8]</a>.</p>
 <p class="rubric">References</p>
-<table class="docutils citation" frame="void" id="r5" rules="none">
+<table class="docutils citation" frame="void" id="r6" rules="none">
 <colgroup><col class="label" /><col /></colgroup>
 <tbody valign="top">
-<tr><td class="label">[R5]</td><td><em>(<a class="fn-backref" href="#id1">1</a>, <a class="fn-backref" href="#id10">2</a>, <a class="fn-backref" href="#id13">3</a>)</em> Q. Wang, S. Kulkarni, &amp; S. Verdu. (2009).
+<tr><td class="label">[R6]</td><td><em>(<a class="fn-backref" href="#id1">1</a>, <a class="fn-backref" href="#id10">2</a>, <a class="fn-backref" href="#id13">3</a>)</em> Q. Wang, S. Kulkarni, &amp; S. Verdu (2009).
 Divergence Estimation for Multidimensional Densities Via
 k-Nearest-Neighbor Distances.
 IEEE Transactions on Information Theory, 55(5), 2392-2405.</td></tr>
 </tbody>
 </table>
-<table class="docutils citation" frame="void" id="r6" rules="none">
-<colgroup><col class="label" /><col /></colgroup>
-<tbody valign="top">
-<tr><td class="label">[R6]</td><td><em>(<a class="fn-backref" href="#id2">1</a>, <a class="fn-backref" href="#id3">2</a>, <a class="fn-backref" href="#id4">3</a>, <a class="fn-backref" href="#id5">4</a>, <a class="fn-backref" href="#id6">5</a>, <a class="fn-backref" href="#id7">6</a>, <a class="fn-backref" href="#id9">7</a>, <a class="fn-backref" href="#id14">8</a>)</em> B. Poczos, L. Xiong, D. J. Sutherland, &amp; J. Schneider. (2012).
-Nonparametric kernel estimators for image classification.
-In Computer Vision and Pattern Recognition (CVPR) (pp. 2989-2996).</td></tr>
-</tbody>
-</table>
 <table class="docutils citation" frame="void" id="r7" rules="none">
 <colgroup><col class="label" /><col /></colgroup>
 <tbody valign="top">
-<tr><td class="label">[R7]</td><td><em>(<a class="fn-backref" href="#id8">1</a>, <a class="fn-backref" href="#id11">2</a>, <a class="fn-backref" href="#id12">3</a>, <a class="fn-backref" href="#id15">4</a>)</em> H. Hino &amp; N. Murata. (2013).
+<tr><td class="label">[R7]</td><td><em>(<a class="fn-backref" href="#id2">1</a>, <a class="fn-backref" href="#id3">2</a>, <a class="fn-backref" href="#id4">3</a>, <a class="fn-backref" href="#id5">4</a>, <a class="fn-backref" href="#id6">5</a>, <a class="fn-backref" href="#id7">6</a>, <a class="fn-backref" href="#id9">7</a>, <a class="fn-backref" href="#id14">8</a>)</em> B. Poczos, L. Xiong, D. J. Sutherland, &amp; J. Schneider (2012).
+Nonparametric kernel estimators for image classification.
+In Computer Vision and Pattern Recognition (CVPR).</td></tr>
+</tbody>
+</table>
+<table class="docutils citation" frame="void" id="r8" rules="none">
+<colgroup><col class="label" /><col /></colgroup>
+<tbody valign="top">
+<tr><td class="label">[R8]</td><td><em>(<a class="fn-backref" href="#id8">1</a>, <a class="fn-backref" href="#id11">2</a>, <a class="fn-backref" href="#id12">3</a>, <a class="fn-backref" href="#id15">4</a>)</em> H. Hino &amp; N. Murata (2013).
 Information estimators for weighted observations.
 Neural Networks.</td></tr>
 </tbody>

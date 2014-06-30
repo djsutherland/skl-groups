@@ -1,0 +1,246 @@
+
+
+<!DOCTYPE html>
+<!--[if IE 8]><html class="no-js lt-ie9" lang="en" > <![endif]-->
+<!--[if gt IE 8]><!--> <html class="no-js" lang="en" > <!--<![endif]-->
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  
+  <title>Installation &mdash; skl-groups 0.1.0-dev documentation</title>
+  
+
+  
+  
+
+  
+  <link href='https://fonts.googleapis.com/css?family=Lato:400,700|Roboto+Slab:400,700|Inconsolata:400,700' rel='stylesheet' type='text/css'>
+
+  
+  
+    
+
+  
+
+  
+  
+    <link rel="stylesheet" href="_static/css/theme.css" type="text/css" />
+  
+
+  
+    <link rel="top" title="skl-groups 0.1.0-dev documentation" href="index.html"/>
+        <link rel="next" title="Introduction" href="intro.html"/>
+        <link rel="prev" title="Who this package is for" href="who.html"/> 
+
+  
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/modernizr/2.6.2/modernizr.min.js"></script>
+
+</head>
+
+<body class="wy-body-for-nav" role="document">
+
+  <div class="wy-grid-for-nav">
+
+    
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-nav-search">
+        <a href="index.html" class="fa fa-home"> skl-groups</a>
+        <div role="search">
+  <form id ="rtd-search-form" class="wy-form" action="search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+      </div>
+
+      <div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="main navigation">
+        
+        
+            <ul class="current">
+<li class="toctree-l1"><a class="reference internal" href="who.html">Who this package is for</a></li>
+<li class="toctree-l1 current"><a class="current reference internal" href="">Installation</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="#flann">FLANN</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#accelerated-version">Accelerated version</a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="intro.html">Introduction</a></li>
+<li class="toctree-l1"><a class="reference internal" href="reference.html">API reference</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="reference.html#features-representation">Features representation</a></li>
+<li class="toctree-l2"><a class="reference internal" href="reference.html#preprocessing">Preprocessing</a></li>
+<li class="toctree-l2"><a class="reference internal" href="reference.html#summaries">Summaries</a></li>
+<li class="toctree-l2"><a class="reference internal" href="reference.html#divergences">Divergences</a></li>
+<li class="toctree-l2"><a class="reference internal" href="reference.html#kernel-utilities">Kernel utilities</a></li>
+</ul>
+</li>
+</ul>
+
+        
+      </div>
+      &nbsp;
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap">
+
+      
+      <nav class="wy-nav-top" role="navigation" aria-label="top navigation">
+        <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+        <a href="index.html">skl-groups</a>
+      </nav>
+
+
+      
+      <div class="wy-nav-content">
+        <div class="rst-content">
+          <div role="navigation" aria-label="breadcrumbs navigation">
+  <ul class="wy-breadcrumbs">
+    <li><a href="index.html">Docs</a> &raquo;</li>
+      
+    <li>Installation</li>
+      <li class="wy-breadcrumbs-aside">
+        
+          <a href="_sources/installation.txt" rel="nofollow"> View page source</a>
+        
+      </li>
+  </ul>
+  <hr/>
+</div>
+          <div role="main">
+            
+  <div class="section" id="installation">
+<h1>Installation<a class="headerlink" href="#installation" title="Permalink to this headline">¶</a></h1>
+<p>First, you&#8217;ll want a Python installation
+(we test with versions 2.7, 3.3, and 3.4; 3.2 probably works),
+and reasonably recent versions of
+<a class="reference external" href="http://numpy.org">numpy</a>,
+<a class="reference external" href="http://scipy.org">scipy</a>,
+and <a class="reference external" href="http://scikit-learn.org">scikit-learn</a>.
+If you&#8217;re not already attached to a particular install of Python,
+we recommend the <a class="reference external" href="https://store.continuum.io/cshop/anaconda/">Anaconda</a>
+distribution, which makes life easy;
+otherwise, <a class="reference external" href="http://scikit-learn.org/stable/install.html">these instructions</a>
+might be helpful.
+Note that skl-groups is not currently tested on Windows (or FreeBSD, or anything
+other than recent versions of OSX, Arch, and CentOS). If you try it, let us
+know.</p>
+<p>skl-groups is not yet available via the standard Python package distribution
+mechanisms, because it&#8217;s too early to be tagging released versions. (Soon.)</p>
+<p>In the meantime, you can install it by getting the code from
+<a class="reference external" href="https://github.com/dougalsutherland/skl-groups/issues">the repository</a>,
+either with:</p>
+<div class="highlight-python"><div class="highlight"><pre>$ git clone https://github.com/dougalsutherland/skl-groups.git
+</pre></div>
+</div>
+<p>or by downloading and extracting the latest version
+<a class="reference external" href="https://github.com/dougalsutherland/skl-groups/archive/master.zip">as a ZIP</a>.
+Then just run:</p>
+<div class="highlight-python"><div class="highlight"><pre>$ python setup.py install
+</pre></div>
+</div>
+<p>to install it. You might need to add <tt class="docutils literal"><span class="pre">--user</span></tt> to install into your home
+directory, or run it with <tt class="docutils literal"><span class="pre">sudo</span></tt>, depending on your setup.</p>
+<p>If you chose to clone the repository, you can update the code later by running
+<tt class="docutils literal"><span class="pre">git</span> <span class="pre">pull</span></tt> and then <tt class="docutils literal"><span class="pre">python</span> <span class="pre">setup.py</span> <span class="pre">install</span></tt> again.</p>
+<div class="section" id="flann">
+<h2>FLANN<a class="headerlink" href="#flann" title="Permalink to this headline">¶</a></h2>
+<p>If you want to use <a class="reference internal" href="skl_groups/skl_groups.divergences.KNNDivergenceEstimator.html#skl_groups.divergences.KNNDivergenceEstimator" title="skl_groups.divergences.KNNDivergenceEstimator"><tt class="xref py py-class docutils literal"><span class="pre">skl_groups.divergences.KNNDivergenceEstimator</span></tt></a>,
+you&#8217;ll also need a Python interface to
+<a class="reference external" href="http://www.cs.ubc.ca/research/flann/">FLANN</a>
+(the Fast Library for Approximate Nearest Neighbors),
+either the <tt class="docutils literal"><span class="pre">pyflann</span></tt> library included with FLANN or
+<a class="reference external" href="https://github.com/dougalsutherland/cyflann/">cyflann</a>.
+If you&#8217;re using Anaconda, the best way to get it is:</p>
+<div class="highlight-python"><div class="highlight"><pre>$ conda install -c http://conda.binstar.org/dougal cyflann
+</pre></div>
+</div>
+<p>Otherwise, check your package manager or install it from source.</p>
+</div>
+<div class="section" id="accelerated-version">
+<h2>Accelerated version<a class="headerlink" href="#accelerated-version" title="Permalink to this headline">¶</a></h2>
+<p>Some algorithms
+(currently just <a class="reference internal" href="skl_groups/skl_groups.divergences.KNNDivergenceEstimator.html#skl_groups.divergences.KNNDivergenceEstimator" title="skl_groups.divergences.KNNDivergenceEstimator"><tt class="xref py py-class docutils literal"><span class="pre">skl_groups.divergences.KNNDivergenceEstimator</span></tt></a>)
+have faster C implementations in the
+<a class="reference external" href="https://github.com/dougalsutherland/skl-groups-accel/">skl-groups-accel</a>
+package, which is kept separate to make the &#8220;base&#8221; skl-groups easier to install.</p>
+<p>skl-groups-accel requires
+<a class="reference external" href="https://github.com/dougalsutherland/cyflann/">cyflann</a>
+(pyflann is insufficient – in fact, this code is why cyflann was written)
+and a recent version of <a class="reference external" href="http://cython.org/">cython</a>
+as well as a functioning C compiler with OpenMP support
+(i.e. gcc, not clang, <a class="reference external" href="http://clang-omp.github.io">for now</a>).
+Once you have that, get it with:</p>
+<div class="highlight-python"><div class="highlight"><pre>$ git clone https://github.com/dougalsutherland/skl-groups-accel.git
+</pre></div>
+</div>
+<p>or <a class="reference external" href="https://github.com/dougalsutherland/skl-groups/archive/master.zip">as a ZIP</a>
+and install it the same way (<em>after</em> installing skl-groups).</p>
+</div>
+</div>
+
+
+          </div>
+          <footer>
+  
+    <div class="rst-footer-buttons" role="navigation" aria-label="footer navigation">
+      
+        <a href="intro.html" class="btn btn-neutral float-right" title="Introduction"/>Next <span class="fa fa-arrow-circle-right"></span></a>
+      
+      
+        <a href="who.html" class="btn btn-neutral" title="Who this package is for"><span class="fa fa-arrow-circle-left"></span> Previous</a>
+      
+    </div>
+  
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>
+        &copy; Copyright 2014, Dougal J. Sutherland.
+    </p>
+  </div>
+
+  <a href="https://github.com/snide/sphinx_rtd_theme">Sphinx theme</a> provided by <a href="https://readthedocs.org">Read the Docs</a>
+</footer>
+        </div>
+      </div>
+
+    </section>
+
+  </div>
+  
+
+
+  
+
+    <script type="text/javascript">
+        var DOCUMENTATION_OPTIONS = {
+            URL_ROOT:'./',
+            VERSION:'0.1.0-dev',
+            COLLAPSE_INDEX:false,
+            FILE_SUFFIX:'.html',
+            HAS_SOURCE:  true
+        };
+    </script>
+      <script type="text/javascript" src="_static/jquery.js"></script>
+      <script type="text/javascript" src="_static/underscore.js"></script>
+      <script type="text/javascript" src="_static/doctools.js"></script>
+      <script type="text/javascript" src="https://cdn.mathjax.org/mathjax/latest/MathJax.js?config=TeX-AMS-MML_HTMLorMML"></script>
+
+  
+
+  
+  
+    <script type="text/javascript" src="_static/js/theme.js"></script>
+  
+
+  
+  
+  <script type="text/javascript">
+      jQuery(function () {
+          SphinxRtdTheme.StickyNav.enable();
+      });
+  </script>
+   
+
+</body>
+</html>
