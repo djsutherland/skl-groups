@@ -1,5 +1,5 @@
-Introduction
-============
+Overview
+========
 
 skl-groups is a package that extends the Python machine learning toolkit
 `scikit-learn <http://scikit-learn.org/>`_ with support for operating on
