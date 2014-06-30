@@ -6,6 +6,7 @@
 # Copyright 2013 Lars Buitinck / University of Amsterdam.
 # License: MIT (http://opensource.org/licenses/MIT)
 
+# Based on:
 # https://github.com/larsmans/seqlearn/blob/d7a3d82c/doc/hash-tree.py
 
 import os
@@ -17,7 +18,7 @@ import sys
 
 def hash_file(path):
     """Write file at path to Git index, return its SHA1 as a string."""
-    return check_output(["git", "hash-object", "-w", "--", path]).strip()
+    return check_output(["git", "hash-object", "-w", "--", path]).decode().strip()
 
 
 def _lstree(files, dirs):
@@ -31,7 +32,8 @@ def _lstree(files, dirs):
 
 def _mktree(files, dirs):
     mkt = Popen(["git", "mktree", "-z"], stdin=PIPE, stdout=PIPE)
-    return mkt.communicate("".join(_lstree(files, dirs)))[0].strip()
+    inp = "".join(_lstree(files, dirs)).encode('ascii')
+    return mkt.communicate(inp)[0].strip().decode()
 
 
 def hash_dir(path):
