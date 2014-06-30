@@ -70,7 +70,7 @@ class L2DensityTransformer(BaseEstimator, TransformerMixin):
         cosines with differently-scaled periods.
 
     do_bounds_check : boolean, optional, default True
-        Whether to make sure that the data is in [0, 1] in transform().
+        Whether to make sure that the data is in [0, 1] in :meth:`transform`.
         (If you skip this check, and the data isn't in the right scale, you'll
         get silently incorrect results.)
     
@@ -102,6 +102,7 @@ class L2DensityTransformer(BaseEstimator, TransformerMixin):
 
     @property
     def dim_(self):
+        "The dimension of the transformed vectors, once fitted."
         self._check_fitted()
         return self.inds_.shape[1]
 
@@ -143,7 +144,7 @@ class L2DensityTransformer(BaseEstimator, TransformerMixin):
 
         Returns
         -------
-        X_new : integer array, shape [len(X), kmeans.n_clusters]
+        X_new : integer array, shape ``[len(X), dim_]``
             X transformed into the new space.
         '''
         self._check_fitted()

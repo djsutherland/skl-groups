@@ -60,27 +60,31 @@ class KNNDivergenceEstimator(BaseEstimator, TransformerMixin):
     them. The valid divergence functions are, where p and q refer to the density
     functions for two bags:
 
-    * 'kl': The Kullback-Liebler divergence, which acts like a distance and has
-      some attractive information-theoretic properties as well as often giving
-      good results on machine learning problems in practice. Values are
-      nonnegative but can go to infinity.
+    * 'kl': The `Kullback-Liebler divergence <https://en.wikipedia.org/wiki/KL_divergence>`_,
+      which acts like a distance and has some attractive information-theoretic
+      properties as well as often giving good results on machine learning
+      problems in practice. Values are nonnegative but can go to infinity.
       :math:`\int p(x) \log\left( \frac{p(x)}{q(x)} \right) dx`.
       Estimated as in [1]_.
-    * 'renyi:.8' or any other number (other than 1): The Renyi-alpha divergence,
+    * 'renyi:.8' or any other number (other than 1): The
+      `Renyi-alpha divergence <https://en.wikipedia.org/wiki/Renyi_divergence#R.C3.A9nyi_divergence>`_,
       :math:`\frac{1}{\alpha - 1} \log \int p(x) \left( \frac{p(x)}{q(x)} \right)^{\alpha - 1} dx`.
       Converges to 'kl' as :math:`\alpha` goes to 1.
       Values are nonnegative, but can go to infinity.
       Estimated as in [2]_.
-    * 'tsallis:.8' or any other number (other than 1): The Tsallis-alpha divergence,
+    * 'tsallis:.8' or any other number (other than 1): The 
+      `Tsallis-alpha divergence <https://en.wikipedia.org/wiki/Tsallis_entropy>`_,
       :math:`\frac{1}{\alpha - 1} \left( \int p(x) \left(\frac{p(x)}{q(x)} \right)^{\alpha - 1} dx - 1 \right)`.
       Converges to `kl` as :math:`\alpha` goes to 1.
       Values are nonnegative, but can go to infinity.
       Estimated as in [2]_.
-    * 'hellinger': The Hellinger distance, which is a true distance (i.e. it is
-      symmetric and its true value satisfies the triangle inequality) and is
-      between 0 and 1. Defined by :math:`\sqrt{1 - \int \sqrt{p(x) q(x)} dx}`.
+    * 'hellinger': The `Hellinger distance <https://en.wikipedia.org/wiki/Hellinger_distance>`_,
+      which is a true distance (i.e. it is symmetric and its true value
+      satisfies the triangle inequality) and is between 0 and 1.
+      Defined by :math:`\sqrt{1 - \int \sqrt{p(x) q(x)} dx}`.
       Estimated as in [2]_.
-    * 'bc': The Bhattacharyya coefficient, `:math:\int \sqrt{p(x) q(x)} dx`.
+    * 'bc': The `Bhattacharyya coefficient <https://en.wikipedia.org/wiki/Bhattacharyya_coefficient>`_,
+      :math:`\int \sqrt{p(x) q(x)} dx`.
       This is an affinity rather than a distance and is between 0 and 1.
       Estimated as in [2]_.
     * 'l2': The :math:`L_2` distance between density functions
@@ -89,7 +93,8 @@ class KNNDivergenceEstimator(BaseEstimator, TransformerMixin):
       A true distance function (symmetric and satisfies the triangle inequality.)
     * 'linear': :math:`\int p(x) q(x) dx`.
       Estimated as in [2]_.
-    * 'jensen-shannon' or 'js': The Jensen-Shannon divergence.
+    * 'jensen-shannon' or 'js': The
+      `Jensen-Shannon divergence <https://en.wikipedia.org/wiki/Jensen%E2%80%93Shannon_divergence>`_.
       Equal to :math:`\frac{1}{2} D(p \| M) + \tfrac{1}{2} D(q \| M)`,
       where D is the Kullback-Liebler divergence
       and M is an equal mixture between p and q,
@@ -99,6 +104,9 @@ class KNNDivergenceEstimator(BaseEstimator, TransformerMixin):
       and is between 0 and :math:`\ln 2`.
       Estimated using [3]_.
 
+    Note that even for the true distance functions,
+    resulting kernels will not necessarily be positive semidefinite
+    due to estimation error.
 
     Parameters
     ----------

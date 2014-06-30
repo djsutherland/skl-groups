@@ -5,7 +5,7 @@ help:
 	@echo "docs - generate Sphinx HTML docs"
 
 docs:
-	$(MAKE) -C docs clean
+	rm -rf docs/_build/html
 	$(MAKE) -C docs html
 
 test:

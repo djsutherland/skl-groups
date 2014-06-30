@@ -16,11 +16,13 @@ class Features(object):
     vectors corresponding to a single "object.")
 
     Supports storing data in two major ways:
-      - As a set of pointers to a numpy array per bag. This is the default,
-        because it usually doesn't require copying all of your data. Note that
-        the sub-arrays are not enforced to be row-major or even contiguous.
-      - As a single big row-major array. This lets you do certain things more
-        easily (e.g. run PCA).
+
+    - As a list of pointers to a numpy array per bag. This is the default,
+      because it usually doesn't require copying all of your data. Note that
+      the sub-arrays are not enforced to be row-major or even contiguous.
+
+    - As a single big row-major array. This lets you do certain things more
+      easily (e.g. run PCA).
 
     The main usage API is the same for both versions; you can distinguish them
     with the `stacked` property, and convert from pointers to stacked with the

@@ -274,7 +274,11 @@ autodoc_default_flags = ['members']
 
 mathjax_path = 'https://cdn.mathjax.org/mathjax/latest/MathJax.js?config=TeX-AMS-MML_HTMLorMML'
 
+todo_include_todos = True
+
 intersphinx_mapping = {
   'python': ('http://docs.python.org/3', None),
   'sklearn': ('http://scikit-learn.org/stable/', None),
+  'numpy': ('http://docs.scipy.org/doc/numpy/', None),
+  'scipy': ('http://docs.scipy.org/doc/scipy/reference/', None),
 }
