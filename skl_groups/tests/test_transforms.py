@@ -4,6 +4,7 @@ import os
 import sys
 
 import numpy as np
+from sklearn.metrics.pairwise import euclidean_distances
 from nose.tools import assert_raises
 
 if __name__ == '__main__':
@@ -12,7 +13,8 @@ if __name__ == '__main__':
     sys.path.insert(0, os.path.dirname(os.path.dirname(_this_dir)))
 
 from skl_groups.kernels.transform import (
-        PairwisePicker, Symmetrize, ProjectPSD, FlipPSD, ShiftPSD, SquarePSD)
+        PairwisePicker, Symmetrize, RBFize,
+        ProjectPSD, FlipPSD, ShiftPSD, SquarePSD)
 
 ################################################################################
 
@@ -42,6 +44,27 @@ def test_symmetrize():
     sym = Symmetrize()
     assert_raises(NotImplementedError, lambda: sym.fit(X))
     assert_raises(TypeError, lambda: sym.fit_transform(np.zeros((5, 3))))
+
+
+def test_rbfize():
+    X = np.random.normal(size=(20, 4))
+    dists = euclidean_distances(X)
+    median = np.median(dists[np.triu_indices_from(dists)])
+
+    rbf = RBFize(gamma=.25)
+    res = rbf.fit_transform(dists)
+    assert not hasattr(res, 'median_')
+    assert np.allclose(res, np.exp(-.25 * dists ** 2))
+
+    rbf = RBFize(gamma=.25, squared=True)
+    res = rbf.fit_transform(dists)
+    assert np.allclose(res, np.exp(-.25 * dists))
+
+    rbf = RBFize(gamma=4, scale_by_median=True)
+    res = rbf.fit_transform(dists)
+    assert np.allclose(rbf.median_, median)
+    assert np.allclose(res, np.exp((-4 * median) * dists ** 2))
+
 
 
 def test_project():

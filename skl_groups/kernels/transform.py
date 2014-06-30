@@ -4,6 +4,7 @@ from sklearn.base import BaseEstimator, TransformerMixin
 from sklearn.externals.joblib import Memory
 from sklearn.externals.six import string_types, with_metaclass
 from sklearn.externals.six.moves import xrange
+from sklearn.utils import array2d
 
 def get_memory(memory):
     if isinstance(memory, string_types):
@@ -95,6 +96,104 @@ class Symmetrize(BaseEstimator, TransformerMixin):
         X = X + X.T
         X /= 2
         return X
+
+
+class RBFize(BaseEstimator, TransformerMixin):
+    r'''
+    Turns a distance matrix into an RBF kernel:
+    :math:`K(x, y) = \exp\left( - \gamma \lVert x - y \rVert^2 \right)`.
+
+    For the output to be a valid kernel, the inputs should either be
+    Euclidean distances, e.g. the output of
+    :func:`sklearn.metrics.pairwise.euclidean_distances`,
+    or be isometrically embeddable into a Euclidean space.
+    If not, you should ensure that the result is positive semidefinite before
+    using it as a kernel, for example via :class:`ProjectPSD`.
+
+    Parameters
+    ----------
+
+    gamma : float, optional, default 1
+        The :math:`\gamma` value to use in the kernel.
+
+        Defaults to 1, but this is not a very good value to use;
+        two reasonable heuristics are 1 / feature dimension
+        or 1 / the median distance value.
+        You probably want to cross-validate on a range of possible values;
+        see also :attr:`scale_by_median`.
+
+    scale_by_median : boolean, optional, default False
+        If True, actually use the median input distance times :attr:`gamma`.
+
+    squared : boolean, optional, default False
+        Whether the inputs are treated as distances or squared distances.
+
+    copy : boolean, optional, default True
+        If False, data passed to :meth:`transform` is overwritten.
+
+    Attributes
+    ----------
+
+    `median_` : float
+        If :attr:`scale_by_median`, the median distance. Otherwise, not set.
+
+    See Also
+    --------
+    sklearn.metrics.pairwise.rbf_kernel : computes this from feature vectors
+    '''
+    _pairwise = True
+    _pairwise_output = True
+
+    def __init__(self, gamma=1, scale_by_median=False, squared=False,
+                 copy=True):
+        self.gamma = gamma
+        self.scale_by_median = scale_by_median
+        self.copy = copy
+        self.squared = squared
+
+    def fit(self, X, y=None):
+        '''
+        If scale_by_median, find :attr:`median_`; otherwise, do nothing.
+
+        Parameters
+        ----------
+        X : array
+            The raw pairwise distances.
+        '''
+
+        X = array2d(X)
+        if self.scale_by_median:
+            self.median_ = np.median(X[np.triu_indices_from(X)],
+                                     overwrite_input=True)
+        elif hasattr(self, 'median_'):
+            del self.median_
+        return self
+
+    def transform(self, X):
+        '''
+        Turns distances into RBF values.
+
+        Parameters
+        ----------
+        X : array
+            The raw pairwise distances.
+
+        Returns
+        -------
+        X_rbf : array of same shape as X
+            The distances in X passed through the RBF kernel.
+        '''
+        X = array2d(X)
+        X_rbf = np.empty_like(X) if self.copy else X
+
+        if not self.squared:
+            np.power(X, 2, out=X_rbf)
+
+        gamma = self.gamma * (self.median_ if self.scale_by_median else 1)
+        np.multiply(X if self.squared else X_rbf, -gamma, out=X_rbf)
+
+        np.exp(X_rbf, out=X_rbf)
+        return X_rbf
 
 
 class ProjectPSD(BaseEstimator, TransformerMixin):
