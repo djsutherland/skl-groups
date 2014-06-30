@@ -57,7 +57,7 @@ def cython_ext(name, **kw):
         try:
             pyx_time = os.path.getmtime(pyx_path)
             c_time = os.path.getmtime(c_path)
-            if pyx_time >= c_time:
+            if pyx_time > c_time:
                 import datetime
                 msg = "{name}.pyx file has mtime {pyx_t}, {name}.c has {c_t}"
                 raise ValueError(msg.format(
