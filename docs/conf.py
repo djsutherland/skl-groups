@@ -275,6 +275,6 @@ autodoc_default_flags = ['members']
 mathjax_path = 'https://cdn.mathjax.org/mathjax/latest/MathJax.js?config=TeX-AMS-MML_HTMLorMML'
 
 intersphinx_mapping = {
-  'python': ('http://docs.python.org/3.4', None),
+  'python': ('http://docs.python.org/3', None),
   'sklearn': ('http://scikit-learn.org/stable/', None),
 }
