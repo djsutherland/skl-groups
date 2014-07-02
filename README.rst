@@ -19,29 +19,22 @@ touch (dsutherl@cs.cmu.edu) if you're interested.
 Installation
 ------------
 
-This code is written and tested for Python 2.7, 3.3, and 3.4. 3.2 probably
-works. It is also only tested on OS X and Linux, though it's not known not to
-work on other platforms; let me know if you try it.
+Full instructions are
+`in the documentation <https://dougalsutherland.github.io/skl-groups/installation.html>`_,
+but the short version is to do::
 
-Get reasonably recent versions of numpy, scipy, and scikit-learn, then run::
+    $ conda install -c http://conda.binstar.org/dougal skl-groups
 
-    python setup.py install
+if you use conda, or::
 
-to install skl-groups. Once the package is a little more mature, it will also
-be available through pip or conda, but not just yet.
+    $ pip install skl-groups
 
-If you want to use the kNN divergence estimator, you'll need to have
-`FLANN <http://people.cs.ubc.ca/~mariusm/index.php/FLANN/FLANN>`_
-and either its Python interface (pyflann) or the
-`cyflann <https://github.com/dougalsutherland/cyflann/>`_ library.
-These can be installed after installing skl-groups.
-If you're running on non-tiny datasets, you'll want a version with OpenMP
-support.
-If you use Anaconda, the cyflann page has a pointer on how to install both
-FLANN and cyflann through conda.
-
-You may also want the
+if not. If you pip install and want to use the kNN divergence estimator,
+you'll need to install either
+`cyflann <https://github.com/dougalsutherland/cyflann/>`_
+or the regular pyflann bindings to FLANN,
+and you'll want a version of FLANN with OpenMP support.
+A faster version of the kNN estimator is enabled by the
 `skl-groups-accel <https://github.com/dougalsutherland/skl-groups-accel>`_
-package, which contains faster implementations of some of the algorithms in
-skl-groups; it's split out to make the base package of skl-groups easier to
-install. (Currently, it only has the kNN divergence estimator).
+package (also in pip), which requires cyflann
+and a working C compiler with OpenMP support (i.e. gcc).
