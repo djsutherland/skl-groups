@@ -14,13 +14,24 @@ This code is written and tested for Python 2.7, 3.3, and 3.4. 3.2 probably
 works. It is also only tested on OS X and Linux, though it's not known not to
 work on other platforms; let me know if you try it.
 
-To install, first install skl-groups,
-`cyflann <https://github.com/dougalsutherland/cyflann/>`_,
-and a recent version of Cython.
-You'll also want to use a compiler with OpenMP support, i.e. gcc instead of
-clang (`for now <https://clang-omp.github.io/>`_); if clang is your default,
-make sure to set ``CC=gcc`` (or whatever). Then run::
+The easy way to install is::
 
-    python setup.py install
+    $ conda install -c http://conda.binstar.org/dougal skl-groups
 
-to install skl-groups-accel.
+if you use conda, which includes both skl-groups and skl-groups-accel.
+
+Otherwise, first install skl-groups and
+`cyflann <https://github.com/dougalsutherland/cyflann/>`_.
+You'll also need a compiler with OpenMP support,
+so gcc (not llvm-gcc) instead of clang
+(`for now <https://clang-omp.github.io/>`_).
+On OSX, do ``brew install gcc`` and then set ``CC=gcc-4.8``;
+Linux users probably have gcc installed,
+but make sure to set ``CC`` if you default to clang.
+Then you can::
+
+    $ pip install skl-groups-accel
+
+or, from a source checkout,
+``python setup.py install`` or ``pip install .`` or whatever.
+If you're installing from a source checkout you need a recent version of Cython.
