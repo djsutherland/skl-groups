@@ -50,7 +50,7 @@ for i, X in enumerate(minus):
     ax = plt.subplot2grid(shape, (2, i), rowspan=2)
     # plt.subplot(2, n, n + i)
     plot(X, ax)
-    plt.annotate('-', (.5, .2), xycoords='axes fraction',
+    plt.annotate('-', (.5, .15), xycoords='axes fraction',
                  fontsize='large', fontweight='extra bold')
 
 ax = plt.subplot2grid(shape, (1, n), rowspan=2)
