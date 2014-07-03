@@ -84,14 +84,14 @@ and the '?' is a test point:
         ax = plt.subplot2grid(shape, (0, i), rowspan=2)
         # plt.subplot(2, n, i)
         plot(X, ax)
-        plt.annotate('+', (.5, .15), xycoords='axes fraction',
+        plt.annotate('+', (.5, .13), xycoords='axes fraction',
                      fontsize='large', fontweight='extra bold')
 
     for i, X in enumerate(minus):
         ax = plt.subplot2grid(shape, (2, i), rowspan=2)
         # plt.subplot(2, n, n + i)
         plot(X, ax)
-        plt.annotate('-', (.5, .15), xycoords='axes fraction',
+        plt.annotate('-', (.5, .13), xycoords='axes fraction',
                      fontsize='large', fontweight='extra bold')
 
     ax = plt.subplot2grid(shape, (1, n), rowspan=2)
@@ -309,13 +309,13 @@ Plotting how the bags lie on the selected codewords
     for i, X in enumerate(plus):
         ax = plt.subplot2grid(shape, (0, i), rowspan=2)
         plot(X, ax)
-        plt.annotate('+', (.5, .15), xycoords='axes fraction',
+        plt.annotate('+', (.5, .13), xycoords='axes fraction',
                      fontsize='large', fontweight='extra bold')
 
     for i, X in enumerate(minus):
         ax = plt.subplot2grid(shape, (2, i), rowspan=2)
         plot(X, ax)
-        plt.annotate('-', (.5, .15), xycoords='axes fraction',
+        plt.annotate('-', (.5, .13), xycoords='axes fraction',
                      fontsize='large', fontweight='extra bold')
 
     ax = plt.subplot2grid(shape, (1, n), rowspan=2)
