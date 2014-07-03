@@ -133,10 +133,10 @@ the mean of each entry.</p>
 <p>If you have a kernel where you can compute an (approximate?) explicit
 embedding, you can compute an explicit embedding of the mean map kernel
 (MMK, also known as maximum mean discrepancy or MMD) by first doing the
-kernel embedding and then taking the mean.</p>
-<p>For example, using an approximate RBF kernel:</p>
-<div class="highlight-python"><div class="highlight"><pre><span class="n">get_rbf_mmk</span> <span class="o">=</span> <span class="n">Pipeline</span><span class="p">([</span>
-    <span class="p">(</span><span class="s">&#39;rbf&#39;</span><span class="p">,</span> <span class="n">sklearn</span><span class="o">.</span><span class="n">kernel_approximation</span><span class="o">.</span><span class="n">RBFSampler</span><span class="p">()),</span>
+kernel embedding and then taking the mean.
+Using <a class="reference external" href="http://scikit-learn.org/stable/modules/generated/sklearn.kernel_approximation.RBFSampler.html#sklearn.kernel_approximation.RBFSampler" title="(in scikit-learn v0.14)"><tt class="xref py py-class docutils literal"><span class="pre">sklearn.kernel_approximation.RBFSampler</span></tt></a>:</p>
+<div class="highlight-python"><div class="highlight"><pre><span class="n">rbf_mmk</span> <span class="o">=</span> <span class="n">Pipeline</span><span class="p">([</span>
+    <span class="p">(</span><span class="s">&#39;rbf&#39;</span><span class="p">,</span> <span class="n">RBFSampler</span><span class="p">()),</span>
     <span class="p">(</span><span class="s">&#39;mean&#39;</span><span class="p">,</span> <span class="n">BagMean</span><span class="p">()),</span>
 <span class="p">])</span>
 </pre></div>

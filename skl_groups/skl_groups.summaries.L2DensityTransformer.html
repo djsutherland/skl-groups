@@ -129,7 +129,7 @@
 <em class="property">class </em><tt class="descclassname">skl_groups.summaries.</tt><tt class="descname">L2DensityTransformer</tt><big>(</big><em>smoothness</em>, <em>basis='cosine'</em>, <em>do_bounds_check=True</em><big>)</big><a class="headerlink" href="#skl_groups.summaries.L2DensityTransformer" title="Permalink to this definition">¶</a></dt>
 <dd><p>Summarizes sets into a single vector, whose inner products estimate the
 L2 inner product between the density functions underlying each of the sets.</p>
-<p><em>IMPORTANT</em>: Assumes that inputs lie in [0, 1] - use
+<p><strong>IMPORTANT</strong>: Assumes that inputs lie in [0, 1] - use
 <a class="reference internal" href="skl_groups.preprocessing.BagMinMaxScaler.html#skl_groups.preprocessing.BagMinMaxScaler" title="skl_groups.preprocessing.BagMinMaxScaler"><tt class="xref py py-class docutils literal"><span class="pre">skl_groups.preprocessing.BagMinMaxScaler</span></tt></a> to make this true.
 (TODO: add a truncating scaler to handle the test case as well.)</p>
 <p>Classifiers built off of this representation can scale to very large set
@@ -300,7 +300,7 @@ specific numbers:</p>
 </tr>
 </tbody>
 </table>
-<p>For more on the estimator, see <a class="reference internal" href="#r5" id="id1">[R5]</a>, which effectively uses a pipeline of
+<p>For more on the estimator, see <a class="reference internal" href="#r10" id="id1">[R10]</a>, which effectively uses a pipeline of
 <a class="reference internal" href="skl_groups.preprocessing.BagMinMaxScaler.html#skl_groups.preprocessing.BagMinMaxScaler" title="skl_groups.preprocessing.BagMinMaxScaler"><tt class="xref py py-class docutils literal"><span class="pre">skl_groups.preprocessing.BagMinMaxScaler</span></tt></a>,
 <a class="reference internal" href="#skl_groups.summaries.L2DensityTransformer" title="skl_groups.summaries.L2DensityTransformer"><tt class="xref py py-class docutils literal"><span class="pre">L2DensityTransformer</span></tt></a>,
 <a class="reference external" href="http://scikit-learn.org/stable/modules/generated/sklearn.kernel_approximation.RBFSampler.html#sklearn.kernel_approximation.RBFSampler" title="(in scikit-learn v0.14)"><tt class="xref py py-class docutils literal"><span class="pre">sklearn.kernel_approximation.RBFSampler</span></tt></a>,
@@ -331,10 +331,10 @@ get silently incorrect results.)</p>
 </tbody>
 </table>
 <p class="rubric">References</p>
-<table class="docutils citation" frame="void" id="r5" rules="none">
+<table class="docutils citation" frame="void" id="r10" rules="none">
 <colgroup><col class="label" /><col /></colgroup>
 <tbody valign="top">
-<tr><td class="label">[R5]</td><td><em>(<a class="fn-backref" href="#id1">1</a>, <a class="fn-backref" href="#id2">2</a>)</em> J. B. Oliva, B. Poczos, &amp; J. Schneider (2014).
+<tr><td class="label">[R10]</td><td><em>(<a class="fn-backref" href="#id1">1</a>, <a class="fn-backref" href="#id2">2</a>)</em> J. B. Oliva, B. Poczos, &amp; J. Schneider (2014).
 Fast Distribution To Real Regression.
 In Proceedings of the 17th International Conference on
 Artificial Intelligence and Statistics (AISTATS).</td></tr>
