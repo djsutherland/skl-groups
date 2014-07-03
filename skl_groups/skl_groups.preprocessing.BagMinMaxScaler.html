@@ -126,11 +126,10 @@
 <h1>skl_groups.preprocessing.BagMinMaxScaler<a class="headerlink" href="#skl-groups-preprocessing-bagminmaxscaler" title="Permalink to this headline">¶</a></h1>
 <dl class="class">
 <dt id="skl_groups.preprocessing.BagMinMaxScaler">
-<em class="property">class </em><tt class="descclassname">skl_groups.preprocessing.</tt><tt class="descname">BagMinMaxScaler</tt><big>(</big><em>feature_range=(0</em>, <em>1)</em><big>)</big><a class="reference internal" href="../_modules/skl_groups/preprocessing.html#BagMinMaxScaler"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#skl_groups.preprocessing.BagMinMaxScaler" title="Permalink to this definition">¶</a></dt>
+<em class="property">class </em><tt class="descclassname">skl_groups.preprocessing.</tt><tt class="descname">BagMinMaxScaler</tt><big>(</big><em>feature_range=(0</em>, <em>1)</em>, <em>truncate=False</em>, <em>fit_feature_range=None</em><big>)</big><a class="reference internal" href="../_modules/skl_groups/preprocessing.html#BagMinMaxScaler"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#skl_groups.preprocessing.BagMinMaxScaler" title="Permalink to this definition">¶</a></dt>
 <dd><p>Linearly scales each feature dimension to lie within the given range, for
 example [0, 1].</p>
-<p>This is just <a class="reference internal" href="skl_groups.preprocessing.BagPreprocesser.html#skl_groups.preprocessing.BagPreprocesser" title="skl_groups.preprocessing.BagPreprocesser"><tt class="xref py py-class docutils literal"><span class="pre">BagPreprocesser</span></tt></a> with
-<a class="reference external" href="http://scikit-learn.org/stable/modules/generated/sklearn.preprocessing.MinMaxScaler.html#sklearn.preprocessing.MinMaxScaler" title="(in scikit-learn v0.14)"><tt class="xref py py-class docutils literal"><span class="pre">sklearn.preprocessing.MinMaxScaler</span></tt></a>.</p>
+<p>This is just <a class="reference internal" href="skl_groups.preprocessing.BagPreprocesser.html#skl_groups.preprocessing.BagPreprocesser" title="skl_groups.preprocessing.BagPreprocesser"><tt class="xref py py-class docutils literal"><span class="pre">BagPreprocesser</span></tt></a> with <tt class="xref py py-class docutils literal"><span class="pre">MinMaxScaler</span></tt>.</p>
 <table class="docutils field-list" frame="void" rules="none">
 <col class="field-name" />
 <col class="field-body" />
@@ -145,7 +144,7 @@ example [0, 1].</p>
 </table>
 <dl class="method">
 <dt id="skl_groups.preprocessing.BagMinMaxScaler.__init__">
-<tt class="descname">__init__</tt><big>(</big><em>feature_range=(0</em>, <em>1)</em><big>)</big><a class="reference internal" href="../_modules/skl_groups/preprocessing.html#BagMinMaxScaler.__init__"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#skl_groups.preprocessing.BagMinMaxScaler.__init__" title="Permalink to this definition">¶</a></dt>
+<tt class="descname">__init__</tt><big>(</big><em>feature_range=(0</em>, <em>1)</em>, <em>truncate=False</em>, <em>fit_feature_range=None</em><big>)</big><a class="reference internal" href="../_modules/skl_groups/preprocessing.html#BagMinMaxScaler.__init__"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#skl_groups.preprocessing.BagMinMaxScaler.__init__" title="Permalink to this definition">¶</a></dt>
 <dd></dd></dl>
 
 <p class="rubric">Methods</p>
@@ -155,7 +154,7 @@ example [0, 1].</p>
 <col width="90%" />
 </colgroup>
 <tbody valign="top">
-<tr class="row-odd"><td><a class="reference internal" href="#skl_groups.preprocessing.BagMinMaxScaler.__init__" title="skl_groups.preprocessing.BagMinMaxScaler.__init__"><tt class="xref py py-obj docutils literal"><span class="pre">__init__</span></tt></a>([feature_range])</td>
+<tr class="row-odd"><td><a class="reference internal" href="#skl_groups.preprocessing.BagMinMaxScaler.__init__" title="skl_groups.preprocessing.BagMinMaxScaler.__init__"><tt class="xref py py-obj docutils literal"><span class="pre">__init__</span></tt></a>([feature_range,&nbsp;truncate,&nbsp;...])</td>
 <td></td>
 </tr>
 <tr class="row-even"><td><tt class="xref py py-obj docutils literal"><span class="pre">fit</span></tt>(X[,&nbsp;y])</td>

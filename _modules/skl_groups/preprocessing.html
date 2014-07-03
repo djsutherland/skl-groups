@@ -119,9 +119,11 @@
           <div role="main">
             
   <h1>Source code for skl_groups.preprocessing</h1><div class="highlight"><pre>
+<span class="kn">import</span> <span class="nn">numpy</span> <span class="kn">as</span> <span class="nn">np</span>
 <span class="kn">from</span> <span class="nn">sklearn.base</span> <span class="kn">import</span> <span class="n">BaseEstimator</span><span class="p">,</span> <span class="n">TransformerMixin</span>
 <span class="kn">from</span> <span class="nn">sklearn.decomposition</span> <span class="kn">import</span> <span class="n">PCA</span><span class="p">,</span> <span class="n">RandomizedPCA</span>
-<span class="kn">from</span> <span class="nn">sklearn.preprocessing</span> <span class="kn">import</span> <span class="n">MinMaxScaler</span><span class="p">,</span> <span class="n">StandardScaler</span><span class="p">,</span> <span class="n">Normalizer</span>
+<span class="kn">from</span> <span class="nn">sklearn.preprocessing</span> <span class="kn">import</span> <span class="n">StandardScaler</span><span class="p">,</span> <span class="n">Normalizer</span>
+<span class="kn">from</span> <span class="nn">sklearn.utils</span> <span class="kn">import</span> <span class="n">check_arrays</span><span class="p">,</span> <span class="n">warn_if_not_float</span>
 
 <span class="kn">from</span> <span class="nn">.features</span> <span class="kn">import</span> <span class="n">Features</span>
 
@@ -257,21 +259,159 @@
         <span class="nb">super</span><span class="p">(</span><span class="n">BagStandardizer</span><span class="p">,</span> <span class="bp">self</span><span class="p">)</span><span class="o">.</span><span class="n">__init__</span><span class="p">(</span><span class="n">StandardScaler</span><span class="p">())</span>
 
 </div></div>
+<span class="k">class</span> <span class="nc">MinMaxScaler</span><span class="p">(</span><span class="n">BaseEstimator</span><span class="p">,</span> <span class="n">TransformerMixin</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;Standardizes features by scaling each feature to a given range.</span>
+
+<span class="sd">    This estimator scales and translates each feature individually such</span>
+<span class="sd">    that it is in the given range on the training set, i.e. between</span>
+<span class="sd">    zero and one.</span>
+
+<span class="sd">    The standardization is given by::</span>
+<span class="sd">        X_std = (X - X.min(axis=0)) / (X.max(axis=0) - X.min(axis=0))</span>
+<span class="sd">        X_scaled = X_std * (max - min) + min</span>
+
+<span class="sd">    where min, max = feature_range.</span>
+
+<span class="sd">    This standardization is often used as an alternative to zero mean,</span>
+<span class="sd">    unit variance scaling.</span>
+
+<span class="sd">    Notes</span>
+<span class="sd">    -----</span>
+
+<span class="sd">    This is a version of :class:`sklearn.preprocessing.MinMaxScaler`</span>
+<span class="sd">    with support for truncation added. It&#39;s been</span>
+<span class="sd">    `proposed &lt;https://github.com/scikit-learn/scikit-learn/pull/3342&gt;`_</span>
+<span class="sd">    for inclusion in scikit-learn, but is not yet in there.</span>
+
+<span class="sd">    Parameters</span>
+<span class="sd">    ----------</span>
+<span class="sd">    feature_range: tuple (min, max), default=(0, 1)</span>
+<span class="sd">        Desired range of transformed data.</span>
+
+<span class="sd">    copy : boolean, optional, default is True</span>
+<span class="sd">        Set to False to perform inplace row normalization and avoid a</span>
+<span class="sd">        copy (if the input is already a numpy array).</span>
+
+<span class="sd">    truncate : boolean, optional, default is False</span>
+<span class="sd">        If True, :meth:`transform` will truncate any inputs that lie outside</span>
+<span class="sd">        the min/max of the values passed to :meth:`fit` to lie on the ends</span>
+<span class="sd">        of feature_range. Normally, the transform of these points will be</span>
+<span class="sd">        outside feature_range.</span>
+
+<span class="sd">    fit_feature_range : None or tuple (min, max), default None</span>
+<span class="sd">        If not None, :meth:`fit` will actually rescale such that the passed</span>
+<span class="sd">        features all lie within fit_feature_range rather than just</span>
+<span class="sd">        feature_range. This is useful when truncate is True, to give</span>
+<span class="sd">        some &quot;wiggle room&quot; before it starts truncating. Otherwise it just</span>
+<span class="sd">        effectively overrides feature_range.</span>
+
+<span class="sd">    Attributes</span>
+<span class="sd">    ----------</span>
+<span class="sd">    `min_` : ndarray, shape (n_features,)</span>
+<span class="sd">        Per feature adjustment for minimum.</span>
+
+<span class="sd">    `scale_` : ndarray, shape (n_features,)</span>
+<span class="sd">        Per feature relative scaling of the data.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+
+    <span class="k">def</span> <span class="nf">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">feature_range</span><span class="o">=</span><span class="p">(</span><span class="mi">0</span><span class="p">,</span> <span class="mi">1</span><span class="p">),</span> <span class="n">copy</span><span class="o">=</span><span class="bp">True</span><span class="p">,</span> <span class="n">truncate</span><span class="o">=</span><span class="bp">False</span><span class="p">,</span>
+                 <span class="n">fit_feature_range</span><span class="o">=</span><span class="bp">None</span><span class="p">):</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">feature_range</span> <span class="o">=</span> <span class="n">feature_range</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">copy</span> <span class="o">=</span> <span class="n">copy</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">truncate</span> <span class="o">=</span> <span class="n">truncate</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">fit_feature_range</span> <span class="o">=</span> <span class="n">fit_feature_range</span>
+
+    <span class="k">def</span> <span class="nf">fit</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">X</span><span class="p">,</span> <span class="n">y</span><span class="o">=</span><span class="bp">None</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;Compute the minimum and maximum to be used for later scaling.</span>
+
+<span class="sd">        Parameters</span>
+<span class="sd">        ----------</span>
+<span class="sd">        X : array-like, shape [n_samples, n_features]</span>
+<span class="sd">            The data used to compute the per-feature minimum and maximum</span>
+<span class="sd">            used for later scaling along the features axis.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="n">X</span> <span class="o">=</span> <span class="n">check_arrays</span><span class="p">(</span><span class="n">X</span><span class="p">,</span> <span class="n">sparse_format</span><span class="o">=</span><span class="s">&quot;dense&quot;</span><span class="p">,</span> <span class="n">copy</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">copy</span><span class="p">)[</span><span class="mi">0</span><span class="p">]</span>
+        <span class="n">warn_if_not_float</span><span class="p">(</span><span class="n">X</span><span class="p">,</span> <span class="n">estimator</span><span class="o">=</span><span class="bp">self</span><span class="p">)</span>
+
+        <span class="n">feature_range</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">feature_range</span>
+        <span class="k">if</span> <span class="n">feature_range</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span> <span class="o">&gt;=</span> <span class="n">feature_range</span><span class="p">[</span><span class="mi">1</span><span class="p">]:</span>
+            <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="s">&quot;Minimum of desired feature range must be smaller&quot;</span>
+                             <span class="s">&quot; than maximum. Got </span><span class="si">%s</span><span class="s">.&quot;</span> <span class="o">%</span> <span class="nb">str</span><span class="p">(</span><span class="n">feature_range</span><span class="p">))</span>
+        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">fit_feature_range</span> <span class="ow">is</span> <span class="ow">not</span> <span class="bp">None</span><span class="p">:</span>
+            <span class="n">fit_feature_range</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">fit_feature_range</span>
+            <span class="k">if</span> <span class="n">fit_feature_range</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span> <span class="o">&gt;=</span> <span class="n">fit_feature_range</span><span class="p">[</span><span class="mi">1</span><span class="p">]:</span>
+                <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="s">&quot;Minimum of desired (fit) feature range must &quot;</span>
+                                 <span class="s">&quot;be smaller than maximum. Got </span><span class="si">%s</span><span class="s">.&quot;</span>
+                                 <span class="o">%</span> <span class="nb">str</span><span class="p">(</span><span class="n">feature_range</span><span class="p">))</span>
+            <span class="k">if</span> <span class="p">(</span><span class="n">fit_feature_range</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span> <span class="o">&lt;</span> <span class="n">feature_range</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span> <span class="ow">or</span>
+                    <span class="n">fit_feature_range</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span> <span class="o">&gt;</span> <span class="n">feature_range</span><span class="p">[</span><span class="mi">1</span><span class="p">]):</span>
+                <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="s">&quot;fit_feature_range must be a subset of &quot;</span>
+                                 <span class="s">&quot;feature_range. Got </span><span class="si">%s</span><span class="s">, fit </span><span class="si">%s</span><span class="s">.&quot;</span>
+                                 <span class="o">%</span> <span class="p">(</span><span class="nb">str</span><span class="p">(</span><span class="n">feature_range</span><span class="p">),</span>
+                                    <span class="nb">str</span><span class="p">(</span><span class="n">fit_feature_range</span><span class="p">)))</span>
+            <span class="n">feature_range</span> <span class="o">=</span> <span class="n">fit_feature_range</span>
+
+        <span class="n">data_min</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">min</span><span class="p">(</span><span class="n">X</span><span class="p">,</span> <span class="n">axis</span><span class="o">=</span><span class="mi">0</span><span class="p">)</span>
+        <span class="n">data_range</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">max</span><span class="p">(</span><span class="n">X</span><span class="p">,</span> <span class="n">axis</span><span class="o">=</span><span class="mi">0</span><span class="p">)</span> <span class="o">-</span> <span class="n">data_min</span>
+        <span class="c"># Do not scale constant features</span>
+        <span class="n">data_range</span><span class="p">[</span><span class="n">data_range</span> <span class="o">==</span> <span class="mf">0.0</span><span class="p">]</span> <span class="o">=</span> <span class="mf">1.0</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">scale_</span> <span class="o">=</span> <span class="p">(</span><span class="n">feature_range</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span> <span class="o">-</span> <span class="n">feature_range</span><span class="p">[</span><span class="mi">0</span><span class="p">])</span> <span class="o">/</span> <span class="n">data_range</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">min_</span> <span class="o">=</span> <span class="n">feature_range</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span> <span class="o">-</span> <span class="n">data_min</span> <span class="o">*</span> <span class="bp">self</span><span class="o">.</span><span class="n">scale_</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">data_range</span> <span class="o">=</span> <span class="n">data_range</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">data_min</span> <span class="o">=</span> <span class="n">data_min</span>
+        <span class="k">return</span> <span class="bp">self</span>
+
+    <span class="k">def</span> <span class="nf">transform</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">X</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;Scaling features of X according to feature_range.</span>
+
+<span class="sd">        Parameters</span>
+<span class="sd">        ----------</span>
+<span class="sd">        X : array-like with shape [n_samples, n_features]</span>
+<span class="sd">            Input data that will be transformed.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="n">X</span> <span class="o">=</span> <span class="n">check_arrays</span><span class="p">(</span><span class="n">X</span><span class="p">,</span> <span class="n">sparse_format</span><span class="o">=</span><span class="s">&quot;dense&quot;</span><span class="p">,</span> <span class="n">copy</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">copy</span><span class="p">)[</span><span class="mi">0</span><span class="p">]</span>
+        <span class="n">X</span> <span class="o">*=</span> <span class="bp">self</span><span class="o">.</span><span class="n">scale_</span>
+        <span class="n">X</span> <span class="o">+=</span> <span class="bp">self</span><span class="o">.</span><span class="n">min_</span>
+        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">truncate</span><span class="p">:</span>
+            <span class="n">np</span><span class="o">.</span><span class="n">maximum</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">feature_range</span><span class="p">[</span><span class="mi">0</span><span class="p">],</span> <span class="n">X</span><span class="p">,</span> <span class="n">out</span><span class="o">=</span><span class="n">X</span><span class="p">)</span>
+            <span class="n">np</span><span class="o">.</span><span class="n">minimum</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">feature_range</span><span class="p">[</span><span class="mi">1</span><span class="p">],</span> <span class="n">X</span><span class="p">,</span> <span class="n">out</span><span class="o">=</span><span class="n">X</span><span class="p">)</span>
+        <span class="k">return</span> <span class="n">X</span>
+
+    <span class="k">def</span> <span class="nf">inverse_transform</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">X</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;Undo the scaling of X according to feature_range.</span>
+
+<span class="sd">        Note that if truncate is true, any truncated points will not</span>
+<span class="sd">        be restored exactly.</span>
+
+<span class="sd">        Parameters</span>
+<span class="sd">        ----------</span>
+<span class="sd">        X : array-like with shape [n_samples, n_features]</span>
+<span class="sd">            Input data that will be transformed.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="n">X</span> <span class="o">=</span> <span class="n">check_arrays</span><span class="p">(</span><span class="n">X</span><span class="p">,</span> <span class="n">sparse_format</span><span class="o">=</span><span class="s">&quot;dense&quot;</span><span class="p">,</span> <span class="n">copy</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">copy</span><span class="p">)[</span><span class="mi">0</span><span class="p">]</span>
+        <span class="n">X</span> <span class="o">-=</span> <span class="bp">self</span><span class="o">.</span><span class="n">min_</span>
+        <span class="n">X</span> <span class="o">/=</span> <span class="bp">self</span><span class="o">.</span><span class="n">scale_</span>
+        <span class="k">return</span> <span class="n">X</span>
+
+
+
 <div class="viewcode-block" id="BagMinMaxScaler"><a class="viewcode-back" href="../../skl_groups/skl_groups.preprocessing.BagMinMaxScaler.html#skl_groups.preprocessing.BagMinMaxScaler">[docs]</a><span class="k">class</span> <span class="nc">BagMinMaxScaler</span><span class="p">(</span><span class="n">BagPreprocesser</span><span class="p">):</span>
     <span class="sd">&#39;&#39;&#39;</span>
 <span class="sd">    Linearly scales each feature dimension to lie within the given range, for</span>
 <span class="sd">    example [0, 1].</span>
 
-<span class="sd">    This is just :class:`BagPreprocesser` with</span>
-<span class="sd">    :class:`sklearn.preprocessing.MinMaxScaler`.</span>
+<span class="sd">    This is just :class:`BagPreprocesser` with :class:`MinMaxScaler`.</span>
 
 <span class="sd">    Parameters</span>
 <span class="sd">    ----------</span>
 <span class="sd">    feature_range : tuple (min, max), default = (0, 1)</span>
 <span class="sd">        Desired range of the transformed data.</span>
 <span class="sd">    &#39;&#39;&#39;</span>
-<div class="viewcode-block" id="BagMinMaxScaler.__init__"><a class="viewcode-back" href="../../skl_groups/skl_groups.preprocessing.BagMinMaxScaler.html#skl_groups.preprocessing.BagMinMaxScaler.__init__">[docs]</a>    <span class="k">def</span> <span class="nf">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">feature_range</span><span class="o">=</span><span class="p">(</span><span class="mi">0</span><span class="p">,</span> <span class="mi">1</span><span class="p">)):</span>
-        <span class="nb">super</span><span class="p">(</span><span class="n">BagMinMaxScaler</span><span class="p">,</span> <span class="bp">self</span><span class="p">)</span><span class="o">.</span><span class="n">__init__</span><span class="p">(</span><span class="n">MinMaxScaler</span><span class="p">(</span><span class="n">feature_range</span><span class="p">))</span>
+<div class="viewcode-block" id="BagMinMaxScaler.__init__"><a class="viewcode-back" href="../../skl_groups/skl_groups.preprocessing.BagMinMaxScaler.html#skl_groups.preprocessing.BagMinMaxScaler.__init__">[docs]</a>    <span class="k">def</span> <span class="nf">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">feature_range</span><span class="o">=</span><span class="p">(</span><span class="mi">0</span><span class="p">,</span> <span class="mi">1</span><span class="p">),</span> <span class="n">truncate</span><span class="o">=</span><span class="bp">False</span><span class="p">,</span>
+                 <span class="n">fit_feature_range</span><span class="o">=</span><span class="bp">None</span><span class="p">):</span>
+        <span class="nb">super</span><span class="p">(</span><span class="n">BagMinMaxScaler</span><span class="p">,</span> <span class="bp">self</span><span class="p">)</span><span class="o">.</span><span class="n">__init__</span><span class="p">(</span><span class="n">MinMaxScaler</span><span class="p">(</span>
+            <span class="n">feature_range</span><span class="o">=</span><span class="n">feature_range</span><span class="p">,</span> <span class="n">truncate</span><span class="o">=</span><span class="n">truncate</span><span class="p">,</span>
+            <span class="n">fit_feature_range</span><span class="o">=</span><span class="n">fit_feature_range</span><span class="p">))</span>
 
 </div></div>
 <div class="viewcode-block" id="BagNormalizer"><a class="viewcode-back" href="../../skl_groups/skl_groups.preprocessing.BagNormalizer.html#skl_groups.preprocessing.BagNormalizer">[docs]</a><span class="k">class</span> <span class="nc">BagNormalizer</span><span class="p">(</span><span class="n">BagPreprocesser</span><span class="p">):</span>

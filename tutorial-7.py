@@ -3,7 +3,7 @@ plt.close('all')
 from skl_groups.preprocessing import BagMinMaxScaler
 from skl_groups.summaries import L2DensityTransformer
 
-scaled = BagMinMaxScaler((0, 1)).fit_transform(feats)
+scaled = BagMinMaxScaler((0, 1), truncate=True).fit_transform(feats)
 l2ized = L2DensityTransformer(smoothness=5).fit_transform(scaled)
 
 from sklearn.manifold import LocallyLinearEmbedding

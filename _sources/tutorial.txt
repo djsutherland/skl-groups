@@ -483,7 +483,7 @@ For example::
     >>> from skl_groups.preprocessing import BagMinMaxScaler
     >>> from skl_groups.summaries import L2DensityTransformer
     >>> model = Pipeline([
-        ('scale', BagMinMaxScaler((0, 1))),
+        ('scale', BagMinMaxScaler((0, 1), truncate=True)),
         ('l2', L2DensityTransformer(smoothness=5)),
     ])
     >>> l2ized = model.fit_transform(feats)
@@ -503,7 +503,7 @@ We can again plot a two-dimensional approximation:
     from skl_groups.preprocessing import BagMinMaxScaler
     from skl_groups.summaries import L2DensityTransformer
 
-    scaled = BagMinMaxScaler((0, 1)).fit_transform(feats)
+    scaled = BagMinMaxScaler((0, 1), truncate=True).fit_transform(feats)
     l2ized = L2DensityTransformer(smoothness=5).fit_transform(scaled)
 
     from sklearn.manifold import LocallyLinearEmbedding

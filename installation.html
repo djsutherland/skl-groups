@@ -148,6 +148,13 @@ know.</p>
 <p>The conda install includes skl-groups-accel, described below.</p>
 <p>At this point, there&#8217;s nothing special about the releases other than that
 they&#8217;re easier to install.</p>
+<p>Once it&#8217;s installed, you can check that it worked by running the tests:</p>
+<div class="highlight-python"><div class="highlight"><pre>$ pip install nose testfixtures
+$ nosetests --exe skl-groups
+</pre></div>
+</div>
+<p>If you don&#8217;t have FLANN or skl-groups-accel installed (see below),
+some tests will be skipped.</p>
 </div>
 <div class="section" id="development-version">
 <h2>Development version<a class="headerlink" href="#development-version" title="Permalink to this headline">¶</a></h2>
