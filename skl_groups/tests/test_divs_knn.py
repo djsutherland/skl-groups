@@ -11,6 +11,7 @@ from scipy.special import psi
 from sklearn.externals.six.moves import xrange, zip
 
 from nose.tools import assert_raises
+from nose import SkipTest
 from testfixtures import LogCapture
 
 if __name__ == '__main__':
@@ -22,9 +23,31 @@ from skl_groups.divergences import KNNDivergenceEstimator
 from skl_groups.features import Features
 
 
+have_flann = True
+try:
+    import cyflann
+except ImportError:
+    try:
+        import pyflann
+    except ImportError:
+        have_flann = False
+
+try:
+    import skl_groups_accel
+except ImportError:
+    have_accel = False
+else:
+    have_accel = True
+
+
 ################################################################################
 
-def test_knn_sanity():
+def test_knn_version_consistency():
+    if not have_flann:
+        raise SkipTest("No flann, so skipping knn tests.")
+    if not have_accel:
+        raise SkipTest("No skl-groups-accel, so skipping version consistency.")
+
     dim = 3
     n = 20
     np.random.seed(47)
@@ -53,6 +76,25 @@ def test_knn_sanity():
     res = est.fit_transform(bags)
     assert np.all(results['slow'] == res)
 
+
+def test_knn_sanity_slow():
+    if not have_flann:
+        raise SkipTest("No flann, so skipping knn tests.")
+
+    dim = 3
+    n = 20
+    np.random.seed(47)
+    bags = Features([np.random.randn(np.random.randint(30, 100), dim)
+                     for _ in xrange(n)])
+
+    # just make sure it runs
+    div_funcs = ('kl', 'js', 'renyi:.9', 'l2', 'tsallis:.8')
+    Ks = (3, 4)
+    est = KNNDivergenceEstimator(div_funcs=div_funcs, Ks=Ks)
+    res = est.fit_transform(bags)
+    assert res.shape == (len(div_funcs), len(Ks), n, n)
+    assert np.all(np.isfinite(res))
+
     # test that JS blows up when there's a huge difference in bag sizes
     # (so that K is too low)
     assert_raises(
@@ -76,9 +118,21 @@ def test_knn_sanity():
     assert_raises(ValueError, lambda: blah('renyi:.8'))
     assert_raises(ValueError, lambda: blah('l2'))
 
-    # test memory
+
+def test_knn_memory():
+    if not have_flann:
+        raise SkipTest("No flann, so skipping knn tests.")
+
+    dim = 3
+    n = 20
+    np.random.seed(47)
+    bags = Features([np.random.randn(np.random.randint(30, 100), dim)
+                     for _ in xrange(n)])
+
     tdir = tempfile.mkdtemp()
-    est = get_est(memory=tdir)
+    div_funcs = ('kl', 'js', 'renyi:.9', 'l2', 'tsallis:.8')
+    Ks = (3, 4)
+    est = KNNDivergenceEstimator(div_funcs=div_funcs, Ks=Ks, memory=tdir)
     res1 = est.fit_transform(bags)
 
     with LogCapture('skl_groups.divergences.knn', level=logging.INFO) as l:
@@ -94,6 +148,9 @@ def test_knn_sanity():
 
 
 def test_knn_kl():
+    if not have_flann:
+        raise SkipTest("No flann, so skipping knn tests.")
+
     # verified by hand
     # Dhat(P||Q) = \log m/(n-1) + d / n  \sum_{i=1}^n \log \nu_k(i)/rho_k(i)
     x = np.reshape([0., 1, 3], (3, 1))
@@ -107,20 +164,19 @@ def test_knn_kl():
     y_to_x = np.log(n / (m-1)) + 1/m * (
         np.log(.8 / 3) + np.log(1.2 / 2) + np.log(2.2 / 3) + np.log(6.2 / 6))
 
-    msg = "got {}, expected {} with {}"
-    for version in ['fast', 'slow']:
-        est = KNNDivergenceEstimator(div_funcs=['kl'], Ks=[2],
-                                     clamp=False, version=version)
-        res = est.fit_transform([x, y]).squeeze()
-        assert res[0, 0] == 0
-        assert res[1, 1] == 0
-        assert np.allclose(res[0, 1], x_to_y), msg.format(
-            res[0, 1], x_to_y, version)
-        assert np.allclose(res[1, 0], y_to_x), msg.format(
-            res[1, 0], y_to_x, version)
+    msg = "got {}, expected {}"
+    est = KNNDivergenceEstimator(div_funcs=['kl'], Ks=[2], clamp=False)
+    res = est.fit_transform([x, y]).squeeze()
+    assert res[0, 0] == 0
+    assert res[1, 1] == 0
+    assert np.allclose(res[0, 1], x_to_y), msg.format(res[0, 1], x_to_y)
+    assert np.allclose(res[1, 0], y_to_x), msg.format(res[1, 0], y_to_x)
 
 
 def test_knn_js():
+    if not have_flann:
+        raise SkipTest("No flann, so skipping knn tests.")
+
     # verified by hand
     x = np.reshape([0., 1, 3, 6], (4, 1))
     n = 4
@@ -151,15 +207,12 @@ def test_knn_js():
             np.log(3) + np.log(2) + np.log(3) + np.log(4) + np.log(7))
     )
 
-    msg = "got {}, expected {} with {}"
-    for version in ['fast', 'slow']:
-        est = KNNDivergenceEstimator(div_funcs=['js'], Ks=[2],
-                                     version=version, clamp=False)
-        res = est.fit([x]).transform([y])
-        assert res.shape == (1, 1, 1, 1)
-        res = res[0, 0, 0, 0]
-        assert np.allclose(res, right_js, atol=1e-6), msg.format(
-            res, right_js, version)
+    msg = "got {}, expected {}"
+    est = KNNDivergenceEstimator(div_funcs=['js'], Ks=[2], clamp=False)
+    res = est.fit([x]).transform([y])
+    assert res.shape == (1, 1, 1, 1)
+    res = res[0, 0, 0, 0]
+    assert np.allclose(res, right_js, atol=1e-6), msg.format(res, right_js)
 
 
 
