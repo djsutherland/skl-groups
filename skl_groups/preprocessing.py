@@ -1,6 +1,8 @@
+import numpy as np
 from sklearn.base import BaseEstimator, TransformerMixin
 from sklearn.decomposition import PCA, RandomizedPCA
-from sklearn.preprocessing import MinMaxScaler, StandardScaler, Normalizer
+from sklearn.preprocessing import StandardScaler, Normalizer
+from sklearn.utils import check_arrays, warn_if_not_float
 
 from .features import Features
 
@@ -136,21 +138,159 @@ class BagStandardizer(BagPreprocesser):
         super(BagStandardizer, self).__init__(StandardScaler())
 
 
+class MinMaxScaler(BaseEstimator, TransformerMixin):
+    """Standardizes features by scaling each feature to a given range.
+
+    This estimator scales and translates each feature individually such
+    that it is in the given range on the training set, i.e. between
+    zero and one.
+
+    The standardization is given by::
+        X_std = (X - X.min(axis=0)) / (X.max(axis=0) - X.min(axis=0))
+        X_scaled = X_std * (max - min) + min
+
+    where min, max = feature_range.
+
+    This standardization is often used as an alternative to zero mean,
+    unit variance scaling.
+
+    Notes
+    -----
+
+    This is a version of :class:`sklearn.preprocessing.MinMaxScaler`
+    with support for truncation added. It's been
+    `proposed <https://github.com/scikit-learn/scikit-learn/pull/3342>`_
+    for inclusion in scikit-learn, but is not yet in there.
+
+    Parameters
+    ----------
+    feature_range: tuple (min, max), default=(0, 1)
+        Desired range of transformed data.
+
+    copy : boolean, optional, default is True
+        Set to False to perform inplace row normalization and avoid a
+        copy (if the input is already a numpy array).
+
+    truncate : boolean, optional, default is False
+        If True, :meth:`transform` will truncate any inputs that lie outside
+        the min/max of the values passed to :meth:`fit` to lie on the ends
+        of feature_range. Normally, the transform of these points will be
+        outside feature_range.
+
+    fit_feature_range : None or tuple (min, max), default None
+        If not None, :meth:`fit` will actually rescale such that the passed
+        features all lie within fit_feature_range rather than just
+        feature_range. This is useful when truncate is True, to give
+        some "wiggle room" before it starts truncating. Otherwise it just
+        effectively overrides feature_range.
+
+    Attributes
+    ----------
+    `min_` : ndarray, shape (n_features,)
+        Per feature adjustment for minimum.
+
+    `scale_` : ndarray, shape (n_features,)
+        Per feature relative scaling of the data.
+    """
+
+    def __init__(self, feature_range=(0, 1), copy=True, truncate=False,
+                 fit_feature_range=None):
+        self.feature_range = feature_range
+        self.copy = copy
+        self.truncate = truncate
+        self.fit_feature_range = fit_feature_range
+
+    def fit(self, X, y=None):
+        """Compute the minimum and maximum to be used for later scaling.
+
+        Parameters
+        ----------
+        X : array-like, shape [n_samples, n_features]
+            The data used to compute the per-feature minimum and maximum
+            used for later scaling along the features axis.
+        """
+        X = check_arrays(X, sparse_format="dense", copy=self.copy)[0]
+        warn_if_not_float(X, estimator=self)
+
+        feature_range = self.feature_range
+        if feature_range[0] >= feature_range[1]:
+            raise ValueError("Minimum of desired feature range must be smaller"
+                             " than maximum. Got %s." % str(feature_range))
+        if self.fit_feature_range is not None:
+            fit_feature_range = self.fit_feature_range
+            if fit_feature_range[0] >= fit_feature_range[1]:
+                raise ValueError("Minimum of desired (fit) feature range must "
+                                 "be smaller than maximum. Got %s."
+                                 % str(feature_range))
+            if (fit_feature_range[0] < feature_range[0] or
+                    fit_feature_range[1] > feature_range[1]):
+                raise ValueError("fit_feature_range must be a subset of "
+                                 "feature_range. Got %s, fit %s."
+                                 % (str(feature_range),
+                                    str(fit_feature_range)))
+            feature_range = fit_feature_range
+
+        data_min = np.min(X, axis=0)
+        data_range = np.max(X, axis=0) - data_min
+        # Do not scale constant features
+        data_range[data_range == 0.0] = 1.0
+        self.scale_ = (feature_range[1] - feature_range[0]) / data_range
+        self.min_ = feature_range[0] - data_min * self.scale_
+        self.data_range = data_range
+        self.data_min = data_min
+        return self
+
+    def transform(self, X):
+        """Scaling features of X according to feature_range.
+
+        Parameters
+        ----------
+        X : array-like with shape [n_samples, n_features]
+            Input data that will be transformed.
+        """
+        X = check_arrays(X, sparse_format="dense", copy=self.copy)[0]
+        X *= self.scale_
+        X += self.min_
+        if self.truncate:
+            np.maximum(self.feature_range[0], X, out=X)
+            np.minimum(self.feature_range[1], X, out=X)
+        return X
+
+    def inverse_transform(self, X):
+        """Undo the scaling of X according to feature_range.
+
+        Note that if truncate is true, any truncated points will not
+        be restored exactly.
+
+        Parameters
+        ----------
+        X : array-like with shape [n_samples, n_features]
+            Input data that will be transformed.
+        """
+        X = check_arrays(X, sparse_format="dense", copy=self.copy)[0]
+        X -= self.min_
+        X /= self.scale_
+        return X
+
+
+
 class BagMinMaxScaler(BagPreprocesser):
     '''
     Linearly scales each feature dimension to lie within the given range, for
     example [0, 1].
 
-    This is just :class:`BagPreprocesser` with
-    :class:`sklearn.preprocessing.MinMaxScaler`.
+    This is just :class:`BagPreprocesser` with :class:`MinMaxScaler`.
 
     Parameters
     ----------
     feature_range : tuple (min, max), default = (0, 1)
         Desired range of the transformed data.
     '''
-    def __init__(self, feature_range=(0, 1)):
-        super(BagMinMaxScaler, self).__init__(MinMaxScaler(feature_range))
+    def __init__(self, feature_range=(0, 1), truncate=False,
+                 fit_feature_range=None):
+        super(BagMinMaxScaler, self).__init__(MinMaxScaler(
+            feature_range=feature_range, truncate=truncate,
+            fit_feature_range=fit_feature_range))
 
 
 class BagNormalizer(BagPreprocesser):

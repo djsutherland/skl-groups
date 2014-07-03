@@ -16,8 +16,9 @@ class L2DensityTransformer(BaseEstimator, TransformerMixin):
     L2 inner product between the density functions underlying each of the sets.
 
     **IMPORTANT**: Assumes that inputs lie in [0, 1] - use
-    :class:`skl_groups.preprocessing.BagMinMaxScaler` to make this true.
-    (TODO: add a truncating scaler to handle the test case as well.)
+    :class:`skl_groups.preprocessing.BagMinMaxScaler`
+    with ``feature_range=(0, 1)``, ``truncate=True``, and optionally a
+    ``fit_feature_range`` to ensure this.
 
     Classifiers built off of this representation can scale to very large set
     sizes (since they're summarized in a fixed-dimensional vector) and/or
