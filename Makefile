@@ -5,7 +5,7 @@ help:
 	@echo "docs - generate Sphinx HTML docs"
 
 docs:
-	rm -rf docs/_build/html
+	rm -rf docs/_build/html docs/_build/plot_directive
 	$(MAKE) -C docs html
 
 test:

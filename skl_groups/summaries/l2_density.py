@@ -15,7 +15,7 @@ class L2DensityTransformer(BaseEstimator, TransformerMixin):
     Summarizes sets into a single vector, whose inner products estimate the
     L2 inner product between the density functions underlying each of the sets.
 
-    *IMPORTANT*: Assumes that inputs lie in [0, 1] - use
+    **IMPORTANT**: Assumes that inputs lie in [0, 1] - use
     :class:`skl_groups.preprocessing.BagMinMaxScaler` to make this true.
     (TODO: add a truncating scaler to handle the test case as well.)
 

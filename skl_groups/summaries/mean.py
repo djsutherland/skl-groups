@@ -14,11 +14,10 @@ class BagMean(BaseEstimator, TransformerMixin):
     embedding, you can compute an explicit embedding of the mean map kernel
     (MMK, also known as maximum mean discrepancy or MMD) by first doing the
     kernel embedding and then taking the mean.
+    Using :class:`sklearn.kernel_approximation.RBFSampler`::
 
-    For example, using an approximate RBF kernel::
-
-        get_rbf_mmk = Pipeline([
-            ('rbf', sklearn.kernel_approximation.RBFSampler()),
+        rbf_mmk = Pipeline([
+            ('rbf', RBFSampler()),
             ('mean', BagMean()),
         ])
     '''

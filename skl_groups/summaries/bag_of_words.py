@@ -64,7 +64,7 @@ class BagOfWords(BaseEstimator, TransformerMixin):
 
     @property
     def codewords_(self):
-        "The selected codewords."
+        "The selected codewords; shape [n_codewords, n_features]."
         self._check_fitted()
         return self.kmeans_fit_.cluster_centers_
 
