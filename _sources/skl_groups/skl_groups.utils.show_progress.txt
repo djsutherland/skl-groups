@@ -1,0 +1,6 @@
+skl_groups.utils.show_progress
+==============================
+
+.. currentmodule:: skl_groups.utils
+
+.. autofunction:: show_progress

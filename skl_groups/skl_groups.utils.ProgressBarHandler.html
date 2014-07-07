@@ -7,7 +7,7 @@
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   
-  <title>skl_groups.kernels.Symmetrize &mdash; skl-groups 0.1.0-dev documentation</title>
+  <title>skl_groups.utils.ProgressBarHandler &mdash; skl-groups 0.1.0-dev documentation</title>
   
 
   
@@ -30,8 +30,8 @@
   
     <link rel="top" title="skl-groups 0.1.0-dev documentation" href="../index.html"/>
         <link rel="up" title="API reference" href="../reference.html"/>
-        <link rel="next" title="skl_groups.kernels.RBFize" href="skl_groups.kernels.RBFize.html"/>
-        <link rel="prev" title="skl_groups.kernels.PairwisePicker" href="skl_groups.kernels.PairwisePicker.html"/> 
+        <link rel="next" title="skl_groups.utils.show_progress" href="skl_groups.utils.show_progress.html"/>
+        <link rel="prev" title="skl_groups.utils.ProgressLogger" href="skl_groups.utils.ProgressLogger.html"/> 
 
   
   <script src="https://cdnjs.cloudflare.com/ajax/libs/modernizr/2.6.2/modernizr.min.js"></script>
@@ -84,8 +84,8 @@
 <li class="toctree-l2"><a class="reference internal" href="../reference.html#summaries">Summaries</a></li>
 <li class="toctree-l2"><a class="reference internal" href="../reference.html#set-kernels">Set kernels</a></li>
 <li class="toctree-l2"><a class="reference internal" href="../reference.html#divergences">Divergences</a></li>
-<li class="toctree-l2 current"><a class="reference internal" href="../reference.html#kernel-utilities">Kernel utilities</a></li>
-<li class="toctree-l2"><a class="reference internal" href="../reference.html#logging-related-utilities">Logging-related utilities</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../reference.html#kernel-utilities">Kernel utilities</a></li>
+<li class="toctree-l2 current"><a class="reference internal" href="../reference.html#logging-related-utilities">Logging-related utilities</a></li>
 </ul>
 </li>
 <li class="toctree-l1"><a class="reference internal" href="../todo.html">Planned improvements</a></li>
@@ -114,10 +114,10 @@
       
           <li><a href="../reference.html">API reference</a> &raquo;</li>
       
-    <li>skl_groups.kernels.Symmetrize</li>
+    <li>skl_groups.utils.ProgressBarHandler</li>
       <li class="wy-breadcrumbs-aside">
         
-          <a href="../_sources/skl_groups/skl_groups.kernels.Symmetrize.txt" rel="nofollow"> View page source</a>
+          <a href="../_sources/skl_groups/skl_groups.utils.ProgressBarHandler.txt" rel="nofollow"> View page source</a>
         
       </li>
   </ul>
@@ -125,30 +125,16 @@
 </div>
           <div role="main">
             
-  <div class="section" id="skl-groups-kernels-symmetrize">
-<h1>skl_groups.kernels.Symmetrize<a class="headerlink" href="#skl-groups-kernels-symmetrize" title="Permalink to this headline">¶</a></h1>
+  <div class="section" id="skl-groups-utils-progressbarhandler">
+<h1>skl_groups.utils.ProgressBarHandler<a class="headerlink" href="#skl-groups-utils-progressbarhandler" title="Permalink to this headline">¶</a></h1>
 <dl class="class">
-<dt id="skl_groups.kernels.Symmetrize">
-<em class="property">class </em><tt class="descclassname">skl_groups.kernels.</tt><tt class="descname">Symmetrize</tt><big>(</big><em>copy=True</em><big>)</big><a class="headerlink" href="#skl_groups.kernels.Symmetrize" title="Permalink to this definition">¶</a></dt>
-<dd><p>Symmetrizes pairwise affinity/distance/whatever matrices, by taking
-the mean of itself and its transpose.</p>
-<table class="docutils field-list" frame="void" rules="none">
-<col class="field-name" />
-<col class="field-body" />
-<tbody valign="top">
-<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><p class="first"><strong>copy</strong> : boolean, optional, default True</p>
-<blockquote class="last">
-<div><p>If false, invalidates the passed-in matrix.</p>
-</div></blockquote>
-</td>
-</tr>
-</tbody>
-</table>
-<p class="rubric">Notes</p>
-<p><tt class="docutils literal"><span class="pre">copy=False</span></tt> currently doesn&#8217;t do anything.</p>
+<dt id="skl_groups.utils.ProgressBarHandler">
+<em class="property">class </em><tt class="descclassname">skl_groups.utils.</tt><tt class="descname">ProgressBarHandler</tt><big>(</big><em>widgets=None</em>, <em>**kwargs</em><big>)</big><a class="reference internal" href="../_modules/skl_groups/utils.html#ProgressBarHandler"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#skl_groups.utils.ProgressBarHandler" title="Permalink to this definition">¶</a></dt>
+<dd><p>A logging handler that uses the progressbar module to show progress from
+a <a class="reference internal" href="skl_groups.utils.ProgressLogger.html#skl_groups.utils.ProgressLogger" title="skl_groups.utils.ProgressLogger"><tt class="xref py py-class docutils literal"><span class="pre">ProgressLogger</span></tt></a>.</p>
 <dl class="method">
-<dt id="skl_groups.kernels.Symmetrize.__init__">
-<tt class="descname">__init__</tt><big>(</big><em>copy=True</em><big>)</big><a class="headerlink" href="#skl_groups.kernels.Symmetrize.__init__" title="Permalink to this definition">¶</a></dt>
+<dt id="skl_groups.utils.ProgressBarHandler.__init__">
+<tt class="descname">__init__</tt><big>(</big><em>widgets=None</em>, <em>**kwargs</em><big>)</big><a class="reference internal" href="../_modules/skl_groups/utils.html#ProgressBarHandler.__init__"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#skl_groups.utils.ProgressBarHandler.__init__" title="Permalink to this definition">¶</a></dt>
 <dd></dd></dl>
 
 <p class="rubric">Methods</p>
@@ -158,62 +144,71 @@ the mean of itself and its transpose.</p>
 <col width="90%" />
 </colgroup>
 <tbody valign="top">
-<tr class="row-odd"><td><a class="reference internal" href="#skl_groups.kernels.Symmetrize.__init__" title="skl_groups.kernels.Symmetrize.__init__"><tt class="xref py py-obj docutils literal"><span class="pre">__init__</span></tt></a>([copy])</td>
+<tr class="row-odd"><td><a class="reference internal" href="#skl_groups.utils.ProgressBarHandler.__init__" title="skl_groups.utils.ProgressBarHandler.__init__"><tt class="xref py py-obj docutils literal"><span class="pre">__init__</span></tt></a>([widgets])</td>
 <td></td>
 </tr>
-<tr class="row-even"><td><a class="reference internal" href="#skl_groups.kernels.Symmetrize.fit" title="skl_groups.kernels.Symmetrize.fit"><tt class="xref py py-obj docutils literal"><span class="pre">fit</span></tt></a>(X[,&nbsp;y])</td>
-<td>Raises NotImplementedError.</td>
+<tr class="row-even"><td><tt class="xref py py-obj docutils literal"><span class="pre">acquire</span></tt>()</td>
+<td>Acquire the I/O thread lock.</td>
 </tr>
-<tr class="row-odd"><td><a class="reference internal" href="#skl_groups.kernels.Symmetrize.fit_transform" title="skl_groups.kernels.Symmetrize.fit_transform"><tt class="xref py py-obj docutils literal"><span class="pre">fit_transform</span></tt></a>(X[,&nbsp;y])</td>
-<td>Symmetrizes X.</td>
+<tr class="row-odd"><td><tt class="xref py py-obj docutils literal"><span class="pre">addFilter</span></tt>(filter)</td>
+<td>Add the specified filter to this handler.</td>
 </tr>
-<tr class="row-even"><td><tt class="xref py py-obj docutils literal"><span class="pre">get_params</span></tt>([deep])</td>
-<td>Get parameters for this estimator.</td>
+<tr class="row-even"><td><tt class="xref py py-obj docutils literal"><span class="pre">close</span></tt>()</td>
+<td>Tidy up any resources used by the handler.</td>
 </tr>
-<tr class="row-odd"><td><tt class="xref py py-obj docutils literal"><span class="pre">set_params</span></tt>(**params)</td>
-<td>Set the parameters of this estimator.</td>
+<tr class="row-odd"><td><tt class="xref py py-obj docutils literal"><span class="pre">createLock</span></tt>()</td>
+<td>Acquire a thread lock for serializing access to the underlying I/O.</td>
 </tr>
-<tr class="row-even"><td><a class="reference internal" href="#skl_groups.kernels.Symmetrize.transform" title="skl_groups.kernels.Symmetrize.transform"><tt class="xref py py-obj docutils literal"><span class="pre">transform</span></tt></a>(X)</td>
-<td>Does nothing, so that it works nicely in pipelines.</td>
+<tr class="row-even"><td><tt class="xref py py-obj docutils literal"><span class="pre">emit</span></tt>(record)</td>
+<td></td>
+</tr>
+<tr class="row-odd"><td><tt class="xref py py-obj docutils literal"><span class="pre">filter</span></tt>(record)</td>
+<td>Determine if a record is loggable by consulting all the filters.</td>
+</tr>
+<tr class="row-even"><td><tt class="xref py py-obj docutils literal"><span class="pre">flush</span></tt>()</td>
+<td>Ensure all logging output has been flushed.</td>
+</tr>
+<tr class="row-odd"><td><tt class="xref py py-obj docutils literal"><span class="pre">format</span></tt>(record)</td>
+<td>Format the specified record.</td>
+</tr>
+<tr class="row-even"><td><tt class="xref py py-obj docutils literal"><span class="pre">get_name</span></tt>()</td>
+<td></td>
+</tr>
+<tr class="row-odd"><td><tt class="xref py py-obj docutils literal"><span class="pre">handle</span></tt>(record)</td>
+<td>Conditionally emit the specified logging record.</td>
+</tr>
+<tr class="row-even"><td><tt class="xref py py-obj docutils literal"><span class="pre">handleError</span></tt>(record)</td>
+<td>Handle errors which occur during an emit() call.</td>
+</tr>
+<tr class="row-odd"><td><tt class="xref py py-obj docutils literal"><span class="pre">release</span></tt>()</td>
+<td>Release the I/O thread lock.</td>
+</tr>
+<tr class="row-even"><td><tt class="xref py py-obj docutils literal"><span class="pre">removeFilter</span></tt>(filter)</td>
+<td>Remove the specified filter from this handler.</td>
+</tr>
+<tr class="row-odd"><td><tt class="xref py py-obj docutils literal"><span class="pre">setFormatter</span></tt>(fmt)</td>
+<td>Set the formatter for this handler.</td>
+</tr>
+<tr class="row-even"><td><tt class="xref py py-obj docutils literal"><span class="pre">setLevel</span></tt>(level)</td>
+<td>Set the logging level of this handler.</td>
+</tr>
+<tr class="row-odd"><td><tt class="xref py py-obj docutils literal"><span class="pre">set_name</span></tt>(name)</td>
+<td></td>
 </tr>
 </tbody>
 </table>
-<dl class="method">
-<dt id="skl_groups.kernels.Symmetrize.fit">
-<tt class="descname">fit</tt><big>(</big><em>X</em>, <em>y=None</em><big>)</big><a class="headerlink" href="#skl_groups.kernels.Symmetrize.fit" title="Permalink to this definition">¶</a></dt>
-<dd><p>Raises NotImplementedError.</p>
-</dd></dl>
-
-<dl class="method">
-<dt id="skl_groups.kernels.Symmetrize.fit_transform">
-<tt class="descname">fit_transform</tt><big>(</big><em>X</em>, <em>y=None</em><big>)</big><a class="headerlink" href="#skl_groups.kernels.Symmetrize.fit_transform" title="Permalink to this definition">¶</a></dt>
-<dd><p>Symmetrizes X.</p>
-<table class="docutils field-list" frame="void" rules="none">
-<col class="field-name" />
-<col class="field-body" />
+<p class="rubric">Attributes</p>
+<table border="1" class="longtable docutils">
+<colgroup>
+<col width="10%" />
+<col width="90%" />
+</colgroup>
 <tbody valign="top">
-<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><p class="first"><strong>X</strong> : array, shape [n, n]</p>
-<blockquote>
-<div><p>The pairwise inputs to symmetrize.</p>
-</div></blockquote>
-</td>
-</tr>
-<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body"><p class="first"><strong>X</strong> : array, shape [n, n]</p>
-<blockquote class="last">
-<div><p>The symmetrized pairwise outputs.</p>
-</div></blockquote>
-</td>
+<tr class="row-odd"><td><tt class="xref py py-obj docutils literal"><span class="pre">name</span></tt></td>
+<td></td>
 </tr>
 </tbody>
 </table>
-</dd></dl>
-
-<dl class="method">
-<dt id="skl_groups.kernels.Symmetrize.transform">
-<tt class="descname">transform</tt><big>(</big><em>X</em><big>)</big><a class="headerlink" href="#skl_groups.kernels.Symmetrize.transform" title="Permalink to this definition">¶</a></dt>
-<dd><p>Does nothing, so that it works nicely in pipelines.</p>
-</dd></dl>
-
 </dd></dl>
 
 </div>
@@ -224,10 +219,10 @@ the mean of itself and its transpose.</p>
   
     <div class="rst-footer-buttons" role="navigation" aria-label="footer navigation">
       
-        <a href="skl_groups.kernels.RBFize.html" class="btn btn-neutral float-right" title="skl_groups.kernels.RBFize"/>Next <span class="fa fa-arrow-circle-right"></span></a>
+        <a href="skl_groups.utils.show_progress.html" class="btn btn-neutral float-right" title="skl_groups.utils.show_progress"/>Next <span class="fa fa-arrow-circle-right"></span></a>
       
       
-        <a href="skl_groups.kernels.PairwisePicker.html" class="btn btn-neutral" title="skl_groups.kernels.PairwisePicker"><span class="fa fa-arrow-circle-left"></span> Previous</a>
+        <a href="skl_groups.utils.ProgressLogger.html" class="btn btn-neutral" title="skl_groups.utils.ProgressLogger"><span class="fa fa-arrow-circle-left"></span> Previous</a>
       
     </div>
   

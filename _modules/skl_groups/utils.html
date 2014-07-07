@@ -1,0 +1,392 @@
+
+
+<!DOCTYPE html>
+<!--[if IE 8]><html class="no-js lt-ie9" lang="en" > <![endif]-->
+<!--[if gt IE 8]><!--> <html class="no-js" lang="en" > <!--<![endif]-->
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  
+  <title>skl_groups.utils &mdash; skl-groups 0.1.0-dev documentation</title>
+  
+
+  
+  
+
+  
+  <link href='https://fonts.googleapis.com/css?family=Lato:400,700|Roboto+Slab:400,700|Inconsolata:400,700' rel='stylesheet' type='text/css'>
+
+  
+  
+    
+
+  
+
+  
+  
+    <link rel="stylesheet" href="../../_static/css/theme.css" type="text/css" />
+  
+
+  
+    <link rel="top" title="skl-groups 0.1.0-dev documentation" href="../../index.html"/>
+        <link rel="up" title="Module code" href="../index.html"/> 
+
+  
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/modernizr/2.6.2/modernizr.min.js"></script>
+
+</head>
+
+<body class="wy-body-for-nav" role="document">
+
+  <div class="wy-grid-for-nav">
+
+    
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-nav-search">
+        <a href="../../index.html" class="fa fa-home"> skl-groups</a>
+        <div role="search">
+  <form id ="rtd-search-form" class="wy-form" action="../../search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+      </div>
+
+      <div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="main navigation">
+        
+        
+            <ul>
+<li class="toctree-l1"><a class="reference internal" href="../../index.html">Overview</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../who.html">Who this package is for</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../installation.html">Installation</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="../../installation.html#release-versions">Release versions</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../installation.html#development-version">Development version</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../installation.html#flann">FLANN</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../installation.html#accelerated-version">Accelerated version</a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="../../tutorial.html">Quick tutorial</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="../../tutorial.html#motivation">Motivation</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../tutorial.html#feature-representation">Feature representation</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../tutorial.html#means">Means</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../tutorial.html#bag-of-words">Bag of Words</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../tutorial.html#divergences">Divergences</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../tutorial.html#l2-density-transformer">L2 density transformer</a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="../../logging.html">Progress logging / etc</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../reference.html">API reference</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="../../reference.html#features-representation">Features representation</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../reference.html#preprocessing">Preprocessing</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../reference.html#summaries">Summaries</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../reference.html#set-kernels">Set kernels</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../reference.html#divergences">Divergences</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../reference.html#kernel-utilities">Kernel utilities</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../reference.html#logging-related-utilities">Logging-related utilities</a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="../../todo.html">Planned improvements</a></li>
+</ul>
+
+        
+      </div>
+      &nbsp;
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap">
+
+      
+      <nav class="wy-nav-top" role="navigation" aria-label="top navigation">
+        <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+        <a href="../../index.html">skl-groups</a>
+      </nav>
+
+
+      
+      <div class="wy-nav-content">
+        <div class="rst-content">
+          <div role="navigation" aria-label="breadcrumbs navigation">
+  <ul class="wy-breadcrumbs">
+    <li><a href="../../index.html">Docs</a> &raquo;</li>
+      
+          <li><a href="../index.html">Module code</a> &raquo;</li>
+      
+    <li>skl_groups.utils</li>
+      <li class="wy-breadcrumbs-aside">
+        
+      </li>
+  </ul>
+  <hr/>
+</div>
+          <div role="main">
+            
+  <h1>Source code for skl_groups.utils</h1><pre>
+from __future__ import division, print_function
+
+import logging
+import json
+import sys
+
+import numpy as np
+from sklearn.externals import six
+
+
+def identity(x):
+    return x
+
+
+################################################################################
+### Type utilities for numpy
+
+def is_integer_type(x):
+    "Checks whether the array is of an integral type."
+    return issubclass(np.asanyarray(x).dtype.type, np.integer)
+
+
+def is_categorical_type(ary):
+    "Checks whether the array is either integral or boolean."
+    ary = np.asanyarray(ary)
+    return is_integer_type(ary) or ary.dtype.kind == 'b'
+
+
+def is_integer(x):
+    "Checks whether the argument is a single integer."
+    return np.isscalar(x) and is_integer_type(x)
+
+
+def is_categorical(x):
+    "Checks whether the argument is a single integer or boolean."
+    return np.isscalar(x) and is_categorical_type(x)
+
+
+def as_integer_type(ary):
+    '''
+    Returns argument as an integer array, converting floats if convertable.
+    Raises ValueError if it's a float array with nonintegral values.
+    '''
+    ary = np.asanyarray(ary)
+    if is_integer_type(ary):
+        return ary
+    rounded = np.rint(ary)
+    if np.any(rounded != ary):
+        raise ValueError("argument array must contain only integers")
+    return rounded.astype(int)
+
+
+################################################################################
+
+class NoImportStub(object):
+    '''
+    A class to use so that if there are missing optional dependencies, we can
+    still import the name, but using it will raise the original import error
+    that prevented us using the name anyway.
+    '''
+    def __init__(self, exception):
+        self.exception = exception
+
+    def __getattribute__(self, name):
+        if name == 'exception':
+            return object.__getattribute__(self, name)
+        six.reraise(*self.exception)
+
+    def __call__(self, *args, **kwargs):
+        six.reraise(*self.exception)
+
+
+################################################################################
+
+<div class="viewcode-block" id="ProgressLogger"><a class="viewcode-back" href="../../skl_groups/skl_groups.utils.ProgressLogger.html#skl_groups.utils.ProgressLogger">[docs]</a>class ProgressLogger(object):
+    '''
+    A little class to use to wrap logging progress to a logger object.
+
+    Parameters
+    ----------
+    logger : :class:`logging.Logger`
+        The logger instance to use.
+
+    name : string, optional, default None
+        The name of the process.
+
+    Notes
+    -----
+    Instances of this class can be used as callables. In that case,
+    they take an iterable and return a generator that yields each element, with
+    appropriate progress messages in between. For example::
+
+        ProgressLogger(logger)([x ** 2 for x in range(10)])
+        ProgressLogger(logger)((x ** 2 for x in range(10)), total=10)
+
+    will each yield the integers 1, 4, 9, ... while logging progress messages
+    to ``logger``. In the second case, we passed the ``total`` argument to
+    communicate the length of the iterable, which is not available via
+    :func:`len`.
+
+    A gotcha here is that :meth:`finish` will only be called if the iterator
+    actually terminates. For example::
+
+        for x, y in zip(things, ProgressLogger(logger)(f(x) for x in things)):
+            pass
+
+    won't ever :meth:`finish`, because :func:`zip` will see that ``things``
+    ends first and not continue iterating over the generator.
+    '''
+<div class="viewcode-block" id="ProgressLogger.__init__"><a class="viewcode-back" href="../../skl_groups/skl_groups.utils.ProgressLogger.html#skl_groups.utils.ProgressLogger.__init__">[docs]</a>    def __init__(self, logger, name=None):
+        self.logger = logger
+        self.name = name
+</div>
+<div class="viewcode-block" id="ProgressLogger.start"><a class="viewcode-back" href="../../skl_groups/skl_groups.utils.ProgressLogger.html#skl_groups.utils.ProgressLogger.start">[docs]</a>    def start(self, total):
+        '''
+        Signal the start of the process.
+
+        Parameters
+        ----------
+        total : int
+            The total number of steps in the process, or None if unknown.
+        '''
+        self.logger.info(json.dumps(['START', self.name, total]))
+</div>
+<div class="viewcode-block" id="ProgressLogger.update"><a class="viewcode-back" href="../../skl_groups/skl_groups.utils.ProgressLogger.html#skl_groups.utils.ProgressLogger.update">[docs]</a>    def update(self, idx):
+        '''
+        Update the current state.
+
+        Parameters
+        ----------
+        idx : int
+            The current state through the process.
+        '''
+        # json format, but since we might call this a lot do it a little faster
+        self.logger.info('["SET", {}]'.format(idx))
+</div>
+<div class="viewcode-block" id="ProgressLogger.finish"><a class="viewcode-back" href="../../skl_groups/skl_groups.utils.ProgressLogger.html#skl_groups.utils.ProgressLogger.finish">[docs]</a>    def finish(self):
+        '''
+        Marks the process as done.
+        '''
+        self.logger.info(json.dumps(['DONE']))
+</div>
+    def __call__(self, it, total=None):
+        if total is None:
+            try:
+                total = len(it)
+            except TypeError:
+                total = None
+        self.start(total)
+        for i, thing in enumerate(it, 1):
+            self.update(i)
+            yield thing
+        self.finish()
+
+</div>
+<div class="viewcode-block" id="ProgressBarHandler"><a class="viewcode-back" href="../../skl_groups/skl_groups.utils.ProgressBarHandler.html#skl_groups.utils.ProgressBarHandler">[docs]</a>class ProgressBarHandler(logging.Handler):
+    '''
+    A logging handler that uses the progressbar module to show progress from
+    a :class:`ProgressLogger`.
+    '''
+<div class="viewcode-block" id="ProgressBarHandler.__init__"><a class="viewcode-back" href="../../skl_groups/skl_groups.utils.ProgressBarHandler.html#skl_groups.utils.ProgressBarHandler.__init__">[docs]</a>    def __init__(self, widgets=None, **kwargs):
+        import progressbar as pb
+
+        logging.Handler.__init__(self)
+
+        if widgets is None:
+            class CommaProgress(pb.Widget):
+                def update(self, pbar):
+                    return '{:,} of {:,}'.format(pbar.currval, pbar.maxval)
+
+            widgets = [' ', CommaProgress(), ' (', pb.Percentage(), ') ',
+                       pb.Bar(), ' ', pb.ETA()]
+
+        self.pbar_args = {'widgets': widgets}
+        self.pbar_args.update(kwargs)
+</div>
+    def emit(self, record):
+        import progressbar as pb
+
+        msg = json.loads(record.msg)
+        # print(msg)
+        if msg[0] == 'SET':
+            pass
+            self.pbar.update(msg[1])
+        elif msg[0] == 'START':
+            print(msg[1] + ':', file=sys.stderr)
+            self.pbar = pb.ProgressBar(maxval=msg[2], **self.pbar_args)
+            self.pbar.start()
+        elif msg[0] == 'DONE':
+            self.pbar.finish()
+            del self.pbar
+            print('', file=sys.stderr)
+
+</div>
+<div class="viewcode-block" id="show_progress"><a class="viewcode-back" href="../../skl_groups/skl_groups.utils.show_progress.html#skl_groups.utils.show_progress">[docs]</a>def show_progress(name):
+    '''
+    Sets up a :class:`ProgressBarHandler` to handle progess logs for
+    a given module.
+
+    Parameters
+    ----------
+    name : string
+        The module name of the progress logger to use. For example,
+        :class:`skl_groups.divergences.KNNDivergenceEstimator`
+        uses ``'skl_groups.divergences.knn.progress'``.
+    '''
+    logger = logging.getLogger(name)
+    logger.setLevel(logging.INFO)
+    logger.addHandler(ProgressBarHandler())</div>
+</pre>
+
+          </div>
+          <footer>
+  
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>
+        &copy; Copyright 2014, Dougal J. Sutherland.
+    </p>
+  </div>
+
+  <a href="https://github.com/snide/sphinx_rtd_theme">Sphinx theme</a> provided by <a href="https://readthedocs.org">Read the Docs</a>
+</footer>
+        </div>
+      </div>
+
+    </section>
+
+  </div>
+  
+
+
+  
+
+    <script type="text/javascript">
+        var DOCUMENTATION_OPTIONS = {
+            URL_ROOT:'../../',
+            VERSION:'0.1.0-dev',
+            COLLAPSE_INDEX:false,
+            FILE_SUFFIX:'.html',
+            HAS_SOURCE:  true
+        };
+    </script>
+      <script type="text/javascript" src="../../_static/jquery.js"></script>
+      <script type="text/javascript" src="../../_static/underscore.js"></script>
+      <script type="text/javascript" src="../../_static/doctools.js"></script>
+      <script type="text/javascript" src="https://cdn.mathjax.org/mathjax/latest/MathJax.js?config=TeX-AMS-MML_HTMLorMML"></script>
+
+  
+
+  
+  
+    <script type="text/javascript" src="../../_static/js/theme.js"></script>
+  
+
+  
+  
+  <script type="text/javascript">
+      jQuery(function () {
+          SphinxRtdTheme.StickyNav.enable();
+      });
+  </script>
+   
+
+</body>
+</html>

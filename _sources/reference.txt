@@ -81,3 +81,17 @@ Utilities to convert generic affinities into valid kernels.
     kernels.FlipPSD
     kernels.ShiftPSD
     kernels.SquarePSD
+
+
+Logging-related utilities
+-------------------------
+
+See :ref:`logging` for more information.
+
+.. autosummary::
+    :toctree: skl_groups
+    :nosignatures:
+
+    utils.ProgressLogger
+    utils.ProgressBarHandler
+    utils.show_progress

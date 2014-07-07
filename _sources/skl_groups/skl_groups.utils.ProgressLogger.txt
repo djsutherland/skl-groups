@@ -1,0 +1,25 @@
+skl_groups.utils.ProgressLogger
+===============================
+
+.. currentmodule:: skl_groups.utils
+
+.. autoclass:: ProgressLogger
+
+   
+   .. automethod:: __init__
+
+   
+   .. rubric:: Methods
+
+   .. autosummary::
+   
+      ~ProgressLogger.__init__
+      ~ProgressLogger.finish
+      ~ProgressLogger.start
+      ~ProgressLogger.update
+   
+   
+
+   
+   
+   

@@ -7,7 +7,7 @@
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   
-  <title>Planned improvements &mdash; skl-groups 0.1.0-dev documentation</title>
+  <title>Progress logging / etc &mdash; skl-groups 0.1.0-dev documentation</title>
   
 
   
@@ -29,7 +29,8 @@
 
   
     <link rel="top" title="skl-groups 0.1.0-dev documentation" href="index.html"/>
-        <link rel="prev" title="skl_groups.utils.show_progress" href="skl_groups/skl_groups.utils.show_progress.html"/> 
+        <link rel="next" title="API reference" href="reference.html"/>
+        <link rel="prev" title="Quick tutorial" href="tutorial.html"/> 
 
   
   <script src="https://cdnjs.cloudflare.com/ajax/libs/modernizr/2.6.2/modernizr.min.js"></script>
@@ -75,7 +76,7 @@
 <li class="toctree-l2"><a class="reference internal" href="tutorial.html#l2-density-transformer">L2 density transformer</a></li>
 </ul>
 </li>
-<li class="toctree-l1"><a class="reference internal" href="logging.html">Progress logging / etc</a></li>
+<li class="toctree-l1 current"><a class="current reference internal" href="">Progress logging / etc</a></li>
 <li class="toctree-l1"><a class="reference internal" href="reference.html">API reference</a><ul>
 <li class="toctree-l2"><a class="reference internal" href="reference.html#features-representation">Features representation</a></li>
 <li class="toctree-l2"><a class="reference internal" href="reference.html#preprocessing">Preprocessing</a></li>
@@ -86,7 +87,7 @@
 <li class="toctree-l2"><a class="reference internal" href="reference.html#logging-related-utilities">Logging-related utilities</a></li>
 </ul>
 </li>
-<li class="toctree-l1 current"><a class="current reference internal" href="">Planned improvements</a></li>
+<li class="toctree-l1"><a class="reference internal" href="todo.html">Planned improvements</a></li>
 </ul>
 
         
@@ -110,10 +111,10 @@
   <ul class="wy-breadcrumbs">
     <li><a href="index.html">Docs</a> &raquo;</li>
       
-    <li>Planned improvements</li>
+    <li>Progress logging / etc</li>
       <li class="wy-breadcrumbs-aside">
         
-          <a href="_sources/todo.txt" rel="nofollow"> View page source</a>
+          <a href="_sources/logging.txt" rel="nofollow"> View page source</a>
         
       </li>
   </ul>
@@ -121,33 +122,29 @@
 </div>
           <div role="main">
             
-  <div class="section" id="planned-improvements">
-<h1>Planned improvements<a class="headerlink" href="#planned-improvements" title="Permalink to this headline">¶</a></h1>
-<p>skl-groups is a young package (the
-<a class="reference external" href="https://github.com/dougalsutherland/skl-groups/commit/e0e2013a">first commit</a>
-was on June 9, 2014, though it&#8217;s partially based on the previously-existing
-<a class="reference external" href="https://github.com/dougalsutherland/py-sdm">py-sdm</a> package that saw a bit
-of real-world use).
-Here are some of the things we plan to improve:</p>
-<ul class="simple">
-<li>Better support for parameter tuning and cross-validation (high-priority).</li>
-<li>Preconstructed pipelines to do &#8220;standard&#8221; operations, like
-<a class="reference internal" href="skl_groups/skl_groups.divergences.KNNDivergenceEstimator.html#skl_groups.divergences.KNNDivergenceEstimator" title="skl_groups.divergences.KNNDivergenceEstimator"><tt class="xref py py-class docutils literal"><span class="pre">skl_groups.divergences.KNNDivergenceEstimator</span></tt></a> followed by
-<a class="reference internal" href="skl_groups/skl_groups.kernels.PairwisePicker.html#skl_groups.kernels.PairwisePicker" title="skl_groups.kernels.PairwisePicker"><tt class="xref py py-class docutils literal"><span class="pre">skl_groups.kernels.PairwisePicker</span></tt></a>,
-<a class="reference internal" href="skl_groups/skl_groups.kernels.Symmetrize.html#skl_groups.kernels.Symmetrize" title="skl_groups.kernels.Symmetrize"><tt class="xref py py-class docutils literal"><span class="pre">skl_groups.kernels.Symmetrize</span></tt></a>,
-<a class="reference internal" href="skl_groups/skl_groups.kernels.RBFize.html#skl_groups.kernels.RBFize" title="skl_groups.kernels.RBFize"><tt class="xref py py-class docutils literal"><span class="pre">skl_groups.kernels.RBFize</span></tt></a>,
-<a class="reference internal" href="skl_groups/skl_groups.kernels.ProjectPSD.html#skl_groups.kernels.ProjectPSD" title="skl_groups.kernels.ProjectPSD"><tt class="xref py py-class docutils literal"><span class="pre">skl_groups.kernels.ProjectPSD</span></tt></a>,
-then <a class="reference external" href="http://scikit-learn.org/stable/modules/generated/sklearn.svm.SVC.html#sklearn.svm.SVC" title="(in scikit-learn v0.14)"><tt class="xref py py-class docutils literal"><span class="pre">sklearn.svm.SVC</span></tt></a>,
-with appropriate parameter tuning and so on.
-(A replacement for <tt class="xref py py-class docutils literal"><span class="pre">sdm.SDC</span></tt> and friends.)</li>
-<li>Add more algorithms, in particular the mean-map kernel, new KDE-based
-divergence estimators with finite-sample convergence guarantees, and
-Fisher vectors.</li>
-<li>Command-line helpers to perform common tasks.</li>
-<li>Better user documentation.</li>
-<li>Everything else on the
-<a class="reference external" href="https://github.com/dougalsutherland/skl-groups/issues">issues list</a>.</li>
-</ul>
+  <div class="section" id="progress-logging-etc">
+<span id="logging"></span><h1>Progress logging / etc<a class="headerlink" href="#progress-logging-etc" title="Permalink to this headline">¶</a></h1>
+<p>Some components of skl-groups use the standard Python <a class="reference external" href="http://docs.python.org/3/library/logging.html#module-logging" title="(in Python v3.4)"><tt class="xref py py-mod docutils literal"><span class="pre">logging</span></tt></a> mechanism.
+If you want to see this kind of output, you can turn on the logging system.
+For example:</p>
+<div class="highlight-python"><pre>import logging
+logger = logging.getLogger('skl_groups')
+logger.setLevel('INFO')
+logger.addHandler(logging.StreamHandler())</pre>
+</div>
+<p>This will show certain steps of the progress output in some potentially slow
+algorithms, e.g. <a class="reference internal" href="skl_groups/skl_groups.divergences.KNNDivergenceEstimator.html#skl_groups.divergences.KNNDivergenceEstimator" title="skl_groups.divergences.KNNDivergenceEstimator"><tt class="xref py py-class docutils literal"><span class="pre">divergences.KNNDivergenceEstimator</span></tt></a>. There are also
+some warnings given in certain situations.</p>
+<p>Some algorithms (currently only <a class="reference internal" href="skl_groups/skl_groups.divergences.KNNDivergenceEstimator.html#skl_groups.divergences.KNNDivergenceEstimator" title="skl_groups.divergences.KNNDivergenceEstimator"><tt class="xref py py-class docutils literal"><span class="pre">divergences.KNNDivergenceEstimator</span></tt></a>)
+also have a special &#8220;progress&#8221; logger, which doesn&#8217;t propagate up to standard
+handlers because it outputs a line at each step through the algorithm.
+<a class="reference internal" href="skl_groups/skl_groups.utils.show_progress.html#skl_groups.utils.show_progress" title="skl_groups.utils.show_progress"><tt class="xref py py-func docutils literal"><span class="pre">utils.show_progress()</span></tt></a> will set up a
+<a class="reference internal" href="skl_groups/skl_groups.utils.ProgressBarHandler.html#skl_groups.utils.ProgressBarHandler" title="skl_groups.utils.ProgressBarHandler"><tt class="xref py py-class docutils literal"><span class="pre">utils.ProgressBarHandler</span></tt></a>, which uses the <tt class="docutils literal"><span class="pre">progressbar</span></tt> library
+(<a class="reference external" href="https://github.com/dougalsutherland/python-progressbar">recommended fork</a>)
+to print out pretty console progressbars with ETAs and such:</p>
+<div class="highlight-python"><pre>from skl_groups.utils import show_progress
+show_progress('skl_groups.divergences.knn.progress')</pre>
+</div>
 </div>
 
 
@@ -156,8 +153,10 @@ Fisher vectors.</li>
   
     <div class="rst-footer-buttons" role="navigation" aria-label="footer navigation">
       
+        <a href="reference.html" class="btn btn-neutral float-right" title="API reference"/>Next <span class="fa fa-arrow-circle-right"></span></a>
       
-        <a href="skl_groups/skl_groups.utils.show_progress.html" class="btn btn-neutral" title="skl_groups.utils.show_progress"><span class="fa fa-arrow-circle-left"></span> Previous</a>
+      
+        <a href="tutorial.html" class="btn btn-neutral" title="Quick tutorial"><span class="fa fa-arrow-circle-left"></span> Previous</a>
       
     </div>
   

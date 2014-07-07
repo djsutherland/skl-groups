@@ -75,6 +75,7 @@
 <li class="toctree-l2"><a class="reference internal" href="../../tutorial.html#l2-density-transformer">L2 density transformer</a></li>
 </ul>
 </li>
+<li class="toctree-l1"><a class="reference internal" href="../../logging.html">Progress logging / etc</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../../reference.html">API reference</a><ul>
 <li class="toctree-l2"><a class="reference internal" href="../../reference.html#features-representation">Features representation</a></li>
 <li class="toctree-l2"><a class="reference internal" href="../../reference.html#preprocessing">Preprocessing</a></li>
@@ -82,6 +83,7 @@
 <li class="toctree-l2"><a class="reference internal" href="../../reference.html#set-kernels">Set kernels</a></li>
 <li class="toctree-l2"><a class="reference internal" href="../../reference.html#divergences">Divergences</a></li>
 <li class="toctree-l2"><a class="reference internal" href="../../reference.html#kernel-utilities">Kernel utilities</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../reference.html#logging-related-utilities">Logging-related utilities</a></li>
 </ul>
 </li>
 <li class="toctree-l1"><a class="reference internal" href="../../todo.html">Planned improvements</a></li>
@@ -131,13 +133,13 @@ from .features import Features, as_features
 # TODO: support inplace transformations here
 
 <div class="viewcode-block" id="BagPreprocesser"><a class="viewcode-back" href="../../skl_groups/skl_groups.preprocessing.BagPreprocesser.html#skl_groups.preprocessing.BagPreprocesser">[docs]</a>class BagPreprocesser(BaseEstimator, TransformerMixin):
-    &#x27;&#x27;&#x27;
+    '''
     Applies a preprocessing estimator to each column of the bags, independently.
     This is a reasonable thing to do for some cases
     (especially :class:`sklearn.preprocessing.StandardScaler`,
     :class:`sklearn.preprocessing.MinMaxScaler`,
     :class:`sklearn.decomposition.PCA`).
-    It&#x27;s not a reasonable thing to do for things that rely on interactions
+    It's not a reasonable thing to do for things that rely on interactions
     between points, or that change the number of output points. (Changing
     the dimension is okay.)
 
@@ -146,22 +148,22 @@ from .features import Features, as_features
     transformer : an sklearn transformer
         The transformer to apply to the stacked features. Must return the
         same number of features.
-    &#x27;&#x27;&#x27;
+    '''
 <div class="viewcode-block" id="BagPreprocesser.__init__"><a class="viewcode-back" href="../../skl_groups/skl_groups.preprocessing.BagPreprocesser.html#skl_groups.preprocessing.BagPreprocesser.__init__">[docs]</a>    def __init__(self, transformer):
         t = transformer
-        if (not (hasattr(t, &quot;fit&quot;) or hasattr(t, &#x27;fit_transform&#x27;)) or
-                not hasattr(t, &quot;transform&quot;)):
-            raise TypeError(&quot;The transformer doesn&#x27;t have appropriate methods.&quot;)
+        if (not (hasattr(t, "fit") or hasattr(t, 'fit_transform')) or
+                not hasattr(t, "transform")):
+            raise TypeError("The transformer doesn't have appropriate methods.")
         self.transformer = t
 </div>
     def _gather_outputs(self, old, new):
         if new.shape[0] != old.total_points:
-            msg = &quot;Transformer changed number of points from {} to {}&quot;
+            msg = "Transformer changed number of points from {} to {}"
             raise ValueError(msg.format(old.total_points, new.shape[0]))
         return Features(new, old.n_pts, **old.meta)
 
 <div class="viewcode-block" id="BagPreprocesser.fit"><a class="viewcode-back" href="../../skl_groups/skl_groups.preprocessing.BagPreprocesser.html#skl_groups.preprocessing.BagPreprocesser.fit">[docs]</a>    def fit(self, X, y=None, **params):
-        &#x27;&#x27;&#x27;
+        '''
         Fit the transformer on the stacked points.
 
         Parameters
@@ -170,14 +172,14 @@ from .features import Features, as_features
             Training set. If a Features object, it will be stacked.
 
         any other keyword argument :
-            Passed on as keyword arguments to the transformer&#x27;s ``fit()``.
-        &#x27;&#x27;&#x27;
+            Passed on as keyword arguments to the transformer's ``fit()``.
+        '''
         X = as_features(X, stack=True)
         self.transformer.fit(X.stacked_features, y, **params)
         return self
 </div>
 <div class="viewcode-block" id="BagPreprocesser.transform"><a class="viewcode-back" href="../../skl_groups/skl_groups.preprocessing.BagPreprocesser.html#skl_groups.preprocessing.BagPreprocesser.transform">[docs]</a>    def transform(self, X, **params):
-        &#x27;&#x27;&#x27;
+        '''
         Transform the stacked points.
 
         Parameters
@@ -186,19 +188,19 @@ from .features import Features, as_features
             New data to transform.
 
         any other keyword argument :
-            Passed on as keyword arguments to the transformer&#x27;s ``transform()``.
+            Passed on as keyword arguments to the transformer's ``transform()``.
 
         Returns
         -------
         X_new : :class:`Features`
             Transformed features.
-        &#x27;&#x27;&#x27;
+        '''
         X = as_features(X, stack=True)
         X_new = self.transformer.transform(X.stacked_features, **params)
         return self._gather_outputs(X, X_new)
 </div>
 <div class="viewcode-block" id="BagPreprocesser.fit_transform"><a class="viewcode-back" href="../../skl_groups/skl_groups.preprocessing.BagPreprocesser.html#skl_groups.preprocessing.BagPreprocesser.fit_transform">[docs]</a>    def fit_transform(self, X, y=None, **params):
-        &#x27;&#x27;&#x27;
+        '''
         Fit and transform the stacked points.
 
         Parameters
@@ -207,19 +209,19 @@ from .features import Features, as_features
             Data to train on and transform.
 
         any other keyword argument :
-            Passed on as keyword arguments to the transformer&#x27;s ``transform()``.
+            Passed on as keyword arguments to the transformer's ``transform()``.
 
         Returns
         -------
         X_new : :class:`Features`
             Transformed features.
-        &#x27;&#x27;&#x27;
+        '''
         X = as_features(X, stack=True)
         X_new = self.transformer.fit_transform(X.stacked_features, y, **params)
         return self._gather_outputs(X, X_new)
 </div>
 <div class="viewcode-block" id="BagPreprocesser.inverse_transform"><a class="viewcode-back" href="../../skl_groups/skl_groups.preprocessing.BagPreprocesser.html#skl_groups.preprocessing.BagPreprocesser.inverse_transform">[docs]</a>    def inverse_transform(self, X, **params):
-        &#x27;&#x27;&#x27;
+        '''
         Transform data back to its original space, i.e., return an input
         X_original whose transform would (maybe approximately) be X.
 
@@ -229,32 +231,32 @@ from .features import Features, as_features
             Data to train on and transform.
 
         any other keyword argument :
-            Passed on as keyword arguments to the transformer&#x27;s 
+            Passed on as keyword arguments to the transformer's 
             ``inverse_transform()``.
 
         Returns
         -------
         X_original : :class:`Features`
-        &#x27;&#x27;&#x27;
+        '''
         X = as_features(X, stack=True)
         Xo = self.transformer.inverse_transform(X.stacked_features, **params)
         return self._gather_outputs(X, Xo)
 
 </div></div>
 <div class="viewcode-block" id="BagStandardizer"><a class="viewcode-back" href="../../skl_groups/skl_groups.preprocessing.BagStandardizer.html#skl_groups.preprocessing.BagStandardizer">[docs]</a>class BagStandardizer(BagPreprocesser):
-    &#x27;&#x27;&#x27;
+    '''
     Standardizes each feature dimension to have zero mean and unit variance,
     regardless of the bag it falls into.
 
     This is just :class:`BagPreprocesser` with
     :class:`sklearn.preprocessing.StandardScaler`.
-    &#x27;&#x27;&#x27;
+    '''
 <div class="viewcode-block" id="BagStandardizer.__init__"><a class="viewcode-back" href="../../skl_groups/skl_groups.preprocessing.BagStandardizer.html#skl_groups.preprocessing.BagStandardizer.__init__">[docs]</a>    def __init__(self):
         super(BagStandardizer, self).__init__(StandardScaler())
 
 </div></div>
 class MinMaxScaler(BaseEstimator, TransformerMixin):
-    &quot;&quot;&quot;Standardizes features by scaling each feature to a given range.
+    """Standardizes features by scaling each feature to a given range.
 
     This estimator scales and translates each feature individually such
     that it is in the given range on the training set, i.e. between
@@ -273,7 +275,7 @@ class MinMaxScaler(BaseEstimator, TransformerMixin):
     -----
 
     This is a version of :class:`sklearn.preprocessing.MinMaxScaler`
-    with support for truncation added. It&#x27;s been
+    with support for truncation added. It's been
     `proposed &lt;https://github.com/scikit-learn/scikit-learn/pull/3342&gt;`_
     for inclusion in scikit-learn, but is not yet in there.
 
@@ -296,7 +298,7 @@ class MinMaxScaler(BaseEstimator, TransformerMixin):
         If not None, :meth:`fit` will actually rescale such that the passed
         features all lie within fit_feature_range rather than just
         feature_range. This is useful when truncate is True, to give
-        some &quot;wiggle room&quot; before it starts truncating. Otherwise it just
+        some "wiggle room" before it starts truncating. Otherwise it just
         effectively overrides feature_range.
 
     Attributes
@@ -306,7 +308,7 @@ class MinMaxScaler(BaseEstimator, TransformerMixin):
 
     `scale_` : ndarray, shape (n_features,)
         Per feature relative scaling of the data.
-    &quot;&quot;&quot;
+    """
 
     def __init__(self, feature_range=(0, 1), copy=True, truncate=False,
                  fit_feature_range=None):
@@ -316,31 +318,31 @@ class MinMaxScaler(BaseEstimator, TransformerMixin):
         self.fit_feature_range = fit_feature_range
 
     def fit(self, X, y=None):
-        &quot;&quot;&quot;Compute the minimum and maximum to be used for later scaling.
+        """Compute the minimum and maximum to be used for later scaling.
 
         Parameters
         ----------
         X : array-like, shape [n_samples, n_features]
             The data used to compute the per-feature minimum and maximum
             used for later scaling along the features axis.
-        &quot;&quot;&quot;
-        X = check_arrays(X, sparse_format=&quot;dense&quot;, copy=self.copy)[0]
+        """
+        X = check_arrays(X, sparse_format="dense", copy=self.copy)[0]
         warn_if_not_float(X, estimator=self)
 
         feature_range = self.feature_range
         if feature_range[0] &gt;= feature_range[1]:
-            raise ValueError(&quot;Minimum of desired feature range must be smaller&quot;
-                             &quot; than maximum. Got %s.&quot; % str(feature_range))
+            raise ValueError("Minimum of desired feature range must be smaller"
+                             " than maximum. Got %s." % str(feature_range))
         if self.fit_feature_range is not None:
             fit_feature_range = self.fit_feature_range
             if fit_feature_range[0] &gt;= fit_feature_range[1]:
-                raise ValueError(&quot;Minimum of desired (fit) feature range must &quot;
-                                 &quot;be smaller than maximum. Got %s.&quot;
+                raise ValueError("Minimum of desired (fit) feature range must "
+                                 "be smaller than maximum. Got %s."
                                  % str(feature_range))
             if (fit_feature_range[0] &lt; feature_range[0] or
                     fit_feature_range[1] &gt; feature_range[1]):
-                raise ValueError(&quot;fit_feature_range must be a subset of &quot;
-                                 &quot;feature_range. Got %s, fit %s.&quot;
+                raise ValueError("fit_feature_range must be a subset of "
+                                 "feature_range. Got %s, fit %s."
                                  % (str(feature_range),
                                     str(fit_feature_range)))
             feature_range = fit_feature_range
@@ -356,14 +358,14 @@ class MinMaxScaler(BaseEstimator, TransformerMixin):
         return self
 
     def transform(self, X):
-        &quot;&quot;&quot;Scaling features of X according to feature_range.
+        """Scaling features of X according to feature_range.
 
         Parameters
         ----------
         X : array-like with shape [n_samples, n_features]
             Input data that will be transformed.
-        &quot;&quot;&quot;
-        X = check_arrays(X, sparse_format=&quot;dense&quot;, copy=self.copy)[0]
+        """
+        X = check_arrays(X, sparse_format="dense", copy=self.copy)[0]
         X *= self.scale_
         X += self.min_
         if self.truncate:
@@ -372,7 +374,7 @@ class MinMaxScaler(BaseEstimator, TransformerMixin):
         return X
 
     def inverse_transform(self, X):
-        &quot;&quot;&quot;Undo the scaling of X according to feature_range.
+        """Undo the scaling of X according to feature_range.
 
         Note that if truncate is true, any truncated points will not
         be restored exactly.
@@ -381,8 +383,8 @@ class MinMaxScaler(BaseEstimator, TransformerMixin):
         ----------
         X : array-like with shape [n_samples, n_features]
             Input data that will be transformed.
-        &quot;&quot;&quot;
-        X = check_arrays(X, sparse_format=&quot;dense&quot;, copy=self.copy)[0]
+        """
+        X = check_arrays(X, sparse_format="dense", copy=self.copy)[0]
         X -= self.min_
         X /= self.scale_
         return X
@@ -390,7 +392,7 @@ class MinMaxScaler(BaseEstimator, TransformerMixin):
 
 
 <div class="viewcode-block" id="BagMinMaxScaler"><a class="viewcode-back" href="../../skl_groups/skl_groups.preprocessing.BagMinMaxScaler.html#skl_groups.preprocessing.BagMinMaxScaler">[docs]</a>class BagMinMaxScaler(BagPreprocesser):
-    &#x27;&#x27;&#x27;
+    '''
     Linearly scales each feature dimension to lie within the given range, for
     example [0, 1].
 
@@ -400,7 +402,7 @@ class MinMaxScaler(BaseEstimator, TransformerMixin):
     ----------
     feature_range : tuple (min, max), default = (0, 1)
         Desired range of the transformed data.
-    &#x27;&#x27;&#x27;
+    '''
 <div class="viewcode-block" id="BagMinMaxScaler.__init__"><a class="viewcode-back" href="../../skl_groups/skl_groups.preprocessing.BagMinMaxScaler.html#skl_groups.preprocessing.BagMinMaxScaler.__init__">[docs]</a>    def __init__(self, feature_range=(0, 1), truncate=False,
                  fit_feature_range=None):
         super(BagMinMaxScaler, self).__init__(MinMaxScaler(
@@ -409,7 +411,7 @@ class MinMaxScaler(BaseEstimator, TransformerMixin):
 
 </div></div>
 <div class="viewcode-block" id="BagNormalizer"><a class="viewcode-back" href="../../skl_groups/skl_groups.preprocessing.BagNormalizer.html#skl_groups.preprocessing.BagNormalizer">[docs]</a>class BagNormalizer(BagPreprocesser):
-    &#x27;&#x27;&#x27;
+    '''
     Normalizes each sample individually to have unit norm (l1 or l2).
 
     This is just :class:`BagPreprocesser` with
@@ -417,16 +419,16 @@ class MinMaxScaler(BaseEstimator, TransformerMixin):
 
     Parameters
     ----------
-    norm : &#x27;l1&#x27; or &#x27;l2&#x27;, optional, default &#x27;l2&#x27;
+    norm : 'l1' or 'l2', optional, default 'l2'
         The norm to use to normalize each nonzero sample.
-    &#x27;&#x27;&#x27;
-<div class="viewcode-block" id="BagNormalizer.__init__"><a class="viewcode-back" href="../../skl_groups/skl_groups.preprocessing.BagNormalizer.html#skl_groups.preprocessing.BagNormalizer.__init__">[docs]</a>    def __init__(self, norm=&#x27;l2&#x27;):
+    '''
+<div class="viewcode-block" id="BagNormalizer.__init__"><a class="viewcode-back" href="../../skl_groups/skl_groups.preprocessing.BagNormalizer.html#skl_groups.preprocessing.BagNormalizer.__init__">[docs]</a>    def __init__(self, norm='l2'):
         super(BagNormalizer, self).__init__(Normalizer(norm))
 
 </div></div>
 DEFAULT_VARFRAC = 0.7
 <div class="viewcode-block" id="BagPCA"><a class="viewcode-back" href="../../skl_groups/skl_groups.preprocessing.BagPCA.html#skl_groups.preprocessing.BagPCA">[docs]</a>class BagPCA(BagPreprocesser):
-    &#x27;&#x27;&#x27;
+    '''
     Runs principal components analysis to reduce the dimensionality of the
     features.
 
@@ -440,7 +442,7 @@ DEFAULT_VARFRAC = 0.7
         The dimensionality to reduce to.
 
     mle_components : boolean, optional, default False
-        Use Minka&#x27;s MLE for determining the number of components.
+        Use Minka's MLE for determining the number of components.
 
     varfrac : float in (0, 1], optional, default 0.7
         Use enough components to cover this fraction of the variance.
@@ -455,25 +457,25 @@ DEFAULT_VARFRAC = 0.7
         Whether to whiten the outputs, by dividing the components by the
         singular values. This removes some information, but makes the variance
         of the outputs the identity matrix.
-    &#x27;&#x27;&#x27;
+    '''
 <div class="viewcode-block" id="BagPCA.__init__"><a class="viewcode-back" href="../../skl_groups/skl_groups.preprocessing.BagPCA.html#skl_groups.preprocessing.BagPCA.__init__">[docs]</a>    def __init__(self, k=None, mle_components=False, varfrac=None,
                  randomize=False, whiten=False):
         n_specs = sum(1 for x in [k, mle_components, varfrac] if x)
         if n_specs &gt; 1:
-            msg = &quot;can&#x27;t specify number of components in more than one way&quot;
+            msg = "can't specify number of components in more than one way"
             raise TypeError(msg)
         if n_specs == 0:
             varfrac = DEFAULT_VARFRAC
 
         if randomize:
             if k is None:
-                raise TypeError(&quot;can&#x27;t do random PCA without a specific k&quot;)
+                raise TypeError("can't do random PCA without a specific k")
             pca = RandomizedPCA(k, whiten=whiten)
         else:
             if k is not None:
                 n_components = k
             elif mle_components:
-                n_components = &#x27;mle&#x27;
+                n_components = 'mle'
             elif varfrac is not None:
                 n_components = varfrac
             pca = PCA(n_components, whiten=whiten)

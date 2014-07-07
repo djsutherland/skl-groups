@@ -1,0 +1,44 @@
+skl_groups.utils.ProgressBarHandler
+===================================
+
+.. currentmodule:: skl_groups.utils
+
+.. autoclass:: ProgressBarHandler
+
+   
+   .. automethod:: __init__
+
+   
+   .. rubric:: Methods
+
+   .. autosummary::
+   
+      ~ProgressBarHandler.__init__
+      ~ProgressBarHandler.acquire
+      ~ProgressBarHandler.addFilter
+      ~ProgressBarHandler.close
+      ~ProgressBarHandler.createLock
+      ~ProgressBarHandler.emit
+      ~ProgressBarHandler.filter
+      ~ProgressBarHandler.flush
+      ~ProgressBarHandler.format
+      ~ProgressBarHandler.get_name
+      ~ProgressBarHandler.handle
+      ~ProgressBarHandler.handleError
+      ~ProgressBarHandler.release
+      ~ProgressBarHandler.removeFilter
+      ~ProgressBarHandler.setFormatter
+      ~ProgressBarHandler.setLevel
+      ~ProgressBarHandler.set_name
+   
+   
+
+   
+   
+   .. rubric:: Attributes
+
+   .. autosummary::
+   
+      ~ProgressBarHandler.name
+   
+   

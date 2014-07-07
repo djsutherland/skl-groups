@@ -75,6 +75,7 @@
 <li class="toctree-l2"><a class="reference internal" href="../../tutorial.html#l2-density-transformer">L2 density transformer</a></li>
 </ul>
 </li>
+<li class="toctree-l1"><a class="reference internal" href="../../logging.html">Progress logging / etc</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../../reference.html">API reference</a><ul>
 <li class="toctree-l2"><a class="reference internal" href="../../reference.html#features-representation">Features representation</a></li>
 <li class="toctree-l2"><a class="reference internal" href="../../reference.html#preprocessing">Preprocessing</a></li>
@@ -82,6 +83,7 @@
 <li class="toctree-l2"><a class="reference internal" href="../../reference.html#set-kernels">Set kernels</a></li>
 <li class="toctree-l2"><a class="reference internal" href="../../reference.html#divergences">Divergences</a></li>
 <li class="toctree-l2"><a class="reference internal" href="../../reference.html#kernel-utilities">Kernel utilities</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../reference.html#logging-related-utilities">Logging-related utilities</a></li>
 </ul>
 </li>
 <li class="toctree-l1"><a class="reference internal" href="../../todo.html">Planned improvements</a></li>
@@ -133,14 +135,14 @@ from .utils import as_integer_type
 
 
 <div class="viewcode-block" id="Features"><a class="viewcode-back" href="../../skl_groups/skl_groups.features.Features.html#skl_groups.features.Features">[docs]</a>class Features(object):
-    &#x27;&#x27;&#x27;
+    '''
     A wrapper class for storing bags of features. (A *bag* is a set of feature
-    vectors corresponding to a single &quot;object.&quot;)
+    vectors corresponding to a single "object.")
 
     Supports storing data in two major ways:
 
     - As a list of pointers to a numpy array per bag. This is the default,
-      because it usually doesn&#x27;t require copying all of your data. Note that
+      because it usually doesn't require copying all of your data. Note that
       the sub-arrays are not enforced to be row-major or even contiguous.
 
     - As a single big row-major array. This lets you do certain things more
@@ -171,7 +173,7 @@ from .utils import as_integer_type
         but n_pts need not be (though it cannot ever be 0). If a single numpy
         array, it should be of shape [sum(n_pts), dim] and contain the features
         from the first bag, then the next bag, .... In this case you must also
-        pass n_pts. If a Features object, &quot;copies&quot; it (but only actually copies
+        pass n_pts. If a Features object, "copies" it (but only actually copies
         any data if ``copy=True``).
 
     n_pts : array-like of positive integers, only if bags is a single array
@@ -184,11 +186,11 @@ from .utils import as_integer_type
 
     copy : boolean, optional, default False
         If true, always make a copy of the data (so that direct modifications)
-        don&#x27;t modify the original arrays. If false, make a copy only if
+        don't modify the original arrays. If false, make a copy only if
         necessary (i.e. stack=True for an unstacked argument).
 
     bare : boolean, optional, default False
-        If true, and ``bags`` is a Features instance, don&#x27;t include its
+        If true, and ``bags`` is a Features instance, don't include its
         metadata.
 
     any other keyword argument : array-like with first dimension num_bags
@@ -214,14 +216,14 @@ from .utils import as_integer_type
         The number of points in each bag.
 
     meta : dictionary mapping strings to arrays of shape ``[len(self)]``
-        The stored metadata. ``meta[&#x27;foo&#x27;]`` is also accessible as ``self.foo``.
-    &#x27;&#x27;&#x27;
+        The stored metadata. ``meta['foo']`` is also accessible as ``self.foo``.
+    '''
 
 <div class="viewcode-block" id="Features.__init__"><a class="viewcode-back" href="../../skl_groups/skl_groups.features.Features.html#skl_groups.features.Features.__init__">[docs]</a>    def __init__(self, bags, n_pts=None, stack=False, copy=False, bare=False,
                  **meta):
         if isinstance(bags, Features):
             if n_pts is not None:
-                raise TypeError(&quot;can&#x27;t pass n_pts if copying a Features object&quot;)
+                raise TypeError("can't pass n_pts if copying a Features object")
 
             oth = bags
             if oth.stacked:
@@ -237,26 +239,26 @@ from .utils import as_integer_type
 
         if isinstance(bags, np.ndarray) and bags.ndim == 2:
             if n_pts is None:
-                raise TypeError(&quot;must pass n_pts if passing stacked array of &quot;
-                                &quot;features&quot;)
+                raise TypeError("must pass n_pts if passing stacked array of "
+                                "features")
 
             n_pts = np.asarray(n_pts)
             if n_pts.ndim != 1:
-                raise TypeError(&quot;n_pts must be 1-dimensional&quot;)
+                raise TypeError("n_pts must be 1-dimensional")
             if n_pts.size == 0:
-                raise TypeError(&quot;must have at least one bag&quot;)
+                raise TypeError("must have at least one bag")
             if np.any(n_pts &lt;= 0):
-                raise TypeError(&quot;n_pts must all be positive&quot;)
+                raise TypeError("n_pts must all be positive")
             try:
                 n_pts = as_integer_type(n_pts)
             except ValueError:
-                raise TypeError(&quot;n_pts must be an array of integers.&quot;)
+                raise TypeError("n_pts must be an array of integers.")
 
-            bags = np.array(bags, order=&#x27;C&#x27;, copy=copy)
+            bags = np.array(bags, order='C', copy=copy)
             if bags.ndim != 2 or bags.shape[0] != np.sum(n_pts):
-                raise TypeError(&quot;bags must have shape sum(n_pts) x dim&quot;)
+                raise TypeError("bags must have shape sum(n_pts) x dim")
             if bags.shape[1] == 0:
-                raise TypeError(&quot;bags must have dimension &gt; 0&quot;)
+                raise TypeError("bags must have dimension &gt; 0")
             dim = bags.shape[1]
 
             self.stacked = True
@@ -270,8 +272,8 @@ from .utils import as_integer_type
 
         else:
             if n_pts is not None:
-                raise TypeError(&quot;n_pts should only be passed if bags is a &quot;
-                                &quot;single stacked array&quot;)
+                raise TypeError("n_pts should only be passed if bags is a "
+                                "single stacked array")
 
             dim = None
             dtype = None
@@ -283,26 +285,26 @@ from .utils import as_integer_type
                 if a.ndim == 1:
                     a = a[None, :]
                 if a.ndim != 2:
-                    raise TypeError(&quot;bag {} not two-dimensional&quot;.format(i))
+                    raise TypeError("bag {} not two-dimensional".format(i))
 
                 if dim is None:
                     dim = a.shape[1]
                 elif a.shape[1] != dim:
-                    msg = &quot;bags&#x27; second dimension must be consistent: &quot; \
-                          &quot;{} is {}, expected {}&quot;
+                    msg = "bags' second dimension must be consistent: " \
+                          "{} is {}, expected {}"
                     raise TypeError(msg.format(i, a.shape[1], dim))
 
                 if dtype is None:
                     dtype = a.dtype
-                    if dtype.kind not in &#x27;fiu&#x27;:
-                        msg = &quot;can&#x27;t handle features of type {}&quot;
+                    if dtype.kind not in 'fiu':
+                        msg = "can't handle features of type {}"
                         raise TypeError(msg.format(a.dtype.name))
                 elif a.dtype != dtype:
-                    msg = &quot;bags&#x27; dtype is inconsistent: {} is {}, expected {}&quot;
+                    msg = "bags' dtype is inconsistent: {} is {}, expected {}"
                     raise TypeError(msg.format(i, a.dtype.name, dtype.name))
 
                 if a.shape[0] == 0:
-                    raise TypeError(&quot;bag {} has no points&quot;.format(i))
+                    raise TypeError("bag {} has no points".format(i))
 
                 new_bags[i] = a
                 n_pts[i] = a.shape[0]
@@ -326,20 +328,20 @@ from .utils import as_integer_type
         self.meta = {}
         for name, val in iteritems(meta):
             if len(val) != len(n_pts):
-                msg = &quot;Have {} bags but {} values for {}&quot;
+                msg = "Have {} bags but {} values for {}"
                 raise ValueError(msg.format(len(n_pts), len(val), name))
 
             val = np.array(val, copy=copy)
             self.meta[name] = val
             if hasattr(self, name):
-                msg = &quot;Features already has an attribute named &#x27;{}&#x27;; won&#x27;t &quot; \
-                      &quot;be accessible as an attribute&quot;
+                msg = "Features already has an attribute named '{}'; won't " \
+                      "be accessible as an attribute"
                 warnings.warn(msg.format(name))
             else:
                 setattr(self, name, val)
 </div>
 <div class="viewcode-block" id="Features.make_stacked"><a class="viewcode-back" href="../../skl_groups/skl_groups.features.Features.html#skl_groups.features.Features.make_stacked">[docs]</a>    def make_stacked(self):
-        &quot;If unstacked, convert to stacked. If stacked, do nothing.&quot;
+        "If unstacked, convert to stacked. If stacked, do nothing."
         if self.stacked:
             return
 
@@ -354,24 +356,24 @@ from .utils import as_integer_type
 </div>
     @property
 <div class="viewcode-block" id="Features.total_points"><a class="viewcode-back" href="../../skl_groups/skl_groups.features.Features.html#skl_groups.features.Features.total_points">[docs]</a>    def total_points(self):
-        &quot;The total number of points in all bags.&quot;
+        "The total number of points in all bags."
         return self.n_pts.sum()
 </div>
     @property
 <div class="viewcode-block" id="Features.dim"><a class="viewcode-back" href="../../skl_groups/skl_groups.features.Features.html#skl_groups.features.Features.dim">[docs]</a>    def dim(self):
-        &quot;The dimensionality of the features.&quot;
+        "The dimensionality of the features."
         return self.features[0].shape[1]
 </div>
     @property
 <div class="viewcode-block" id="Features.dtype"><a class="viewcode-back" href="../../skl_groups/skl_groups.features.Features.html#skl_groups.features.Features.dtype">[docs]</a>    def dtype(self):
-        &quot;The data type of the feature vectors.&quot;
+        "The data type of the feature vectors."
         return self.features[0].dtype
 
     ############################################################################
     ## Copying / pickling utilities
 </div>
 <div class="viewcode-block" id="Features.copy"><a class="viewcode-back" href="../../skl_groups/skl_groups.features.Features.html#skl_groups.features.Features.copy">[docs]</a>    def copy(self, stack=False, copy_meta=False, memo=None):
-        &#x27;&#x27;&#x27;
+        '''
         Copies the Feature object. Makes a copy of the features array.
 
         Parameters
@@ -382,7 +384,7 @@ from .utils import as_integer_type
         copy_meta : boolean, optional, default False
             Also copy the metadata. If False, metadata in both points to the
             same object.
-        &#x27;&#x27;&#x27;
+        '''
         if self.stacked:
             fs = deepcopy(self.stacked_features, memo)
             n_pts = self.n_pts.copy()
@@ -438,13 +440,13 @@ from .utils import as_integer_type
         return not (self == oth)
 
     def __repr__(self):
-        s = &#x27;&lt;Features: {:,} bags with {} {}-dimensional points ({:,} total)&gt;&#x27;
+        s = '&lt;Features: {:,} bags with {} {}-dimensional points ({:,} total)&gt;'
         min_p = self.n_pts.min()
         max_p = self.n_pts.max()
         if min_p == max_p:
-            pts = &quot;{:,}&quot;.format(min_p)
+            pts = "{:,}".format(min_p)
         else:
-            pts = &#x27;{:,} to {:,}&#x27;.format(min_p, max_p)
+            pts = '{:,} to {:,}'.format(min_p, max_p)
         return s.format(len(self), pts, self.dim, self.total_points)
 
     def __len__(self):
@@ -457,7 +459,7 @@ from .utils import as_integer_type
         if (isinstance(key, string_types) or
                 (isinstance(key, tuple) and
                  any(isinstance(x, string_types) for x in key))):
-            msg = &quot;Features indexing only subsets rows, but got {!r}&quot;
+            msg = "Features indexing only subsets rows, but got {!r}"
             raise TypeError(msg.format(key))
 
         if np.isscalar(key):
@@ -494,7 +496,7 @@ from .utils import as_integer_type
     ## Others
 
 <div class="viewcode-block" id="Features.bare"><a class="viewcode-back" href="../../skl_groups/skl_groups.features.Features.html#skl_groups.features.Features.bare">[docs]</a>    def bare(self):
-        &quot;Make a Features object with no metadata; points to the same features.&quot;
+        "Make a Features object with no metadata; points to the same features."
         if not self.meta:
             return self
         elif self.stacked:
@@ -504,14 +506,14 @@ from .utils import as_integer_type
 
 </div></div>
 def as_features(X, stack=False, bare=False):
-    &#x27;&#x27;&#x27;
+    '''
     Returns a version of X as a :class:`Features` object.
 
     Parameters
     ----------
     stack : boolean, default False
         Make a stacked version of X. Note that if X is a features object,
-        this will stack it in-place, since that&#x27;s usually what you want.
+        this will stack it in-place, since that's usually what you want.
         (If not, just use the :class:`Features` constructor instead.)
 
     bare : boolean, default False
@@ -522,7 +524,7 @@ def as_features(X, stack=False, bare=False):
     feats : :class:`Features`
         A version of X. If X is already a :class:`Features` object, the original
         X may be returned, depending on the arguments.
-    &#x27;&#x27;&#x27;
+    '''
     if isinstance(X, Features):
         if stack:
             X.make_stacked()
