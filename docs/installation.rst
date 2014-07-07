@@ -26,7 +26,7 @@ The released version of skl-groups is available via pypi::
 
 or, if you use Anaconda, via my binstar channel::
 
-    $ conda install -c http://conda.binstar.org/dougal skl-groups
+    $ conda install -c https://conda.binstar.org/dougal skl-groups
 
 The conda install includes skl-groups-accel, described below.
 

@@ -23,7 +23,7 @@ Full instructions are
 `in the documentation <https://dougalsutherland.github.io/skl-groups/installation.html>`_,
 but the short version is to do::
 
-    $ conda install -c http://conda.binstar.org/dougal skl-groups
+    $ conda install -c https://conda.binstar.org/dougal skl-groups
 
 if you use conda, or::
 
