@@ -11,6 +11,7 @@ from scipy.special import psi
 from sklearn.externals.six.moves import xrange, zip
 
 from nose.tools import assert_raises
+from sklearn.utils.testing import assert_array_almost_equal
 from nose import SkipTest
 from testfixtures import LogCapture
 
@@ -48,33 +49,35 @@ def test_knn_version_consistency():
     if not have_accel:
         raise SkipTest("No skl-groups-accel, so skipping version consistency.")
 
-    dim = 3
     n = 20
-    np.random.seed(47)
-    bags = Features([np.random.randn(np.random.randint(30, 100), dim)
-                     for _ in xrange(n)])
+    for dim in [1, 7]:
+        np.random.seed(47)
+        bags = Features([np.random.randn(np.random.randint(30, 100), dim)
+                         for _ in xrange(n)])
 
-    div_funcs = ('kl', 'js', 'renyi:.9', 'l2', 'tsallis:.8')
-    Ks = (3, 4)
-    get_est = partial(KNNDivergenceEstimator, div_funcs=div_funcs, Ks=Ks)
-    results = {}
-    for version in ('fast', 'slow', 'best'):
-        est = get_est(version=version)
-        results[version] = res = est.fit_transform(bags)
-        assert res.shape == (len(div_funcs), len(Ks), n, n)
-        assert np.all(np.isfinite(res))
+        div_funcs = ('kl', 'js', 'renyi:.9', 'l2', 'tsallis:.8')
+        Ks = (3, 4)
+        get_est = partial(KNNDivergenceEstimator, div_funcs=div_funcs, Ks=Ks)
+        results = {}
+        for version in ('fast', 'slow', 'best'):
+            est = get_est(version=version)
+            results[version] = res = est.fit_transform(bags)
+            assert res.shape == (len(div_funcs), len(Ks), n, n)
+            assert np.all(np.isfinite(res))
 
-    for df, fast, slow in zip(div_funcs, results['fast'], results['slow']):
-        assert np.allclose(fast, slow, atol=5e-3 if df == 'js' else 1e-5), df
-        # TODO: debug JS differences
+        for df, fast, slow in zip(div_funcs, results['fast'], results['slow']):
+            assert_array_almost_equal(
+                fast, slow, decimal=1 if df == 'js' else 5,
+                err_msg="({}, dim {})".format(df, dim))
+            # TODO: debug JS differences
 
-    est = get_est(version='fast', n_jobs=-1)
-    res = est.fit_transform(bags)
-    assert np.all(results['fast'] == res)
+        est = get_est(version='fast', n_jobs=-1)
+        res = est.fit_transform(bags)
+        assert np.all(results['fast'] == res)
 
-    est = get_est(version='slow', n_jobs=-1)
-    res = est.fit_transform(bags)
-    assert np.all(results['slow'] == res)
+        est = get_est(version='slow', n_jobs=-1)
+        res = est.fit_transform(bags)
+        assert np.all(results['slow'] == res)
 
 
 def test_knn_sanity_slow():
