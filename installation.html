@@ -138,20 +138,17 @@ know.</p>
 <div class="section" id="release-versions">
 <h2>Release versions<a class="headerlink" href="#release-versions" title="Permalink to this headline">¶</a></h2>
 <p>The released version of skl-groups is available via pypi:</p>
-<div class="highlight-python"><div class="highlight"><pre>$ pip install skl-groups
-</pre></div>
+<div class="highlight-python"><pre>$ pip install skl-groups</pre>
 </div>
 <p>or, if you use Anaconda, via my binstar channel:</p>
-<div class="highlight-python"><div class="highlight"><pre>$ conda install -c http://conda.binstar.org/dougal skl-groups
-</pre></div>
+<div class="highlight-python"><pre>$ conda install -c http://conda.binstar.org/dougal skl-groups</pre>
 </div>
 <p>The conda install includes skl-groups-accel, described below.</p>
 <p>At this point, there&#8217;s nothing special about the releases other than that
 they&#8217;re easier to install.</p>
 <p>Once it&#8217;s installed, you can check that it worked by running the tests:</p>
-<div class="highlight-python"><div class="highlight"><pre>$ pip install nose testfixtures
-$ nosetests --exe skl-groups
-</pre></div>
+<div class="highlight-python"><pre>$ pip install nose testfixtures
+$ nosetests --exe skl-groups</pre>
 </div>
 <p>If you don&#8217;t have FLANN or skl-groups-accel installed (see below),
 some tests will be skipped.</p>
@@ -161,14 +158,12 @@ some tests will be skipped.</p>
 <p>You can install a development version by getting the code from
 <a class="reference external" href="https://github.com/dougalsutherland/skl-groups/issues">the repository</a>,
 either with:</p>
-<div class="highlight-python"><div class="highlight"><pre>$ git clone https://github.com/dougalsutherland/skl-groups.git
-</pre></div>
+<div class="highlight-python"><pre>$ git clone https://github.com/dougalsutherland/skl-groups.git</pre>
 </div>
 <p>or by downloading and extracting the latest version
 <a class="reference external" href="https://github.com/dougalsutherland/skl-groups/archive/master.zip">as a ZIP</a>.
 Then just run:</p>
-<div class="highlight-python"><div class="highlight"><pre>$ python setup.py install
-</pre></div>
+<div class="highlight-python"><pre>$ python setup.py install</pre>
 </div>
 <p>to install it. You might need to add <tt class="docutils literal"><span class="pre">--user</span></tt> to install into your home
 directory, or run it with <tt class="docutils literal"><span class="pre">sudo</span></tt>, depending on your setup.</p>
@@ -187,8 +182,7 @@ either the <tt class="docutils literal"><span class="pre">pyflann</span></tt> li
 <p>skl-groups is only tested with FLANN 1.8.4.</p>
 <p><strong>Anaconda:</strong>
 The skl-groups package pulls this in anyway, but:</p>
-<div class="highlight-python"><div class="highlight"><pre>$ conda install -c http://conda.binstar.org/dougal cyflann
-</pre></div>
+<div class="highlight-python"><pre>$ conda install -c http://conda.binstar.org/dougal cyflann</pre>
 </div>
 <p><strong>OS X:</strong>
 FLANN is available from <a class="reference external" href="http://brew.sh/">Homebrew</a>:
@@ -236,12 +230,10 @@ as well as a functioning C compiler with OpenMP support
 (i.e. gcc, not clang, <a class="reference external" href="http://clang-omp.github.io">for now</a>;
 you may need to <tt class="docutils literal"><span class="pre">export</span> <span class="pre">CC=gcc</span></tt> or similar).</p>
 <p>Once you have that, you can get a release version with:</p>
-<div class="highlight-python"><div class="highlight"><pre>$ pip install skl-groups-accel
-</pre></div>
+<div class="highlight-python"><pre>$ pip install skl-groups-accel</pre>
 </div>
 <p>or install the development version the same way as before, getting the code with:</p>
-<div class="highlight-python"><div class="highlight"><pre>$ git clone https://github.com/dougalsutherland/skl-groups-accel.git
-</pre></div>
+<div class="highlight-python"><pre>$ git clone https://github.com/dougalsutherland/skl-groups-accel.git</pre>
 </div>
 <p>or <a class="reference external" href="https://github.com/dougalsutherland/skl-groups-accel/archive/master.zip">get the ZIP</a>
 and install it the same way (<em>after</em> installing skl-groups).</p>

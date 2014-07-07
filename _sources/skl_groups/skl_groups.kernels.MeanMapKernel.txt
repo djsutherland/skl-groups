@@ -1,0 +1,27 @@
+skl_groups.kernels.MeanMapKernel
+================================
+
+.. currentmodule:: skl_groups.kernels
+
+.. autoclass:: MeanMapKernel
+
+   
+   .. automethod:: __init__
+
+   
+   .. rubric:: Methods
+
+   .. autosummary::
+   
+      ~MeanMapKernel.__init__
+      ~MeanMapKernel.fit
+      ~MeanMapKernel.fit_transform
+      ~MeanMapKernel.get_params
+      ~MeanMapKernel.set_params
+      ~MeanMapKernel.transform
+   
+   
+
+   
+   
+   

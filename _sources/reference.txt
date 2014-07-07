@@ -40,6 +40,18 @@ Methods that convert set-based features into single feature vectors.
     summaries.L2DensityTransformer
 
 
+Set kernels
+-----------
+
+These are kernels on set-based features.
+
+.. autosummary::
+    :toctree: skl_groups
+    :nosignatures:
+
+    kernels.MeanMapKernel
+
+
 Divergences
 -----------
 

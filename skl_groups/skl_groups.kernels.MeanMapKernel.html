@@ -1,0 +1,319 @@
+
+
+<!DOCTYPE html>
+<!--[if IE 8]><html class="no-js lt-ie9" lang="en" > <![endif]-->
+<!--[if gt IE 8]><!--> <html class="no-js" lang="en" > <!--<![endif]-->
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  
+  <title>skl_groups.kernels.MeanMapKernel &mdash; skl-groups 0.1.0-dev documentation</title>
+  
+
+  
+  
+
+  
+  <link href='https://fonts.googleapis.com/css?family=Lato:400,700|Roboto+Slab:400,700|Inconsolata:400,700' rel='stylesheet' type='text/css'>
+
+  
+  
+    
+
+  
+
+  
+  
+    <link rel="stylesheet" href="../_static/css/theme.css" type="text/css" />
+  
+
+  
+    <link rel="top" title="skl-groups 0.1.0-dev documentation" href="../index.html"/>
+        <link rel="up" title="API reference" href="../reference.html"/>
+        <link rel="next" title="skl_groups.kernels.PairwisePicker" href="skl_groups.kernels.PairwisePicker.html"/>
+        <link rel="prev" title="skl_groups.divergences.KNNDivergenceEstimator" href="skl_groups.divergences.KNNDivergenceEstimator.html"/> 
+
+  
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/modernizr/2.6.2/modernizr.min.js"></script>
+
+</head>
+
+<body class="wy-body-for-nav" role="document">
+
+  <div class="wy-grid-for-nav">
+
+    
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-nav-search">
+        <a href="../index.html" class="fa fa-home"> skl-groups</a>
+        <div role="search">
+  <form id ="rtd-search-form" class="wy-form" action="../search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+      </div>
+
+      <div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="main navigation">
+        
+        
+            <ul class="current">
+<li class="toctree-l1"><a class="reference internal" href="../index.html">Overview</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../who.html">Who this package is for</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../installation.html">Installation</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="../installation.html#release-versions">Release versions</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../installation.html#development-version">Development version</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../installation.html#flann">FLANN</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../installation.html#accelerated-version">Accelerated version</a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="../tutorial.html">Quick tutorial</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="../tutorial.html#motivation">Motivation</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../tutorial.html#feature-representation">Feature representation</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../tutorial.html#means">Means</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../tutorial.html#bag-of-words">Bag of Words</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../tutorial.html#divergences">Divergences</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../tutorial.html#l2-density-transformer">L2 density transformer</a></li>
+</ul>
+</li>
+<li class="toctree-l1 current"><a class="reference internal" href="../reference.html">API reference</a><ul class="current">
+<li class="toctree-l2"><a class="reference internal" href="../reference.html#features-representation">Features representation</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../reference.html#preprocessing">Preprocessing</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../reference.html#summaries">Summaries</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../reference.html#divergences">Divergences</a></li>
+<li class="toctree-l2 current"><a class="reference internal" href="../reference.html#set-kernels">Set kernels</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../reference.html#kernel-utilities">Kernel utilities</a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="../todo.html">Planned improvements</a></li>
+</ul>
+
+        
+      </div>
+      &nbsp;
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap">
+
+      
+      <nav class="wy-nav-top" role="navigation" aria-label="top navigation">
+        <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+        <a href="../index.html">skl-groups</a>
+      </nav>
+
+
+      
+      <div class="wy-nav-content">
+        <div class="rst-content">
+          <div role="navigation" aria-label="breadcrumbs navigation">
+  <ul class="wy-breadcrumbs">
+    <li><a href="../index.html">Docs</a> &raquo;</li>
+      
+          <li><a href="../reference.html">API reference</a> &raquo;</li>
+      
+    <li>skl_groups.kernels.MeanMapKernel</li>
+      <li class="wy-breadcrumbs-aside">
+        
+          <a href="../_sources/skl_groups/skl_groups.kernels.MeanMapKernel.txt" rel="nofollow"> View page source</a>
+        
+      </li>
+  </ul>
+  <hr/>
+</div>
+          <div role="main">
+            
+  <div class="section" id="skl-groups-kernels-meanmapkernel">
+<h1>skl_groups.kernels.MeanMapKernel<a class="headerlink" href="#skl-groups-kernels-meanmapkernel" title="Permalink to this headline">¶</a></h1>
+<dl class="class">
+<dt id="skl_groups.kernels.MeanMapKernel">
+<em class="property">class </em><tt class="descclassname">skl_groups.kernels.</tt><tt class="descname">MeanMapKernel</tt><big>(</big><em>kernel='rbf'</em>, <em>gamma=None</em>, <em>coef0=1</em>, <em>degree=3</em>, <em>kernel_params=None</em>, <em>n_components=100</em><big>)</big><a class="headerlink" href="#skl_groups.kernels.MeanMapKernel" title="Permalink to this definition">¶</a></dt>
+<dd><p>Computes a kernel between bags as the mean pairwise evaluation of a kernel
+between the elements of the bags.</p>
+<p>Also known as the maximum mean discrepancy (MMD) when used for a hypothesis
+test for whether two samples come from the same distribution.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><p class="first"><strong>kernel</strong> : string or callable, default=&#8221;rbf&#8221;</p>
+<blockquote>
+<div><p>Kernel map to be approximated. A callable should accept two arguments
+and the keyword arguments passed to this object as kernel_params, and
+should return a floating point number.</p>
+</div></blockquote>
+<p><strong>gamma</strong> : float, default=None</p>
+<blockquote>
+<div><p>Gamma parameter for the RBF, polynomial, exponential chi2 and
+sigmoid kernels. Interpretation of the default value is left to
+the kernel; see the documentation for sklearn.metrics.pairwise.
+Ignored by other kernels.</p>
+</div></blockquote>
+<p><strong>degree</strong> : float, default=3</p>
+<blockquote>
+<div><p>Degree of the polynomial kernel. Ignored by other kernels.</p>
+</div></blockquote>
+<p><strong>coef0</strong> : float, default=1</p>
+<blockquote>
+<div><p>Zero coefficient for polynomial and sigmoid kernels.
+Ignored by other kernels.</p>
+</div></blockquote>
+<p><strong>kernel_params</strong> : mapping of string to any, optional</p>
+<blockquote class="last">
+<div><p>Additional parameters (keyword arguments) for kernel function passed
+as callable object.</p>
+</div></blockquote>
+</td>
+</tr>
+</tbody>
+</table>
+<div class="admonition seealso">
+<p class="first admonition-title">See also</p>
+<p class="last"><a class="reference internal" href="skl_groups.summaries.BagMean.html#skl_groups.summaries.BagMean" title="skl_groups.summaries.BagMean"><tt class="xref py py-class docutils literal"><span class="pre">skl_groups.summaries.BagMean</span></tt></a>, <tt class="xref py py-obj docutils literal"><span class="pre">explicit</span></tt></p>
+</div>
+<dl class="method">
+<dt id="skl_groups.kernels.MeanMapKernel.__init__">
+<tt class="descname">__init__</tt><big>(</big><em>kernel='rbf'</em>, <em>gamma=None</em>, <em>coef0=1</em>, <em>degree=3</em>, <em>kernel_params=None</em>, <em>n_components=100</em><big>)</big><a class="headerlink" href="#skl_groups.kernels.MeanMapKernel.__init__" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<p class="rubric">Methods</p>
+<table border="1" class="longtable docutils">
+<colgroup>
+<col width="10%" />
+<col width="90%" />
+</colgroup>
+<tbody valign="top">
+<tr class="row-odd"><td><a class="reference internal" href="#skl_groups.kernels.MeanMapKernel.__init__" title="skl_groups.kernels.MeanMapKernel.__init__"><tt class="xref py py-obj docutils literal"><span class="pre">__init__</span></tt></a>([kernel,&nbsp;gamma,&nbsp;coef0,&nbsp;degree,&nbsp;...])</td>
+<td></td>
+</tr>
+<tr class="row-even"><td><a class="reference internal" href="#skl_groups.kernels.MeanMapKernel.fit" title="skl_groups.kernels.MeanMapKernel.fit"><tt class="xref py py-obj docutils literal"><span class="pre">fit</span></tt></a>(X[,&nbsp;y])</td>
+<td>Specify the data to which kernel values should be computed.</td>
+</tr>
+<tr class="row-odd"><td><tt class="xref py py-obj docutils literal"><span class="pre">fit_transform</span></tt>(X[,&nbsp;y])</td>
+<td>Fit to data, then transform it.</td>
+</tr>
+<tr class="row-even"><td><tt class="xref py py-obj docutils literal"><span class="pre">get_params</span></tt>([deep])</td>
+<td>Get parameters for this estimator.</td>
+</tr>
+<tr class="row-odd"><td><tt class="xref py py-obj docutils literal"><span class="pre">set_params</span></tt>(**params)</td>
+<td>Set the parameters of this estimator.</td>
+</tr>
+<tr class="row-even"><td><a class="reference internal" href="#skl_groups.kernels.MeanMapKernel.transform" title="skl_groups.kernels.MeanMapKernel.transform"><tt class="xref py py-obj docutils literal"><span class="pre">transform</span></tt></a>(X)</td>
+<td>Compute kernels from X to <tt class="xref py py-attr docutils literal"><span class="pre">features_</span></tt>.</td>
+</tr>
+</tbody>
+</table>
+<dl class="method">
+<dt id="skl_groups.kernels.MeanMapKernel.fit">
+<tt class="descname">fit</tt><big>(</big><em>X</em>, <em>y=None</em><big>)</big><a class="headerlink" href="#skl_groups.kernels.MeanMapKernel.fit" title="Permalink to this definition">¶</a></dt>
+<dd><p>Specify the data to which kernel values should be computed.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><p class="first"><strong>X</strong> : list of arrays or <a class="reference internal" href="skl_groups.features.Features.html#skl_groups.features.Features" title="skl_groups.features.Features"><tt class="xref py py-class docutils literal"><span class="pre">skl_groups.features.Features</span></tt></a></p>
+<blockquote class="last">
+<div><p>The bags to compute &#8220;to&#8221;.</p>
+</div></blockquote>
+</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="method">
+<dt id="skl_groups.kernels.MeanMapKernel.transform">
+<tt class="descname">transform</tt><big>(</big><em>X</em><big>)</big><a class="headerlink" href="#skl_groups.kernels.MeanMapKernel.transform" title="Permalink to this definition">¶</a></dt>
+<dd><p>Compute kernels from X to <tt class="xref py py-attr docutils literal"><span class="pre">features_</span></tt>.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><p class="first"><strong>X</strong> : list of arrays or <a class="reference internal" href="skl_groups.features.Features.html#skl_groups.features.Features" title="skl_groups.features.Features"><tt class="xref py py-class docutils literal"><span class="pre">skl_groups.features.Features</span></tt></a></p>
+<blockquote>
+<div><p>The bags to compute &#8220;from&#8221;. Must have same dimension as
+<tt class="xref py py-attr docutils literal"><span class="pre">features_</span></tt>.</p>
+</div></blockquote>
+</td>
+</tr>
+<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body"><p class="first"><strong>K</strong> : array of shape <tt class="docutils literal"><span class="pre">[len(X),</span> <span class="pre">len(features_)]</span></tt></p>
+<blockquote class="last">
+<div><p>The kernel evaluations from X to <tt class="xref py py-attr docutils literal"><span class="pre">features_</span></tt>.</p>
+</div></blockquote>
+</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+</dd></dl>
+
+</div>
+
+
+          </div>
+          <footer>
+  
+    <div class="rst-footer-buttons" role="navigation" aria-label="footer navigation">
+      
+        <a href="skl_groups.kernels.PairwisePicker.html" class="btn btn-neutral float-right" title="skl_groups.kernels.PairwisePicker"/>Next <span class="fa fa-arrow-circle-right"></span></a>
+      
+      
+        <a href="skl_groups.divergences.KNNDivergenceEstimator.html" class="btn btn-neutral" title="skl_groups.divergences.KNNDivergenceEstimator"><span class="fa fa-arrow-circle-left"></span> Previous</a>
+      
+    </div>
+  
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>
+        &copy; Copyright 2014, Dougal J. Sutherland.
+    </p>
+  </div>
+
+  <a href="https://github.com/snide/sphinx_rtd_theme">Sphinx theme</a> provided by <a href="https://readthedocs.org">Read the Docs</a>
+</footer>
+        </div>
+      </div>
+
+    </section>
+
+  </div>
+  
+
+
+  
+
+    <script type="text/javascript">
+        var DOCUMENTATION_OPTIONS = {
+            URL_ROOT:'../',
+            VERSION:'0.1.0-dev',
+            COLLAPSE_INDEX:false,
+            FILE_SUFFIX:'.html',
+            HAS_SOURCE:  true
+        };
+    </script>
+      <script type="text/javascript" src="../_static/jquery.js"></script>
+      <script type="text/javascript" src="../_static/underscore.js"></script>
+      <script type="text/javascript" src="../_static/doctools.js"></script>
+      <script type="text/javascript" src="https://cdn.mathjax.org/mathjax/latest/MathJax.js?config=TeX-AMS-MML_HTMLorMML"></script>
+
+  
+
+  
+  
+    <script type="text/javascript" src="../_static/js/theme.js"></script>
+  
+
+  
+  
+  <script type="text/javascript">
+      jQuery(function () {
+          SphinxRtdTheme.StickyNav.enable();
+      });
+  </script>
+   
+
+</body>
+</html>
