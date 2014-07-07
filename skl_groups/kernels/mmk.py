@@ -27,7 +27,7 @@ class MeanMapKernel(BaseEstimator, TransformerMixin):
     gamma : float, default=None
         Gamma parameter for the RBF, polynomial, exponential chi2 and
         sigmoid kernels. Interpretation of the default value is left to
-        the kernel; see the documentation for sklearn.metrics.pairwise.
+        the kernel; see :mod:`sklearn.metrics.pairwise`.
         Ignored by other kernels.
 
     degree : float, default=3
