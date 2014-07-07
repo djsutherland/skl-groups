@@ -33,7 +33,7 @@ except ImportError:
         have_flann = False
 
 try:
-    import skl_groups_accel
+    import skl_groups_accel.knn_divs
 except ImportError:
     have_accel = False
 else:
