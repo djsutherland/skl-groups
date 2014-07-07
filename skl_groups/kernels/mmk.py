@@ -4,7 +4,7 @@ import numpy as np
 
 from sklearn.base import BaseEstimator, TransformerMixin
 from sklearn.metrics.pairwise import pairwise_kernels
-from sklearn.externals.six.moves import range
+from sklearn.externals.six.moves import xrange as range
 
 from ..features import as_features
 

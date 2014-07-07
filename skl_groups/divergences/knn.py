@@ -416,7 +416,7 @@ def _get_rhos(X, indices, Ks, max_K, save_all_Ks, min_dist):
 
     indices = plog(indices, name="within-bag distances")
     rhos = [None] * len(X)
-    for i, (bag, idx) in enumerate(zip(X, indices)):
+    for i, (idx, bag) in enumerate(zip(indices, X)):
         r = np.sqrt(idx.nn_index(bag, max_K + 1)[1][:, which_Ks])
         np.maximum(min_dist, r, out=r)
         rhos[i] = r
@@ -470,7 +470,7 @@ def _est_divs(X, Y, Y_indices, Y_rhos, div_funcs, Ks,
     outputs = fn(X, X_indices, X_rhos, Y, Y_indices, Y_rhos,
                  funcs, Ks, max_K, save_all_Ks, len(div_funcs) + n_meta_only,
                  do_sym, to_self,
-                 ProgressLogger(progress_logger, name="Cross-divergences"),
+                 ProgressLogger(progress_logger, name="cross-divergences"),
                  n_jobs, min_dist, clamp)
 
     logger.info("Computing meta-divergences...")

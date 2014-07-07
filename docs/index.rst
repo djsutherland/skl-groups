@@ -35,6 +35,7 @@ Contents
    who
    installation
    tutorial
+   logging
    reference
    todo
 
