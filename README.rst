@@ -16,7 +16,7 @@ work on other platforms; let me know if you try it.
 
 The easy way to install is::
 
-    $ conda install -c http://conda.binstar.org/dougal skl-groups
+    $ conda install -c https://conda.binstar.org/dougal skl-groups
 
 if you use conda, which includes both skl-groups and skl-groups-accel.
 
