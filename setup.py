@@ -6,7 +6,6 @@ try:
     from setuptools import setup
 except ImportError:
     from distutils.core import setup
-from distutils.extension import Extension
 
 DESCRIPTION = "Compiled components to speed up skl-groups."
 with open('README.rst') as f:
@@ -46,44 +45,50 @@ builtins.__SKL_GROUPS_ACCEL_SETUP__ = True
 import skl_groups_accel
 VERSION = skl_groups_accel.__version__
 
-setup_args = {}
 
-def cython_ext(name, **kw):
-    pyx_path = 'skl_groups_accel/{}.pyx'.format(name)
-    c_path = 'skl_groups_accel/{}.c'.format(name)
+def cython_ext(extension, **kw):
+    assert len(extension.sources) == 1
+    base, ext = os.path.splitext(extension.sources[0])
+    # setuptools sometimes "nicely" turns .pyx into .c for us
+    assert ext in {'.pyx', '.c'}
+    pyx_path = base + '.pyx'
+    c_path = base + '.c'
+
     try:
-        from Cython.Distutils import build_ext
+        from Cython.Build import cythonize
     except ImportError:
         try:
             pyx_time = os.path.getmtime(pyx_path)
             c_time = os.path.getmtime(c_path)
             if pyx_time > c_time:
                 import datetime
-                msg = "{name}.pyx file has mtime {pyx_t}, {name}.c has {c_t}"
+                msg = "{pyx_name} file has mtime {pyx_t}, {c_name} has {c_t}"
                 raise ValueError(msg.format(
-                    name=name,
+                    pyx_name=os.path.basename(pyx_path),
+                    c_name=os.path.basename(c_path),
                     pyx_t=datetime.datetime.fromtimestamp(pyx_time),
                     c_t=datetime.datetime.fromtimestamp(c_time),
                 ))
         except (OSError, ValueError) as e:
             msg = "{} extension needs to be compiled, but cython not available:"
-            raise ImportError(msg.format(name) + '\n' + str(e))
+            raise ImportError(msg.format(extension.name) + '\n' + str(e))
         else:
-            source_file = c_path
+            extension.sources[0] = c_path
+            return extension
     else:
-        source_file = pyx_path
-        setup_args['cmdclass'] = {'build_ext': build_ext}
+        return cythonize([extension])[0]
 
-    return Extension("skl_groups_accel.{}".format(name), [source_file], **kw)
 
 # TODO: don't do this for egg_info, etc
 import numpy
-import cyflann
+from cyflann.extensions import FLANNExtension, build_ext_flann
+
 ext_modules = [
-    cython_ext('knn_divs',
-               include_dirs=[numpy.get_include(), cyflann.get_flann_include()],
-               extra_compile_args=['-fopenmp'],
-               extra_link_args=['-fopenmp', cyflann.get_flann_lib()])
+    cython_ext(FLANNExtension('skl_groups_accel.knn_divs',
+                              ['skl_groups_accel/knn_divs.pyx'],
+                              include_dirs=[numpy.get_include()],
+                              extra_compile_args=['-fopenmp'],
+                              extra_link_args=['-fopenmp'])),
 ]
 
 setup(
@@ -103,10 +108,9 @@ setup(
         'skl_groups_accel',
     ],
     ext_modules=ext_modules,
+    cmdclass={'build_ext': build_ext_flann},
     install_requires=[
-        'skl-groups',
-        'cyflann >= 0.1.15',
+        'cyflann >= 0.1.22',
     ],
     zip_safe=False,
-    **setup_args
 )
