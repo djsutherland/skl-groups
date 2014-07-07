@@ -1,7 +1,7 @@
 import numpy as np
 from sklearn.base import BaseEstimator, TransformerMixin
 
-from ..features import Features
+from ..features import as_features
 
 class BagMean(BaseEstimator, TransformerMixin):
     '''
@@ -43,5 +43,5 @@ class BagMean(BaseEstimator, TransformerMixin):
         X_new : array, shape [len(X), X.dim]
             X transformed into its means.
         '''
-        X = Features(X)
+        X = as_features(X)
         return np.vstack([np.mean(bag, axis=0) for bag in X])

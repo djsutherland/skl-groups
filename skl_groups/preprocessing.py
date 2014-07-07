@@ -4,7 +4,7 @@ from sklearn.decomposition import PCA, RandomizedPCA
 from sklearn.preprocessing import StandardScaler, Normalizer
 from sklearn.utils import check_arrays, warn_if_not_float
 
-from .features import Features
+from .features import Features, as_features
 
 # TODO: support inplace transformations here
 
@@ -32,13 +32,6 @@ class BagPreprocesser(BaseEstimator, TransformerMixin):
             raise TypeError("The transformer doesn't have appropriate methods.")
         self.transformer = t
 
-    def _check_inputs(self, X):
-        if isinstance(X, Features):
-            X.make_stacked()
-        else:
-            X = Features(X, stack=True)
-        return X
-
     def _gather_outputs(self, old, new):
         if new.shape[0] != old.total_points:
             msg = "Transformer changed number of points from {} to {}"
@@ -57,7 +50,7 @@ class BagPreprocesser(BaseEstimator, TransformerMixin):
         any other keyword argument :
             Passed on as keyword arguments to the transformer's ``fit()``.
         '''
-        X = self._check_inputs(X)
+        X = as_features(X, stack=True)
         self.transformer.fit(X.stacked_features, y, **params)
         return self
 
@@ -78,7 +71,7 @@ class BagPreprocesser(BaseEstimator, TransformerMixin):
         X_new : :class:`Features`
             Transformed features.
         '''
-        X = self._check_inputs(X)
+        X = as_features(X, stack=True)
         X_new = self.transformer.transform(X.stacked_features, **params)
         return self._gather_outputs(X, X_new)
 
@@ -99,7 +92,7 @@ class BagPreprocesser(BaseEstimator, TransformerMixin):
         X_new : :class:`Features`
             Transformed features.
         '''
-        X = self._check_inputs(X)
+        X = as_features(X, stack=True)
         X_new = self.transformer.fit_transform(X.stacked_features, y, **params)
         return self._gather_outputs(X, X_new)
 
@@ -121,7 +114,7 @@ class BagPreprocesser(BaseEstimator, TransformerMixin):
         -------
         X_original : :class:`Features`
         '''
-        X = self._check_inputs(X)
+        X = as_features(X, stack=True)
         Xo = self.transformer.inverse_transform(X.stacked_features, **params)
         return self._gather_outputs(X, Xo)
 

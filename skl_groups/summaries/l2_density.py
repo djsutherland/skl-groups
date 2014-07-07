@@ -6,7 +6,7 @@ import numpy as np
 from sklearn.base import BaseEstimator, TransformerMixin
 from sklearn.externals.six.moves import xrange, reduce
 
-from ..features import Features
+from ..features import as_features
 from ..utils import is_integer
 
 VALID_BASES = frozenset({'cosine'})
@@ -123,7 +123,7 @@ class L2DensityTransformer(BaseEstimator, TransformerMixin):
         if is_integer(X):
             dim = X
         else:
-            X = Features(X)
+            X = as_features(X)
             dim = X.dim
         M = self.smoothness
 
@@ -154,7 +154,7 @@ class L2DensityTransformer(BaseEstimator, TransformerMixin):
         inds = self.inds_
         do_check = self.do_bounds_check
 
-        X = Features(X)
+        X = as_features(X)
         if X.dim != dim:
             msg = "model fit for dimension {} but got dim {}"
             raise ValueError(msg.format(dim, X.dim))

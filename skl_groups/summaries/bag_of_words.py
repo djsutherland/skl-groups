@@ -4,7 +4,7 @@ import numpy as np
 from sklearn.base import BaseEstimator, TransformerMixin
 from sklearn.externals.six.moves import xrange
 
-from ..features import Features
+from ..features import as_features
 
 # TODO: support vlfeat's kmeans algorithms
 # (to separate fit() and predict(), need to refactor vlfeat-ctypes a bit)
@@ -68,13 +68,6 @@ class BagOfWords(BaseEstimator, TransformerMixin):
         self._check_fitted()
         return self.kmeans_fit_.cluster_centers_
 
-    def _check_inputs(self, X):
-        if isinstance(X, Features):
-            X.make_stacked()
-        else:
-            X = Features(X, stack=True)
-        return X
-
     def _group_assignments(self, X, assignments):
         X_new = np.empty((len(X), self.n_codewords), dtype=np.int32)
         for i in xrange(len(X)):
@@ -95,7 +88,7 @@ class BagOfWords(BaseEstimator, TransformerMixin):
             Training set. If a Features object, it will be stacked.
         '''
         self.kmeans_fit_ = copy(self.kmeans)
-        X = self._check_inputs(X)
+        X = as_features(X, stack=True)
         self.kmeans_fit_.fit(X.stacked_features) 
         return self
 
@@ -114,7 +107,7 @@ class BagOfWords(BaseEstimator, TransformerMixin):
             X transformed into the new space.
         '''
         self._check_fitted()
-        X = self._check_inputs(X)
+        X = as_features(X, stack=True)
         assignments = self.kmeans_fit_.predict(X.stacked_features)
         return self._group_assignments(X, assignments)
 
@@ -134,7 +127,7 @@ class BagOfWords(BaseEstimator, TransformerMixin):
         X_new : integer array, shape [len(X), kmeans.n_clusters]
             X transformed into the new space.
         '''
-        X = self._check_inputs(X)
+        X = as_features(X, stack=True)
         self.kmeans_fit_ = copy(self.kmeans)
         assignments = self.kmeans_fit_.fit_predict(X.stacked_features) 
         return self._group_assignments(X, assignments)

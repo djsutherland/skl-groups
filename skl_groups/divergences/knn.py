@@ -18,7 +18,7 @@ try:
 except ImportError:
     from pyflann import FLANN as FLANNIndex, FLANNParameters
 
-from ..features import Features
+from ..features import as_features
 from ..utils import identity, ProgressLogger, as_integer_type
 from ._knn import _linear, kl, _alpha_div, _jensen_shannon_core
 
@@ -261,14 +261,6 @@ class KNNDivergenceEstimator(BaseEstimator, TransformerMixin):
 
         return args
 
-    def _as_stacked_bare(self, X):
-        "Stacks X if necessary and returns a bare version of it."
-        if isinstance(X, Features):
-            X.make_stacked()
-            return X.bare()
-        else:
-            return Features(X, stack=True)
-
     def fit(self, X, y=None, get_rhos=False):
         '''
         Sets up for divergence estimation "from" new data "to" X.
@@ -277,7 +269,7 @@ class KNNDivergenceEstimator(BaseEstimator, TransformerMixin):
         Parameters
         ----------
         X : list of arrays or :class:`skl_groups.features.Features`
-            The bags to search "from".
+            The bags to search "to".
 
         get_rhos : boolean, optional, default False
             Compute within-bag distances :attr:`rhos_`. These are only needed
@@ -289,7 +281,7 @@ class KNNDivergenceEstimator(BaseEstimator, TransformerMixin):
             be needed once it sees the number of points in the transformed bags,
             so the computation here might be wasted.
         '''
-        self.features_ = X = self._as_stacked_bare(X)
+        self.features_ = X = as_features(X, stack=True, bare=True)
 
         # if we're using a function that needs to pick its K vals itself,
         # then we need to set max_K here. when we transform(), might have to
@@ -332,7 +324,7 @@ class KNNDivergenceEstimator(BaseEstimator, TransformerMixin):
             :math:`D_{d,k}( X_i \| \texttt{features_}_j)` and
             ``divs[d, k, i, j, 1]`` is :math:`D_{d,k}(\texttt{features_}_j \| X_i)`.
         '''
-        X = self._as_stacked_bare(X)
+        X = as_features(X, stack=True, bare=True)
         Y = self.features_
 
         Ks = np.asarray(self.Ks)
