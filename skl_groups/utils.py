@@ -157,6 +157,10 @@ class ProgressBarHandler(logging.Handler):
     '''
     A logging handler that uses the progressbar module to show progress from
     a :class:`ProgressLogger`.
+
+    Takes the same parameters as :class:`progressbar.ProgressBar`,
+    but gives a default for ``widgets`` that applies only when maxval is
+    available; you'll need to pass different widgets if not.
     '''
     def __init__(self, widgets=None, **kwargs):
         import progressbar as pb
@@ -192,7 +196,7 @@ class ProgressBarHandler(logging.Handler):
             print('', file=sys.stderr)
 
 
-def show_progress(name):
+def show_progress(name, **kwargs):
     '''
     Sets up a :class:`ProgressBarHandler` to handle progess logs for
     a given module.
@@ -203,7 +207,10 @@ def show_progress(name):
         The module name of the progress logger to use. For example,
         :class:`skl_groups.divergences.KNNDivergenceEstimator`
         uses ``'skl_groups.divergences.knn.progress'``.
+
+    * : anything
+        Other keyword arguments are passed to the :class:`ProgressBarHandler`.
     '''
     logger = logging.getLogger(name)
     logger.setLevel(logging.INFO)
-    logger.addHandler(ProgressBarHandler())
+    logger.addHandler(ProgressBarHandler(**kwargs))
