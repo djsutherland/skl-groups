@@ -11,13 +11,13 @@ class BagMean(BaseEstimator, TransformerMixin):
     Examples
     --------
     If you have a kernel where you can compute an (approximate?) explicit
-    embedding, you can compute an explicit embedding of the mean map kernel
-    (MMK, also known as maximum mean discrepancy or MMD) by first doing the
-    kernel embedding and then taking the mean.
+    embedding, you can compute an explicit embedding of
+    :class:`skl_groups.kernels.MeanMapKernel` by first doing the kernel
+    embedding and then taking the mean.
     Using :class:`sklearn.kernel_approximation.RBFSampler`::
 
         rbf_mmk = Pipeline([
-            ('rbf', RBFSampler()),
+            ('rbf', BagPreprocesser(RBFSampler(gamma=g, n_components=100))),
             ('mean', BagMean()),
         ])
     '''
@@ -31,16 +31,16 @@ class BagMean(BaseEstimator, TransformerMixin):
 
     def transform(self, X):
         '''
-        Transform a list of bag features into its bag-of-words representation.
+        Transform a list of bag features into a matrix of its mean features.
 
         Parameters
         ----------
-        X : :class:`Features` or list of bag feature arrays
+        X : :class:`skl_groups.features.Features` or list of bag feature arrays
             Data to transform.
 
         Returns
         -------
-        X_new : array, shape [len(X), X.dim]
+        X_new : array, shape ``[len(X), X.dim]``
             X transformed into its means.
         '''
         X = as_features(X)
