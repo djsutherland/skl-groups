@@ -12,8 +12,11 @@ For an introduction to the package, why you might want to use it, and how to
 do so, check out
 `the documentation <https://dougalsutherland.github.io/skl-groups/>`_.
 
-skl-groups is currently in early stages of development; feel free to get in
-touch (dsutherl@cs.cmu.edu) if you're interested.
+skl-groups is still in fairly early development.
+The precursor package, `py-sdm <https://github.com/dougalsutherland/py-sdm/>`_,
+is still somewhat easier to use for some tasks (though it has less functionality
+and less documentation); skl-groups will hopefully match it in the next few weeks.
+Feel free to get in touch (dsutherl@cs.cmu.edu) if you're interested.
 
 
 Installation
