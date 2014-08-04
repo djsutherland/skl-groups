@@ -400,7 +400,7 @@ and then put it in an SVM::
         ('symmetrize', Symmetrize()),
         ('rbf', RBFize(gamma=1, scale_by_median=True)),
         ('project', ProjectPSD()),
-        ('svm', SVC(C=1, kernel='precomputed', probability=True)),
+        ('svm', SVC(C=1, kernel='precomputed')),
     ])
     >>> model.fit(feats[:6], labels[:6]).predict(feats[6:])
     array([False], dtype=bool)

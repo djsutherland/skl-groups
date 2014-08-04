@@ -182,9 +182,18 @@ class KNNDivergenceEstimator(BaseEstimator, TransformerMixin):
         May or may not be present after :meth:`fit`; will be after
         :meth:`transform`.
 
+    See also
+    --------
+    :class:`skl_groups.kernels.PairwisePicker`
+        Chooses a particular divergence function / K combination in a pipeline.
+        Doing parameter tuning with :class:`KNNDivergenceEstimator` with a
+        :attr:`memory` and then :class:`PairwisePicker` is more efficient
+        than directly tuning over :class:`KNNDivergenceEstimator` arguments.
+
+
     Notes
     -----
-    The convergence proof in [1]_ is incorrect. The estimator seems to work
+    The convergence proof in [1]_ seems incorrect. The estimator seems to work
     well, in practice, though.
 
     The Jensen-Shannon estimation is performed by using the estimator of

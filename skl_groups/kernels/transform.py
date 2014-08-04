@@ -19,8 +19,8 @@ class _Meta(type):
 class PairwisePicker(BaseEstimator, TransformerMixin, with_metaclass(_Meta)):
     '''
     Picks a subset of the passed-in matrix. Useful for choosing one of several
-    divergences computed by :class:`skl_groups.divergences.KNNDivergenceEstimator`,
-    for example.
+    divergences computed by
+    :class:`skl_groups.divergences.KNNDivergenceEstimator`, for example.
 
     Rather than ``PairwisePicker((0, slice(2, 3)))``, you can also do
     ``PairwisePicker[0, 2:3]``.
