@@ -132,6 +132,9 @@
 <em class="property">class </em><tt class="descclassname">skl_groups.utils.</tt><tt class="descname">ProgressBarHandler</tt><big>(</big><em>widgets=None</em>, <em>**kwargs</em><big>)</big><a class="reference internal" href="../_modules/skl_groups/utils.html#ProgressBarHandler"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#skl_groups.utils.ProgressBarHandler" title="Permalink to this definition">¶</a></dt>
 <dd><p>A logging handler that uses the progressbar module to show progress from
 a <a class="reference internal" href="skl_groups.utils.ProgressLogger.html#skl_groups.utils.ProgressLogger" title="skl_groups.utils.ProgressLogger"><tt class="xref py py-class docutils literal"><span class="pre">ProgressLogger</span></tt></a>.</p>
+<p>Takes the same parameters as <tt class="xref py py-class docutils literal"><span class="pre">progressbar.ProgressBar</span></tt>,
+but gives a default for <tt class="docutils literal"><span class="pre">widgets</span></tt> that applies only when maxval is
+available; you&#8217;ll need to pass different widgets if not.</p>
 <dl class="method">
 <dt id="skl_groups.utils.ProgressBarHandler.__init__">
 <tt class="descname">__init__</tt><big>(</big><em>widgets=None</em>, <em>**kwargs</em><big>)</big><a class="reference internal" href="../_modules/skl_groups/utils.html#ProgressBarHandler.__init__"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#skl_groups.utils.ProgressBarHandler.__init__" title="Permalink to this definition">¶</a></dt>

@@ -121,217 +121,224 @@
 </div>
           <div role="main">
             
-  <h1>Source code for skl_groups.utils</h1><pre>
-from __future__ import division, print_function
+  <h1>Source code for skl_groups.utils</h1><div class="highlight"><pre>
+<span class="kn">from</span> <span class="nn">__future__</span> <span class="kn">import</span> <span class="n">division</span><span class="p">,</span> <span class="n">print_function</span>
 
-import logging
-import json
-import sys
+<span class="kn">import</span> <span class="nn">logging</span>
+<span class="kn">import</span> <span class="nn">json</span>
+<span class="kn">import</span> <span class="nn">sys</span>
 
-import numpy as np
-from sklearn.externals import six
-
-
-def identity(x):
-    return x
+<span class="kn">import</span> <span class="nn">numpy</span> <span class="kn">as</span> <span class="nn">np</span>
+<span class="kn">from</span> <span class="nn">sklearn.externals</span> <span class="kn">import</span> <span class="n">six</span>
 
 
-################################################################################
-### Type utilities for numpy
-
-def is_integer_type(x):
-    "Checks whether the array is of an integral type."
-    return issubclass(np.asanyarray(x).dtype.type, np.integer)
+<span class="k">def</span> <span class="nf">identity</span><span class="p">(</span><span class="n">x</span><span class="p">):</span>
+    <span class="k">return</span> <span class="n">x</span>
 
 
-def is_categorical_type(ary):
-    "Checks whether the array is either integral or boolean."
-    ary = np.asanyarray(ary)
-    return is_integer_type(ary) or ary.dtype.kind == 'b'
+<span class="c">################################################################################</span>
+<span class="c">### Type utilities for numpy</span>
+
+<span class="k">def</span> <span class="nf">is_integer_type</span><span class="p">(</span><span class="n">x</span><span class="p">):</span>
+    <span class="s">&quot;Checks whether the array is of an integral type.&quot;</span>
+    <span class="k">return</span> <span class="nb">issubclass</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">asanyarray</span><span class="p">(</span><span class="n">x</span><span class="p">)</span><span class="o">.</span><span class="n">dtype</span><span class="o">.</span><span class="n">type</span><span class="p">,</span> <span class="n">np</span><span class="o">.</span><span class="n">integer</span><span class="p">)</span>
 
 
-def is_integer(x):
-    "Checks whether the argument is a single integer."
-    return np.isscalar(x) and is_integer_type(x)
+<span class="k">def</span> <span class="nf">is_categorical_type</span><span class="p">(</span><span class="n">ary</span><span class="p">):</span>
+    <span class="s">&quot;Checks whether the array is either integral or boolean.&quot;</span>
+    <span class="n">ary</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">asanyarray</span><span class="p">(</span><span class="n">ary</span><span class="p">)</span>
+    <span class="k">return</span> <span class="n">is_integer_type</span><span class="p">(</span><span class="n">ary</span><span class="p">)</span> <span class="ow">or</span> <span class="n">ary</span><span class="o">.</span><span class="n">dtype</span><span class="o">.</span><span class="n">kind</span> <span class="o">==</span> <span class="s">&#39;b&#39;</span>
 
 
-def is_categorical(x):
-    "Checks whether the argument is a single integer or boolean."
-    return np.isscalar(x) and is_categorical_type(x)
+<span class="k">def</span> <span class="nf">is_integer</span><span class="p">(</span><span class="n">x</span><span class="p">):</span>
+    <span class="s">&quot;Checks whether the argument is a single integer.&quot;</span>
+    <span class="k">return</span> <span class="n">np</span><span class="o">.</span><span class="n">isscalar</span><span class="p">(</span><span class="n">x</span><span class="p">)</span> <span class="ow">and</span> <span class="n">is_integer_type</span><span class="p">(</span><span class="n">x</span><span class="p">)</span>
 
 
-def as_integer_type(ary):
-    '''
-    Returns argument as an integer array, converting floats if convertable.
-    Raises ValueError if it's a float array with nonintegral values.
-    '''
-    ary = np.asanyarray(ary)
-    if is_integer_type(ary):
-        return ary
-    rounded = np.rint(ary)
-    if np.any(rounded != ary):
-        raise ValueError("argument array must contain only integers")
-    return rounded.astype(int)
+<span class="k">def</span> <span class="nf">is_categorical</span><span class="p">(</span><span class="n">x</span><span class="p">):</span>
+    <span class="s">&quot;Checks whether the argument is a single integer or boolean.&quot;</span>
+    <span class="k">return</span> <span class="n">np</span><span class="o">.</span><span class="n">isscalar</span><span class="p">(</span><span class="n">x</span><span class="p">)</span> <span class="ow">and</span> <span class="n">is_categorical_type</span><span class="p">(</span><span class="n">x</span><span class="p">)</span>
 
 
-################################################################################
-
-class NoImportStub(object):
-    '''
-    A class to use so that if there are missing optional dependencies, we can
-    still import the name, but using it will raise the original import error
-    that prevented us using the name anyway.
-    '''
-    def __init__(self, exception):
-        self.exception = exception
-
-    def __getattribute__(self, name):
-        if name == 'exception':
-            return object.__getattribute__(self, name)
-        six.reraise(*self.exception)
-
-    def __call__(self, *args, **kwargs):
-        six.reraise(*self.exception)
+<span class="k">def</span> <span class="nf">as_integer_type</span><span class="p">(</span><span class="n">ary</span><span class="p">):</span>
+    <span class="sd">&#39;&#39;&#39;</span>
+<span class="sd">    Returns argument as an integer array, converting floats if convertable.</span>
+<span class="sd">    Raises ValueError if it&#39;s a float array with nonintegral values.</span>
+<span class="sd">    &#39;&#39;&#39;</span>
+    <span class="n">ary</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">asanyarray</span><span class="p">(</span><span class="n">ary</span><span class="p">)</span>
+    <span class="k">if</span> <span class="n">is_integer_type</span><span class="p">(</span><span class="n">ary</span><span class="p">):</span>
+        <span class="k">return</span> <span class="n">ary</span>
+    <span class="n">rounded</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">rint</span><span class="p">(</span><span class="n">ary</span><span class="p">)</span>
+    <span class="k">if</span> <span class="n">np</span><span class="o">.</span><span class="n">any</span><span class="p">(</span><span class="n">rounded</span> <span class="o">!=</span> <span class="n">ary</span><span class="p">):</span>
+        <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="s">&quot;argument array must contain only integers&quot;</span><span class="p">)</span>
+    <span class="k">return</span> <span class="n">rounded</span><span class="o">.</span><span class="n">astype</span><span class="p">(</span><span class="nb">int</span><span class="p">)</span>
 
 
-################################################################################
+<span class="c">################################################################################</span>
 
-<div class="viewcode-block" id="ProgressLogger"><a class="viewcode-back" href="../../skl_groups/skl_groups.utils.ProgressLogger.html#skl_groups.utils.ProgressLogger">[docs]</a>class ProgressLogger(object):
-    '''
-    A little class to use to wrap logging progress to a logger object.
+<span class="k">class</span> <span class="nc">NoImportStub</span><span class="p">(</span><span class="nb">object</span><span class="p">):</span>
+    <span class="sd">&#39;&#39;&#39;</span>
+<span class="sd">    A class to use so that if there are missing optional dependencies, we can</span>
+<span class="sd">    still import the name, but using it will raise the original import error</span>
+<span class="sd">    that prevented us using the name anyway.</span>
+<span class="sd">    &#39;&#39;&#39;</span>
+    <span class="k">def</span> <span class="nf">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">exception</span><span class="p">):</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">exception</span> <span class="o">=</span> <span class="n">exception</span>
 
-    Parameters
-    ----------
-    logger : :class:`logging.Logger`
-        The logger instance to use.
+    <span class="k">def</span> <span class="nf">__getattribute__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">name</span><span class="p">):</span>
+        <span class="k">if</span> <span class="n">name</span> <span class="o">==</span> <span class="s">&#39;exception&#39;</span><span class="p">:</span>
+            <span class="k">return</span> <span class="nb">object</span><span class="o">.</span><span class="n">__getattribute__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">name</span><span class="p">)</span>
+        <span class="n">six</span><span class="o">.</span><span class="n">reraise</span><span class="p">(</span><span class="o">*</span><span class="bp">self</span><span class="o">.</span><span class="n">exception</span><span class="p">)</span>
 
-    name : string, optional, default None
-        The name of the process.
+    <span class="k">def</span> <span class="nf">__call__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="o">*</span><span class="n">args</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">):</span>
+        <span class="n">six</span><span class="o">.</span><span class="n">reraise</span><span class="p">(</span><span class="o">*</span><span class="bp">self</span><span class="o">.</span><span class="n">exception</span><span class="p">)</span>
 
-    Notes
-    -----
-    Instances of this class can be used as callables. In that case,
-    they take an iterable and return a generator that yields each element, with
-    appropriate progress messages in between. For example::
 
-        ProgressLogger(logger)([x ** 2 for x in range(10)])
-        ProgressLogger(logger)((x ** 2 for x in range(10)), total=10)
+<span class="c">################################################################################</span>
 
-    will each yield the integers 1, 4, 9, ... while logging progress messages
-    to ``logger``. In the second case, we passed the ``total`` argument to
-    communicate the length of the iterable, which is not available via
-    :func:`len`.
+<div class="viewcode-block" id="ProgressLogger"><a class="viewcode-back" href="../../skl_groups/skl_groups.utils.ProgressLogger.html#skl_groups.utils.ProgressLogger">[docs]</a><span class="k">class</span> <span class="nc">ProgressLogger</span><span class="p">(</span><span class="nb">object</span><span class="p">):</span>
+    <span class="sd">&#39;&#39;&#39;</span>
+<span class="sd">    A little class to use to wrap logging progress to a logger object.</span>
 
-    A gotcha here is that :meth:`finish` will only be called if the iterator
-    actually terminates. For example::
+<span class="sd">    Parameters</span>
+<span class="sd">    ----------</span>
+<span class="sd">    logger : :class:`logging.Logger`</span>
+<span class="sd">        The logger instance to use.</span>
 
-        for x, y in zip(things, ProgressLogger(logger)(f(x) for x in things)):
-            pass
+<span class="sd">    name : string, optional, default None</span>
+<span class="sd">        The name of the process.</span>
 
-    won't ever :meth:`finish`, because :func:`zip` will see that ``things``
-    ends first and not continue iterating over the generator.
-    '''
-<div class="viewcode-block" id="ProgressLogger.__init__"><a class="viewcode-back" href="../../skl_groups/skl_groups.utils.ProgressLogger.html#skl_groups.utils.ProgressLogger.__init__">[docs]</a>    def __init__(self, logger, name=None):
-        self.logger = logger
-        self.name = name
+<span class="sd">    Notes</span>
+<span class="sd">    -----</span>
+<span class="sd">    Instances of this class can be used as callables. In that case,</span>
+<span class="sd">    they take an iterable and return a generator that yields each element, with</span>
+<span class="sd">    appropriate progress messages in between. For example::</span>
+
+<span class="sd">        ProgressLogger(logger)([x ** 2 for x in range(10)])</span>
+<span class="sd">        ProgressLogger(logger)((x ** 2 for x in range(10)), total=10)</span>
+
+<span class="sd">    will each yield the integers 1, 4, 9, ... while logging progress messages</span>
+<span class="sd">    to ``logger``. In the second case, we passed the ``total`` argument to</span>
+<span class="sd">    communicate the length of the iterable, which is not available via</span>
+<span class="sd">    :func:`len`.</span>
+
+<span class="sd">    A gotcha here is that :meth:`finish` will only be called if the iterator</span>
+<span class="sd">    actually terminates. For example::</span>
+
+<span class="sd">        for x, y in zip(things, ProgressLogger(logger)(f(x) for x in things)):</span>
+<span class="sd">            pass</span>
+
+<span class="sd">    won&#39;t ever :meth:`finish`, because :func:`zip` will see that ``things``</span>
+<span class="sd">    ends first and not continue iterating over the generator.</span>
+<span class="sd">    &#39;&#39;&#39;</span>
+<div class="viewcode-block" id="ProgressLogger.__init__"><a class="viewcode-back" href="../../skl_groups/skl_groups.utils.ProgressLogger.html#skl_groups.utils.ProgressLogger.__init__">[docs]</a>    <span class="k">def</span> <span class="nf">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">logger</span><span class="p">,</span> <span class="n">name</span><span class="o">=</span><span class="bp">None</span><span class="p">):</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">logger</span> <span class="o">=</span> <span class="n">logger</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">name</span> <span class="o">=</span> <span class="n">name</span>
 </div>
-<div class="viewcode-block" id="ProgressLogger.start"><a class="viewcode-back" href="../../skl_groups/skl_groups.utils.ProgressLogger.html#skl_groups.utils.ProgressLogger.start">[docs]</a>    def start(self, total):
-        '''
-        Signal the start of the process.
+<div class="viewcode-block" id="ProgressLogger.start"><a class="viewcode-back" href="../../skl_groups/skl_groups.utils.ProgressLogger.html#skl_groups.utils.ProgressLogger.start">[docs]</a>    <span class="k">def</span> <span class="nf">start</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">total</span><span class="p">):</span>
+        <span class="sd">&#39;&#39;&#39;</span>
+<span class="sd">        Signal the start of the process.</span>
 
-        Parameters
-        ----------
-        total : int
-            The total number of steps in the process, or None if unknown.
-        '''
-        self.logger.info(json.dumps(['START', self.name, total]))
+<span class="sd">        Parameters</span>
+<span class="sd">        ----------</span>
+<span class="sd">        total : int</span>
+<span class="sd">            The total number of steps in the process, or None if unknown.</span>
+<span class="sd">        &#39;&#39;&#39;</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">logger</span><span class="o">.</span><span class="n">info</span><span class="p">(</span><span class="n">json</span><span class="o">.</span><span class="n">dumps</span><span class="p">([</span><span class="s">&#39;START&#39;</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">name</span><span class="p">,</span> <span class="n">total</span><span class="p">]))</span>
 </div>
-<div class="viewcode-block" id="ProgressLogger.update"><a class="viewcode-back" href="../../skl_groups/skl_groups.utils.ProgressLogger.html#skl_groups.utils.ProgressLogger.update">[docs]</a>    def update(self, idx):
-        '''
-        Update the current state.
+<div class="viewcode-block" id="ProgressLogger.update"><a class="viewcode-back" href="../../skl_groups/skl_groups.utils.ProgressLogger.html#skl_groups.utils.ProgressLogger.update">[docs]</a>    <span class="k">def</span> <span class="nf">update</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">idx</span><span class="p">):</span>
+        <span class="sd">&#39;&#39;&#39;</span>
+<span class="sd">        Update the current state.</span>
 
-        Parameters
-        ----------
-        idx : int
-            The current state through the process.
-        '''
-        # json format, but since we might call this a lot do it a little faster
-        self.logger.info('["SET", {}]'.format(idx))
+<span class="sd">        Parameters</span>
+<span class="sd">        ----------</span>
+<span class="sd">        idx : int</span>
+<span class="sd">            The current state through the process.</span>
+<span class="sd">        &#39;&#39;&#39;</span>
+        <span class="c"># json format, but since we might call this a lot do it a little faster</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">logger</span><span class="o">.</span><span class="n">info</span><span class="p">(</span><span class="s">&#39;[&quot;SET&quot;, {}]&#39;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">idx</span><span class="p">))</span>
 </div>
-<div class="viewcode-block" id="ProgressLogger.finish"><a class="viewcode-back" href="../../skl_groups/skl_groups.utils.ProgressLogger.html#skl_groups.utils.ProgressLogger.finish">[docs]</a>    def finish(self):
-        '''
-        Marks the process as done.
-        '''
-        self.logger.info(json.dumps(['DONE']))
+<div class="viewcode-block" id="ProgressLogger.finish"><a class="viewcode-back" href="../../skl_groups/skl_groups.utils.ProgressLogger.html#skl_groups.utils.ProgressLogger.finish">[docs]</a>    <span class="k">def</span> <span class="nf">finish</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="sd">&#39;&#39;&#39;</span>
+<span class="sd">        Marks the process as done.</span>
+<span class="sd">        &#39;&#39;&#39;</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">logger</span><span class="o">.</span><span class="n">info</span><span class="p">(</span><span class="n">json</span><span class="o">.</span><span class="n">dumps</span><span class="p">([</span><span class="s">&#39;DONE&#39;</span><span class="p">]))</span>
 </div>
-    def __call__(self, it, total=None):
-        if total is None:
-            try:
-                total = len(it)
-            except TypeError:
-                total = None
-        self.start(total)
-        for i, thing in enumerate(it, 1):
-            self.update(i)
-            yield thing
-        self.finish()
-
-</div>
-<div class="viewcode-block" id="ProgressBarHandler"><a class="viewcode-back" href="../../skl_groups/skl_groups.utils.ProgressBarHandler.html#skl_groups.utils.ProgressBarHandler">[docs]</a>class ProgressBarHandler(logging.Handler):
-    '''
-    A logging handler that uses the progressbar module to show progress from
-    a :class:`ProgressLogger`.
-    '''
-<div class="viewcode-block" id="ProgressBarHandler.__init__"><a class="viewcode-back" href="../../skl_groups/skl_groups.utils.ProgressBarHandler.html#skl_groups.utils.ProgressBarHandler.__init__">[docs]</a>    def __init__(self, widgets=None, **kwargs):
-        import progressbar as pb
-
-        logging.Handler.__init__(self)
-
-        if widgets is None:
-            class CommaProgress(pb.Widget):
-                def update(self, pbar):
-                    return '{:,} of {:,}'.format(pbar.currval, pbar.maxval)
-
-            widgets = [' ', CommaProgress(), ' (', pb.Percentage(), ') ',
-                       pb.Bar(), ' ', pb.ETA()]
-
-        self.pbar_args = {'widgets': widgets}
-        self.pbar_args.update(kwargs)
-</div>
-    def emit(self, record):
-        import progressbar as pb
-
-        msg = json.loads(record.msg)
-        # print(msg)
-        if msg[0] == 'SET':
-            pass
-            self.pbar.update(msg[1])
-        elif msg[0] == 'START':
-            print(msg[1] + ':', file=sys.stderr)
-            self.pbar = pb.ProgressBar(maxval=msg[2], **self.pbar_args)
-            self.pbar.start()
-        elif msg[0] == 'DONE':
-            self.pbar.finish()
-            del self.pbar
-            print('', file=sys.stderr)
+    <span class="k">def</span> <span class="nf">__call__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">it</span><span class="p">,</span> <span class="n">total</span><span class="o">=</span><span class="bp">None</span><span class="p">):</span>
+        <span class="k">if</span> <span class="n">total</span> <span class="ow">is</span> <span class="bp">None</span><span class="p">:</span>
+            <span class="k">try</span><span class="p">:</span>
+                <span class="n">total</span> <span class="o">=</span> <span class="nb">len</span><span class="p">(</span><span class="n">it</span><span class="p">)</span>
+            <span class="k">except</span> <span class="ne">TypeError</span><span class="p">:</span>
+                <span class="n">total</span> <span class="o">=</span> <span class="bp">None</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">start</span><span class="p">(</span><span class="n">total</span><span class="p">)</span>
+        <span class="k">for</span> <span class="n">i</span><span class="p">,</span> <span class="n">thing</span> <span class="ow">in</span> <span class="nb">enumerate</span><span class="p">(</span><span class="n">it</span><span class="p">,</span> <span class="mi">1</span><span class="p">):</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">update</span><span class="p">(</span><span class="n">i</span><span class="p">)</span>
+            <span class="k">yield</span> <span class="n">thing</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">finish</span><span class="p">()</span>
 
 </div>
-<div class="viewcode-block" id="show_progress"><a class="viewcode-back" href="../../skl_groups/skl_groups.utils.show_progress.html#skl_groups.utils.show_progress">[docs]</a>def show_progress(name):
-    '''
-    Sets up a :class:`ProgressBarHandler` to handle progess logs for
-    a given module.
+<div class="viewcode-block" id="ProgressBarHandler"><a class="viewcode-back" href="../../skl_groups/skl_groups.utils.ProgressBarHandler.html#skl_groups.utils.ProgressBarHandler">[docs]</a><span class="k">class</span> <span class="nc">ProgressBarHandler</span><span class="p">(</span><span class="n">logging</span><span class="o">.</span><span class="n">Handler</span><span class="p">):</span>
+    <span class="sd">&#39;&#39;&#39;</span>
+<span class="sd">    A logging handler that uses the progressbar module to show progress from</span>
+<span class="sd">    a :class:`ProgressLogger`.</span>
 
-    Parameters
-    ----------
-    name : string
-        The module name of the progress logger to use. For example,
-        :class:`skl_groups.divergences.KNNDivergenceEstimator`
-        uses ``'skl_groups.divergences.knn.progress'``.
-    '''
-    logger = logging.getLogger(name)
-    logger.setLevel(logging.INFO)
-    logger.addHandler(ProgressBarHandler())</div>
-</pre>
+<span class="sd">    Takes the same parameters as :class:`progressbar.ProgressBar`,</span>
+<span class="sd">    but gives a default for ``widgets`` that applies only when maxval is</span>
+<span class="sd">    available; you&#39;ll need to pass different widgets if not.</span>
+<span class="sd">    &#39;&#39;&#39;</span>
+<div class="viewcode-block" id="ProgressBarHandler.__init__"><a class="viewcode-back" href="../../skl_groups/skl_groups.utils.ProgressBarHandler.html#skl_groups.utils.ProgressBarHandler.__init__">[docs]</a>    <span class="k">def</span> <span class="nf">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">widgets</span><span class="o">=</span><span class="bp">None</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">):</span>
+        <span class="kn">import</span> <span class="nn">progressbar</span> <span class="kn">as</span> <span class="nn">pb</span>
+
+        <span class="n">logging</span><span class="o">.</span><span class="n">Handler</span><span class="o">.</span><span class="n">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span>
+
+        <span class="k">if</span> <span class="n">widgets</span> <span class="ow">is</span> <span class="bp">None</span><span class="p">:</span>
+            <span class="k">class</span> <span class="nc">CommaProgress</span><span class="p">(</span><span class="n">pb</span><span class="o">.</span><span class="n">Widget</span><span class="p">):</span>
+                <span class="k">def</span> <span class="nf">update</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">pbar</span><span class="p">):</span>
+                    <span class="k">return</span> <span class="s">&#39;{:,} of {:,}&#39;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">pbar</span><span class="o">.</span><span class="n">currval</span><span class="p">,</span> <span class="n">pbar</span><span class="o">.</span><span class="n">maxval</span><span class="p">)</span>
+
+            <span class="n">widgets</span> <span class="o">=</span> <span class="p">[</span><span class="s">&#39; &#39;</span><span class="p">,</span> <span class="n">CommaProgress</span><span class="p">(),</span> <span class="s">&#39; (&#39;</span><span class="p">,</span> <span class="n">pb</span><span class="o">.</span><span class="n">Percentage</span><span class="p">(),</span> <span class="s">&#39;) &#39;</span><span class="p">,</span>
+                       <span class="n">pb</span><span class="o">.</span><span class="n">Bar</span><span class="p">(),</span> <span class="s">&#39; &#39;</span><span class="p">,</span> <span class="n">pb</span><span class="o">.</span><span class="n">ETA</span><span class="p">()]</span>
+
+        <span class="bp">self</span><span class="o">.</span><span class="n">pbar_args</span> <span class="o">=</span> <span class="p">{</span><span class="s">&#39;widgets&#39;</span><span class="p">:</span> <span class="n">widgets</span><span class="p">}</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">pbar_args</span><span class="o">.</span><span class="n">update</span><span class="p">(</span><span class="n">kwargs</span><span class="p">)</span>
+</div>
+    <span class="k">def</span> <span class="nf">emit</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">record</span><span class="p">):</span>
+        <span class="kn">import</span> <span class="nn">progressbar</span> <span class="kn">as</span> <span class="nn">pb</span>
+
+        <span class="n">msg</span> <span class="o">=</span> <span class="n">json</span><span class="o">.</span><span class="n">loads</span><span class="p">(</span><span class="n">record</span><span class="o">.</span><span class="n">msg</span><span class="p">)</span>
+        <span class="c"># print(msg)</span>
+        <span class="k">if</span> <span class="n">msg</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span> <span class="o">==</span> <span class="s">&#39;SET&#39;</span><span class="p">:</span>
+            <span class="k">pass</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">pbar</span><span class="o">.</span><span class="n">update</span><span class="p">(</span><span class="n">msg</span><span class="p">[</span><span class="mi">1</span><span class="p">])</span>
+        <span class="k">elif</span> <span class="n">msg</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span> <span class="o">==</span> <span class="s">&#39;START&#39;</span><span class="p">:</span>
+            <span class="k">print</span><span class="p">(</span><span class="n">msg</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span> <span class="o">+</span> <span class="s">&#39;:&#39;</span><span class="p">,</span> <span class="nb">file</span><span class="o">=</span><span class="n">sys</span><span class="o">.</span><span class="n">stderr</span><span class="p">)</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">pbar</span> <span class="o">=</span> <span class="n">pb</span><span class="o">.</span><span class="n">ProgressBar</span><span class="p">(</span><span class="n">maxval</span><span class="o">=</span><span class="n">msg</span><span class="p">[</span><span class="mi">2</span><span class="p">],</span> <span class="o">**</span><span class="bp">self</span><span class="o">.</span><span class="n">pbar_args</span><span class="p">)</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">pbar</span><span class="o">.</span><span class="n">start</span><span class="p">()</span>
+        <span class="k">elif</span> <span class="n">msg</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span> <span class="o">==</span> <span class="s">&#39;DONE&#39;</span><span class="p">:</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">pbar</span><span class="o">.</span><span class="n">finish</span><span class="p">()</span>
+            <span class="k">del</span> <span class="bp">self</span><span class="o">.</span><span class="n">pbar</span>
+            <span class="k">print</span><span class="p">(</span><span class="s">&#39;&#39;</span><span class="p">,</span> <span class="nb">file</span><span class="o">=</span><span class="n">sys</span><span class="o">.</span><span class="n">stderr</span><span class="p">)</span>
+
+</div>
+<div class="viewcode-block" id="show_progress"><a class="viewcode-back" href="../../skl_groups/skl_groups.utils.show_progress.html#skl_groups.utils.show_progress">[docs]</a><span class="k">def</span> <span class="nf">show_progress</span><span class="p">(</span><span class="n">name</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">):</span>
+    <span class="sd">&#39;&#39;&#39;</span>
+<span class="sd">    Sets up a :class:`ProgressBarHandler` to handle progess logs for</span>
+<span class="sd">    a given module.</span>
+
+<span class="sd">    Parameters</span>
+<span class="sd">    ----------</span>
+<span class="sd">    name : string</span>
+<span class="sd">        The module name of the progress logger to use. For example,</span>
+<span class="sd">        :class:`skl_groups.divergences.KNNDivergenceEstimator`</span>
+<span class="sd">        uses ``&#39;skl_groups.divergences.knn.progress&#39;``.</span>
+
+<span class="sd">    * : anything</span>
+<span class="sd">        Other keyword arguments are passed to the :class:`ProgressBarHandler`.</span>
+<span class="sd">    &#39;&#39;&#39;</span>
+    <span class="n">logger</span> <span class="o">=</span> <span class="n">logging</span><span class="o">.</span><span class="n">getLogger</span><span class="p">(</span><span class="n">name</span><span class="p">)</span>
+    <span class="n">logger</span><span class="o">.</span><span class="n">setLevel</span><span class="p">(</span><span class="n">logging</span><span class="o">.</span><span class="n">INFO</span><span class="p">)</span>
+    <span class="n">logger</span><span class="o">.</span><span class="n">addHandler</span><span class="p">(</span><span class="n">ProgressBarHandler</span><span class="p">(</span><span class="o">**</span><span class="n">kwargs</span><span class="p">))</span></div>
+</pre></div>
 
           </div>
           <footer>

@@ -12,9 +12,10 @@ we recommend the `Anaconda <https://store.continuum.io/cshop/anaconda/>`_
 distribution, which makes life easy;
 otherwise, `these instructions <http://scikit-learn.org/stable/install.html>`_
 might be helpful.
-Note that skl-groups is not currently tested on Windows (or FreeBSD, or anything
-other than recent versions of OSX, Arch, and CentOS). If you try it, let us
-know.
+
+skl-groups is currently tested on recent versions of OSX, Arch, and CentOS.
+Notably, it is not tested on Windows, though the author expects that it should
+work. If you try it, let us know.
 
 
 Release versions
@@ -28,7 +29,7 @@ or, if you use Anaconda, via my binstar channel::
 
     $ conda install -c https://conda.binstar.org/dougal skl-groups
 
-The conda install includes skl-groups-accel, described below.
+The conda install includes skl-groups-accel, described in :ref:`accel`.
 
 At this point, there's nothing special about the releases other than that
 they're easier to install.
@@ -41,6 +42,7 @@ Once it's installed, you can check that it worked by running the tests::
 If you don't have FLANN or skl-groups-accel installed (see below),
 some tests will be skipped.
 
+.. _dev-version:
 
 Development version
 -------------------
@@ -121,14 +123,15 @@ and install the Python bindings and/or run
 where ``$prefix`` is whatever ``CMAKE_INSTALL_PREFIX`` was (usually ``/usr/local``).
 
 
+.. _accel:
+
 Accelerated version
 -------------------
 
 Some algorithms
 (currently just :class:`skl_groups.divergences.KNNDivergenceEstimator`)
-have faster C implementations in the
-`skl-groups-accel <https://github.com/dougalsutherland/skl-groups-accel/>`_
-package, which is kept separate to make the "base" skl-groups easier to install.
+have faster C implementations in the skl-groups-accel package,
+which is kept separate to make the "base" skl-groups easier to install.
 
 If you're using the conda package, skl-groups-accel is actually included in
 skl-groups, because requirements are so much easier in conda-land, and you
@@ -136,8 +139,7 @@ don't have to do anything.
 
 Otherwise, skl-groups-accel requires
 `cyflann <https://github.com/dougalsutherland/cyflann/>`_
-(pyflann is insufficient – in fact, this code is why cyflann was written)
-and a recent version of `cython <http://cython.org/>`_
+(pyflann is insufficient – in fact, this is cyflann's raison d'etre)
 as well as a functioning C compiler with OpenMP support
 (i.e. gcc, not clang, `for now <http://clang-omp.github.io>`_;
 you may need to ``export CC=gcc`` or similar).
@@ -146,9 +148,8 @@ Once you have that, you can get a release version with::
 
     $ pip install skl-groups-accel
 
-or install the development version the same way as before, getting the code with::
+or install from source (the same one as in :ref:`dev-version`) with::
 
-    $ git clone https://github.com/dougalsutherland/skl-groups-accel.git
+    $ python setup_accel.py install
 
-or `get the ZIP <https://github.com/dougalsutherland/skl-groups-accel/archive/master.zip>`_
-and install it the same way (*after* installing skl-groups).
+This requires a recent version of `Cython <http://cython.org/>`_.

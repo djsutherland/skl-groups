@@ -134,14 +134,15 @@
 the mean of each entry.</p>
 <p class="rubric">Examples</p>
 <p>If you have a kernel where you can compute an (approximate?) explicit
-embedding, you can compute an explicit embedding of the mean map kernel
-(MMK, also known as maximum mean discrepancy or MMD) by first doing the
-kernel embedding and then taking the mean.
-Using <a class="reference external" href="http://scikit-learn.org/stable/modules/generated/sklearn.kernel_approximation.RBFSampler.html#sklearn.kernel_approximation.RBFSampler" title="(in scikit-learn v0.14)"><tt class="xref py py-class docutils literal"><span class="pre">sklearn.kernel_approximation.RBFSampler</span></tt></a>:</p>
-<div class="highlight-python"><pre>rbf_mmk = Pipeline([
-    ('rbf', RBFSampler()),
-    ('mean', BagMean()),
-])</pre>
+embedding, you can compute an explicit embedding of
+<a class="reference internal" href="skl_groups.kernels.MeanMapKernel.html#skl_groups.kernels.MeanMapKernel" title="skl_groups.kernels.MeanMapKernel"><tt class="xref py py-class docutils literal"><span class="pre">skl_groups.kernels.MeanMapKernel</span></tt></a> by first doing the kernel
+embedding and then taking the mean.
+Using <a class="reference external" href="http://scikit-learn.org/stable/modules/generated/sklearn.kernel_approximation.RBFSampler.html#sklearn.kernel_approximation.RBFSampler" title="(in scikit-learn v0.15.1)"><tt class="xref py py-class docutils literal"><span class="pre">sklearn.kernel_approximation.RBFSampler</span></tt></a>:</p>
+<div class="highlight-python"><div class="highlight"><pre><span class="n">rbf_mmk</span> <span class="o">=</span> <span class="n">Pipeline</span><span class="p">([</span>
+    <span class="p">(</span><span class="s">&#39;rbf&#39;</span><span class="p">,</span> <span class="n">BagPreprocesser</span><span class="p">(</span><span class="n">RBFSampler</span><span class="p">(</span><span class="n">gamma</span><span class="o">=</span><span class="n">g</span><span class="p">,</span> <span class="n">n_components</span><span class="o">=</span><span class="mi">100</span><span class="p">))),</span>
+    <span class="p">(</span><span class="s">&#39;mean&#39;</span><span class="p">,</span> <span class="n">BagMean</span><span class="p">()),</span>
+<span class="p">])</span>
+</pre></div>
 </div>
 <dl class="method">
 <dt id="skl_groups.summaries.BagMean.__init__">
@@ -171,7 +172,7 @@ Using <a class="reference external" href="http://scikit-learn.org/stable/modules
 <td>Set the parameters of this estimator.</td>
 </tr>
 <tr class="row-even"><td><a class="reference internal" href="#skl_groups.summaries.BagMean.transform" title="skl_groups.summaries.BagMean.transform"><tt class="xref py py-obj docutils literal"><span class="pre">transform</span></tt></a>(X)</td>
-<td>Transform a list of bag features into its bag-of-words representation.</td>
+<td>Transform a list of bag features into a matrix of its mean features.</td>
 </tr>
 </tbody>
 </table>
@@ -184,18 +185,18 @@ Using <a class="reference external" href="http://scikit-learn.org/stable/modules
 <dl class="method">
 <dt id="skl_groups.summaries.BagMean.transform">
 <tt class="descname">transform</tt><big>(</big><em>X</em><big>)</big><a class="headerlink" href="#skl_groups.summaries.BagMean.transform" title="Permalink to this definition">¶</a></dt>
-<dd><p>Transform a list of bag features into its bag-of-words representation.</p>
+<dd><p>Transform a list of bag features into a matrix of its mean features.</p>
 <table class="docutils field-list" frame="void" rules="none">
 <col class="field-name" />
 <col class="field-body" />
 <tbody valign="top">
-<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><p class="first"><strong>X</strong> : <tt class="xref py py-class docutils literal"><span class="pre">Features</span></tt> or list of bag feature arrays</p>
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><p class="first"><strong>X</strong> : <a class="reference internal" href="skl_groups.features.Features.html#skl_groups.features.Features" title="skl_groups.features.Features"><tt class="xref py py-class docutils literal"><span class="pre">skl_groups.features.Features</span></tt></a> or list of bag feature arrays</p>
 <blockquote>
 <div><p>Data to transform.</p>
 </div></blockquote>
 </td>
 </tr>
-<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body"><p class="first"><strong>X_new</strong> : array, shape [len(X), X.dim]</p>
+<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body"><p class="first"><strong>X_new</strong> : array, shape <tt class="docutils literal"><span class="pre">[len(X),</span> <span class="pre">X.dim]</span></tt></p>
 <blockquote class="last">
 <div><p>X transformed into its means.</p>
 </div></blockquote>

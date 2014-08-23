@@ -121,416 +121,416 @@
 </div>
           <div role="main">
             
-  <h1>Source code for skl_groups.features</h1><pre>
-from __future__ import division, print_function
+  <h1>Source code for skl_groups.features</h1><div class="highlight"><pre>
+<span class="kn">from</span> <span class="nn">__future__</span> <span class="kn">import</span> <span class="n">division</span><span class="p">,</span> <span class="n">print_function</span>
 
-from copy import deepcopy
-import warnings
+<span class="kn">from</span> <span class="nn">copy</span> <span class="kn">import</span> <span class="n">deepcopy</span>
+<span class="kn">import</span> <span class="nn">warnings</span>
 
-import numpy as np
-from sklearn.externals.six import iteritems, string_types
-from sklearn.externals.six.moves import xrange
+<span class="kn">import</span> <span class="nn">numpy</span> <span class="kn">as</span> <span class="nn">np</span>
+<span class="kn">from</span> <span class="nn">sklearn.externals.six</span> <span class="kn">import</span> <span class="n">iteritems</span><span class="p">,</span> <span class="n">string_types</span>
+<span class="kn">from</span> <span class="nn">sklearn.externals.six.moves</span> <span class="kn">import</span> <span class="nb">xrange</span>
 
-from .utils import as_integer_type
-
-
-<div class="viewcode-block" id="Features"><a class="viewcode-back" href="../../skl_groups/skl_groups.features.Features.html#skl_groups.features.Features">[docs]</a>class Features(object):
-    '''
-    A wrapper class for storing bags of features. (A *bag* is a set of feature
-    vectors corresponding to a single "object.")
-
-    Supports storing data in two major ways:
-
-    - As a list of pointers to a numpy array per bag. This is the default,
-      because it usually doesn't require copying all of your data. Note that
-      the sub-arrays are not enforced to be row-major or even contiguous.
-
-    - As a single big row-major array. This lets you do certain things more
-      easily (e.g. run PCA).
-
-    The main usage API is the same for both versions; you can distinguish them
-    with the `stacked` property, and convert from pointers to stacked with the
-    `make_stacked()` method.
-
-    Supports the following operations:
-
-    * ``len(features)`` gives the number of bags.
-    * ``for bag in features:`` loops over bags.
-    * ``features[4]`` gives the fifth bag.
-    * ``features[[4, 8, 7]]`` makes a new Features object with only the \
-       passed indices, preserving metadata.
-    * ``feats1 == feats2`` checks that all of the features `and metadata` are \
-      the same.
-    * ``feats1 + feats2`` concatenates the two Features objects. Metadata is \
-      preserved if both features have that key, thrown out if not.
+<span class="kn">from</span> <span class="nn">.utils</span> <span class="kn">import</span> <span class="n">as_integer_type</span>
 
 
-    Parameters
-    ----------
-    bags : list of numpy arrays, single array, or Features object
-        The feature data. If a list of numpy arrays, should be one array per 
-        bag, each of shape [n_pts, dim], where dim is consistent between bags
-        but n_pts need not be (though it cannot ever be 0). If a single numpy
-        array, it should be of shape [sum(n_pts), dim] and contain the features
-        from the first bag, then the next bag, .... In this case you must also
-        pass n_pts. If a Features object, "copies" it (but only actually copies
-        any data if ``copy=True``).
+<div class="viewcode-block" id="Features"><a class="viewcode-back" href="../../skl_groups/skl_groups.features.Features.html#skl_groups.features.Features">[docs]</a><span class="k">class</span> <span class="nc">Features</span><span class="p">(</span><span class="nb">object</span><span class="p">):</span>
+    <span class="sd">&#39;&#39;&#39;</span>
+<span class="sd">    A wrapper class for storing bags of features. (A *bag* is a set of feature</span>
+<span class="sd">    vectors corresponding to a single &quot;object.&quot;)</span>
 
-    n_pts : array-like of positive integers, only if bags is a single array
-        If bags is passed as a single array, a list of positive integers
-        defining the size of each bag.
+<span class="sd">    Supports storing data in two major ways:</span>
 
-    stack : boolean, optional, default False
-        If true, stack the features. Otherwise, only stack them if a stacked
-        array of features is passed in.
+<span class="sd">    - As a list of pointers to a numpy array per bag. This is the default,</span>
+<span class="sd">      because it usually doesn&#39;t require copying all of your data. Note that</span>
+<span class="sd">      the sub-arrays are not enforced to be row-major or even contiguous.</span>
 
-    copy : boolean, optional, default False
-        If true, always make a copy of the data (so that direct modifications)
-        don't modify the original arrays. If false, make a copy only if
-        necessary (i.e. stack=True for an unstacked argument).
+<span class="sd">    - As a single big row-major array. This lets you do certain things more</span>
+<span class="sd">      easily (e.g. run PCA).</span>
 
-    bare : boolean, optional, default False
-        If true, and ``bags`` is a Features instance, don't include its
-        metadata.
+<span class="sd">    The main usage API is the same for both versions; you can distinguish them</span>
+<span class="sd">    with the `stacked` property, and convert from pointers to stacked with the</span>
+<span class="sd">    `make_stacked()` method.</span>
 
-    any other keyword argument : array-like with first dimension num_bags
-        Metadata for each bag. Just stored along with the features, nothing
-        in particular done with it. (If ``bags`` is a Features instance, its
-        metadata is merged with any keyword arguments, with keywords taking
-        precedence.)
+<span class="sd">    Supports the following operations:</span>
+
+<span class="sd">    * ``len(features)`` gives the number of bags.</span>
+<span class="sd">    * ``for bag in features:`` loops over bags.</span>
+<span class="sd">    * ``features[4]`` gives the fifth bag.</span>
+<span class="sd">    * ``features[[4, 8, 7]]`` makes a new Features object with only the \</span>
+<span class="sd">       passed indices, preserving metadata.</span>
+<span class="sd">    * ``feats1 == feats2`` checks that all of the features `and metadata` are \</span>
+<span class="sd">      the same.</span>
+<span class="sd">    * ``feats1 + feats2`` concatenates the two Features objects. Metadata is \</span>
+<span class="sd">      preserved if both features have that key, thrown out if not.</span>
 
 
-    Attributes
-    ----------
-    features : list of arrays of shape ``[n_pts[i], dim]``
-        A list of the contained features.
-        If ``stacked``, each array is a slice of ``stacked_features``.
+<span class="sd">    Parameters</span>
+<span class="sd">    ----------</span>
+<span class="sd">    bags : list of numpy arrays, single array, or Features object</span>
+<span class="sd">        The feature data. If a list of numpy arrays, should be one array per </span>
+<span class="sd">        bag, each of shape [n_pts, dim], where dim is consistent between bags</span>
+<span class="sd">        but n_pts need not be (though it cannot ever be 0). If a single numpy</span>
+<span class="sd">        array, it should be of shape [sum(n_pts), dim] and contain the features</span>
+<span class="sd">        from the first bag, then the next bag, .... In this case you must also</span>
+<span class="sd">        pass n_pts. If a Features object, &quot;copies&quot; it (but only actually copies</span>
+<span class="sd">        any data if ``copy=True``).</span>
 
-    stacked : boolean
-        Whether the features are stacked.
+<span class="sd">    n_pts : array-like of positive integers, only if bags is a single array</span>
+<span class="sd">        If bags is passed as a single array, a list of positive integers</span>
+<span class="sd">        defining the size of each bag.</span>
 
-    stacked_features : array of shape ``[sum(n_pts), dim]``
-        All of the features, concatenated together. Only present if ``stacked``.
+<span class="sd">    stack : boolean, optional, default False</span>
+<span class="sd">        If true, stack the features. Otherwise, only stack them if a stacked</span>
+<span class="sd">        array of features is passed in.</span>
 
-    n_pts : integer array of shape ``[len(self)]``
-        The number of points in each bag.
+<span class="sd">    copy : boolean, optional, default False</span>
+<span class="sd">        If true, always make a copy of the data (so that direct modifications)</span>
+<span class="sd">        don&#39;t modify the original arrays. If false, make a copy only if</span>
+<span class="sd">        necessary (i.e. stack=True for an unstacked argument).</span>
 
-    meta : dictionary mapping strings to arrays of shape ``[len(self)]``
-        The stored metadata. ``meta['foo']`` is also accessible as ``self.foo``.
-    '''
+<span class="sd">    bare : boolean, optional, default False</span>
+<span class="sd">        If true, and ``bags`` is a Features instance, don&#39;t include its</span>
+<span class="sd">        metadata.</span>
 
-<div class="viewcode-block" id="Features.__init__"><a class="viewcode-back" href="../../skl_groups/skl_groups.features.Features.html#skl_groups.features.Features.__init__">[docs]</a>    def __init__(self, bags, n_pts=None, stack=False, copy=False, bare=False,
-                 **meta):
-        if isinstance(bags, Features):
-            if n_pts is not None:
-                raise TypeError("can't pass n_pts if copying a Features object")
-
-            oth = bags
-            if oth.stacked:
-                bags = oth.stacked_features
-                n_pts = oth.n_pts
-            else:
-                bags = oth.features
-                n_pts = None
-            if not bare:
-                for k, v in iteritems(oth.meta):
-                    meta.setdefault(k, v)
+<span class="sd">    any other keyword argument : array-like with first dimension num_bags</span>
+<span class="sd">        Metadata for each bag. Just stored along with the features, nothing</span>
+<span class="sd">        in particular done with it. (If ``bags`` is a Features instance, its</span>
+<span class="sd">        metadata is merged with any keyword arguments, with keywords taking</span>
+<span class="sd">        precedence.)</span>
 
 
-        if isinstance(bags, np.ndarray) and bags.ndim == 2:
-            if n_pts is None:
-                raise TypeError("must pass n_pts if passing stacked array of "
-                                "features")
+<span class="sd">    Attributes</span>
+<span class="sd">    ----------</span>
+<span class="sd">    features : list of arrays of shape ``[n_pts[i], dim]``</span>
+<span class="sd">        A list of the contained features.</span>
+<span class="sd">        If ``stacked``, each array is a slice of ``stacked_features``.</span>
 
-            n_pts = np.asarray(n_pts)
-            if n_pts.ndim != 1:
-                raise TypeError("n_pts must be 1-dimensional")
-            if n_pts.size == 0:
-                raise TypeError("must have at least one bag")
-            if np.any(n_pts &lt;= 0):
-                raise TypeError("n_pts must all be positive")
-            try:
-                n_pts = as_integer_type(n_pts)
-            except ValueError:
-                raise TypeError("n_pts must be an array of integers.")
+<span class="sd">    stacked : boolean</span>
+<span class="sd">        Whether the features are stacked.</span>
 
-            bags = np.array(bags, order='C', copy=copy)
-            if bags.ndim != 2 or bags.shape[0] != np.sum(n_pts):
-                raise TypeError("bags must have shape sum(n_pts) x dim")
-            if bags.shape[1] == 0:
-                raise TypeError("bags must have dimension &gt; 0")
-            dim = bags.shape[1]
+<span class="sd">    stacked_features : array of shape ``[sum(n_pts), dim]``</span>
+<span class="sd">        All of the features, concatenated together. Only present if ``stacked``.</span>
 
-            self.stacked = True
-            self.n_pts = n_pts
-            self.stacked_features = bags
-            self._boundaries = bounds = np.r_[0, np.cumsum(n_pts)]
+<span class="sd">    n_pts : integer array of shape ``[len(self)]``</span>
+<span class="sd">        The number of points in each bag.</span>
 
-            self.features = np.empty(len(n_pts), object)
-            self.features[:] = [bags[bounds[i-1]:bounds[i]]
-                                for i in xrange(1, len(bounds))]
+<span class="sd">    meta : dictionary mapping strings to arrays of shape ``[len(self)]``</span>
+<span class="sd">        The stored metadata. ``meta[&#39;foo&#39;]`` is also accessible as ``self.foo``.</span>
+<span class="sd">    &#39;&#39;&#39;</span>
 
-        else:
-            if n_pts is not None:
-                raise TypeError("n_pts should only be passed if bags is a "
-                                "single stacked array")
+<div class="viewcode-block" id="Features.__init__"><a class="viewcode-back" href="../../skl_groups/skl_groups.features.Features.html#skl_groups.features.Features.__init__">[docs]</a>    <span class="k">def</span> <span class="nf">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">bags</span><span class="p">,</span> <span class="n">n_pts</span><span class="o">=</span><span class="bp">None</span><span class="p">,</span> <span class="n">stack</span><span class="o">=</span><span class="bp">False</span><span class="p">,</span> <span class="n">copy</span><span class="o">=</span><span class="bp">False</span><span class="p">,</span> <span class="n">bare</span><span class="o">=</span><span class="bp">False</span><span class="p">,</span>
+                 <span class="o">**</span><span class="n">meta</span><span class="p">):</span>
+        <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">bags</span><span class="p">,</span> <span class="n">Features</span><span class="p">):</span>
+            <span class="k">if</span> <span class="n">n_pts</span> <span class="ow">is</span> <span class="ow">not</span> <span class="bp">None</span><span class="p">:</span>
+                <span class="k">raise</span> <span class="ne">TypeError</span><span class="p">(</span><span class="s">&quot;can&#39;t pass n_pts if copying a Features object&quot;</span><span class="p">)</span>
 
-            dim = None
-            dtype = None
-            new_bags = np.empty(len(bags), dtype=object)
-            n_pts = np.empty(len(bags), dtype=int)
-            for i, bag in enumerate(bags):
-                a = np.array(bag, copy=copy)
+            <span class="n">oth</span> <span class="o">=</span> <span class="n">bags</span>
+            <span class="k">if</span> <span class="n">oth</span><span class="o">.</span><span class="n">stacked</span><span class="p">:</span>
+                <span class="n">bags</span> <span class="o">=</span> <span class="n">oth</span><span class="o">.</span><span class="n">stacked_features</span>
+                <span class="n">n_pts</span> <span class="o">=</span> <span class="n">oth</span><span class="o">.</span><span class="n">n_pts</span>
+            <span class="k">else</span><span class="p">:</span>
+                <span class="n">bags</span> <span class="o">=</span> <span class="n">oth</span><span class="o">.</span><span class="n">features</span>
+                <span class="n">n_pts</span> <span class="o">=</span> <span class="bp">None</span>
+            <span class="k">if</span> <span class="ow">not</span> <span class="n">bare</span><span class="p">:</span>
+                <span class="k">for</span> <span class="n">k</span><span class="p">,</span> <span class="n">v</span> <span class="ow">in</span> <span class="n">iteritems</span><span class="p">(</span><span class="n">oth</span><span class="o">.</span><span class="n">meta</span><span class="p">):</span>
+                    <span class="n">meta</span><span class="o">.</span><span class="n">setdefault</span><span class="p">(</span><span class="n">k</span><span class="p">,</span> <span class="n">v</span><span class="p">)</span>
 
-                if a.ndim == 1:
-                    a = a[None, :]
-                if a.ndim != 2:
-                    raise TypeError("bag {} not two-dimensional".format(i))
 
-                if dim is None:
-                    dim = a.shape[1]
-                elif a.shape[1] != dim:
-                    msg = "bags' second dimension must be consistent: " \
-                          "{} is {}, expected {}"
-                    raise TypeError(msg.format(i, a.shape[1], dim))
+        <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">bags</span><span class="p">,</span> <span class="n">np</span><span class="o">.</span><span class="n">ndarray</span><span class="p">)</span> <span class="ow">and</span> <span class="n">bags</span><span class="o">.</span><span class="n">ndim</span> <span class="o">==</span> <span class="mi">2</span><span class="p">:</span>
+            <span class="k">if</span> <span class="n">n_pts</span> <span class="ow">is</span> <span class="bp">None</span><span class="p">:</span>
+                <span class="k">raise</span> <span class="ne">TypeError</span><span class="p">(</span><span class="s">&quot;must pass n_pts if passing stacked array of &quot;</span>
+                                <span class="s">&quot;features&quot;</span><span class="p">)</span>
 
-                if dtype is None:
-                    dtype = a.dtype
-                    if dtype.kind not in 'fiu':
-                        msg = "can't handle features of type {}"
-                        raise TypeError(msg.format(a.dtype.name))
-                elif a.dtype != dtype:
-                    msg = "bags' dtype is inconsistent: {} is {}, expected {}"
-                    raise TypeError(msg.format(i, a.dtype.name, dtype.name))
+            <span class="n">n_pts</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">asarray</span><span class="p">(</span><span class="n">n_pts</span><span class="p">)</span>
+            <span class="k">if</span> <span class="n">n_pts</span><span class="o">.</span><span class="n">ndim</span> <span class="o">!=</span> <span class="mi">1</span><span class="p">:</span>
+                <span class="k">raise</span> <span class="ne">TypeError</span><span class="p">(</span><span class="s">&quot;n_pts must be 1-dimensional&quot;</span><span class="p">)</span>
+            <span class="k">if</span> <span class="n">n_pts</span><span class="o">.</span><span class="n">size</span> <span class="o">==</span> <span class="mi">0</span><span class="p">:</span>
+                <span class="k">raise</span> <span class="ne">TypeError</span><span class="p">(</span><span class="s">&quot;must have at least one bag&quot;</span><span class="p">)</span>
+            <span class="k">if</span> <span class="n">np</span><span class="o">.</span><span class="n">any</span><span class="p">(</span><span class="n">n_pts</span> <span class="o">&lt;=</span> <span class="mi">0</span><span class="p">):</span>
+                <span class="k">raise</span> <span class="ne">TypeError</span><span class="p">(</span><span class="s">&quot;n_pts must all be positive&quot;</span><span class="p">)</span>
+            <span class="k">try</span><span class="p">:</span>
+                <span class="n">n_pts</span> <span class="o">=</span> <span class="n">as_integer_type</span><span class="p">(</span><span class="n">n_pts</span><span class="p">)</span>
+            <span class="k">except</span> <span class="ne">ValueError</span><span class="p">:</span>
+                <span class="k">raise</span> <span class="ne">TypeError</span><span class="p">(</span><span class="s">&quot;n_pts must be an array of integers.&quot;</span><span class="p">)</span>
 
-                if a.shape[0] == 0:
-                    raise TypeError("bag {} has no points".format(i))
+            <span class="n">bags</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">(</span><span class="n">bags</span><span class="p">,</span> <span class="n">order</span><span class="o">=</span><span class="s">&#39;C&#39;</span><span class="p">,</span> <span class="n">copy</span><span class="o">=</span><span class="n">copy</span><span class="p">)</span>
+            <span class="k">if</span> <span class="n">bags</span><span class="o">.</span><span class="n">ndim</span> <span class="o">!=</span> <span class="mi">2</span> <span class="ow">or</span> <span class="n">bags</span><span class="o">.</span><span class="n">shape</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span> <span class="o">!=</span> <span class="n">np</span><span class="o">.</span><span class="n">sum</span><span class="p">(</span><span class="n">n_pts</span><span class="p">):</span>
+                <span class="k">raise</span> <span class="ne">TypeError</span><span class="p">(</span><span class="s">&quot;bags must have shape sum(n_pts) x dim&quot;</span><span class="p">)</span>
+            <span class="k">if</span> <span class="n">bags</span><span class="o">.</span><span class="n">shape</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span> <span class="o">==</span> <span class="mi">0</span><span class="p">:</span>
+                <span class="k">raise</span> <span class="ne">TypeError</span><span class="p">(</span><span class="s">&quot;bags must have dimension &gt; 0&quot;</span><span class="p">)</span>
+            <span class="n">dim</span> <span class="o">=</span> <span class="n">bags</span><span class="o">.</span><span class="n">shape</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span>
 
-                new_bags[i] = a
-                n_pts[i] = a.shape[0]
+            <span class="bp">self</span><span class="o">.</span><span class="n">stacked</span> <span class="o">=</span> <span class="bp">True</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">n_pts</span> <span class="o">=</span> <span class="n">n_pts</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">stacked_features</span> <span class="o">=</span> <span class="n">bags</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">_boundaries</span> <span class="o">=</span> <span class="n">bounds</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">r_</span><span class="p">[</span><span class="mi">0</span><span class="p">,</span> <span class="n">np</span><span class="o">.</span><span class="n">cumsum</span><span class="p">(</span><span class="n">n_pts</span><span class="p">)]</span>
 
-            self.stacked = False
-            self.n_pts = n_pts
-            self.features = new_bags
-            try:
-                del self._boundaries
-            except AttributeError:
-                pass
-            try:
-                del self.stacked_features
-            except AttributeError:
-                pass
+            <span class="bp">self</span><span class="o">.</span><span class="n">features</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">empty</span><span class="p">(</span><span class="nb">len</span><span class="p">(</span><span class="n">n_pts</span><span class="p">),</span> <span class="nb">object</span><span class="p">)</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">features</span><span class="p">[:]</span> <span class="o">=</span> <span class="p">[</span><span class="n">bags</span><span class="p">[</span><span class="n">bounds</span><span class="p">[</span><span class="n">i</span><span class="o">-</span><span class="mi">1</span><span class="p">]:</span><span class="n">bounds</span><span class="p">[</span><span class="n">i</span><span class="p">]]</span>
+                                <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="nb">xrange</span><span class="p">(</span><span class="mi">1</span><span class="p">,</span> <span class="nb">len</span><span class="p">(</span><span class="n">bounds</span><span class="p">))]</span>
 
-            if stack:
-                self.make_stacked()
+        <span class="k">else</span><span class="p">:</span>
+            <span class="k">if</span> <span class="n">n_pts</span> <span class="ow">is</span> <span class="ow">not</span> <span class="bp">None</span><span class="p">:</span>
+                <span class="k">raise</span> <span class="ne">TypeError</span><span class="p">(</span><span class="s">&quot;n_pts should only be passed if bags is a &quot;</span>
+                                <span class="s">&quot;single stacked array&quot;</span><span class="p">)</span>
 
-        # handle metadata
-        self.meta = {}
-        for name, val in iteritems(meta):
-            if len(val) != len(n_pts):
-                msg = "Have {} bags but {} values for {}"
-                raise ValueError(msg.format(len(n_pts), len(val), name))
+            <span class="n">dim</span> <span class="o">=</span> <span class="bp">None</span>
+            <span class="n">dtype</span> <span class="o">=</span> <span class="bp">None</span>
+            <span class="n">new_bags</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">empty</span><span class="p">(</span><span class="nb">len</span><span class="p">(</span><span class="n">bags</span><span class="p">),</span> <span class="n">dtype</span><span class="o">=</span><span class="nb">object</span><span class="p">)</span>
+            <span class="n">n_pts</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">empty</span><span class="p">(</span><span class="nb">len</span><span class="p">(</span><span class="n">bags</span><span class="p">),</span> <span class="n">dtype</span><span class="o">=</span><span class="nb">int</span><span class="p">)</span>
+            <span class="k">for</span> <span class="n">i</span><span class="p">,</span> <span class="n">bag</span> <span class="ow">in</span> <span class="nb">enumerate</span><span class="p">(</span><span class="n">bags</span><span class="p">):</span>
+                <span class="n">a</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">(</span><span class="n">bag</span><span class="p">,</span> <span class="n">copy</span><span class="o">=</span><span class="n">copy</span><span class="p">)</span>
 
-            val = np.array(val, copy=copy)
-            self.meta[name] = val
-            if hasattr(self, name):
-                msg = "Features already has an attribute named '{}'; won't " \
-                      "be accessible as an attribute"
-                warnings.warn(msg.format(name))
-            else:
-                setattr(self, name, val)
+                <span class="k">if</span> <span class="n">a</span><span class="o">.</span><span class="n">ndim</span> <span class="o">==</span> <span class="mi">1</span><span class="p">:</span>
+                    <span class="n">a</span> <span class="o">=</span> <span class="n">a</span><span class="p">[</span><span class="bp">None</span><span class="p">,</span> <span class="p">:]</span>
+                <span class="k">if</span> <span class="n">a</span><span class="o">.</span><span class="n">ndim</span> <span class="o">!=</span> <span class="mi">2</span><span class="p">:</span>
+                    <span class="k">raise</span> <span class="ne">TypeError</span><span class="p">(</span><span class="s">&quot;bag {} not two-dimensional&quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">i</span><span class="p">))</span>
+
+                <span class="k">if</span> <span class="n">dim</span> <span class="ow">is</span> <span class="bp">None</span><span class="p">:</span>
+                    <span class="n">dim</span> <span class="o">=</span> <span class="n">a</span><span class="o">.</span><span class="n">shape</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span>
+                <span class="k">elif</span> <span class="n">a</span><span class="o">.</span><span class="n">shape</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span> <span class="o">!=</span> <span class="n">dim</span><span class="p">:</span>
+                    <span class="n">msg</span> <span class="o">=</span> <span class="s">&quot;bags&#39; second dimension must be consistent: &quot;</span> \
+                          <span class="s">&quot;{} is {}, expected {}&quot;</span>
+                    <span class="k">raise</span> <span class="ne">TypeError</span><span class="p">(</span><span class="n">msg</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">i</span><span class="p">,</span> <span class="n">a</span><span class="o">.</span><span class="n">shape</span><span class="p">[</span><span class="mi">1</span><span class="p">],</span> <span class="n">dim</span><span class="p">))</span>
+
+                <span class="k">if</span> <span class="n">dtype</span> <span class="ow">is</span> <span class="bp">None</span><span class="p">:</span>
+                    <span class="n">dtype</span> <span class="o">=</span> <span class="n">a</span><span class="o">.</span><span class="n">dtype</span>
+                    <span class="k">if</span> <span class="n">dtype</span><span class="o">.</span><span class="n">kind</span> <span class="ow">not</span> <span class="ow">in</span> <span class="s">&#39;fiu&#39;</span><span class="p">:</span>
+                        <span class="n">msg</span> <span class="o">=</span> <span class="s">&quot;can&#39;t handle features of type {}&quot;</span>
+                        <span class="k">raise</span> <span class="ne">TypeError</span><span class="p">(</span><span class="n">msg</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">a</span><span class="o">.</span><span class="n">dtype</span><span class="o">.</span><span class="n">name</span><span class="p">))</span>
+                <span class="k">elif</span> <span class="n">a</span><span class="o">.</span><span class="n">dtype</span> <span class="o">!=</span> <span class="n">dtype</span><span class="p">:</span>
+                    <span class="n">msg</span> <span class="o">=</span> <span class="s">&quot;bags&#39; dtype is inconsistent: {} is {}, expected {}&quot;</span>
+                    <span class="k">raise</span> <span class="ne">TypeError</span><span class="p">(</span><span class="n">msg</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">i</span><span class="p">,</span> <span class="n">a</span><span class="o">.</span><span class="n">dtype</span><span class="o">.</span><span class="n">name</span><span class="p">,</span> <span class="n">dtype</span><span class="o">.</span><span class="n">name</span><span class="p">))</span>
+
+                <span class="k">if</span> <span class="n">a</span><span class="o">.</span><span class="n">shape</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span> <span class="o">==</span> <span class="mi">0</span><span class="p">:</span>
+                    <span class="k">raise</span> <span class="ne">TypeError</span><span class="p">(</span><span class="s">&quot;bag {} has no points&quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">i</span><span class="p">))</span>
+
+                <span class="n">new_bags</span><span class="p">[</span><span class="n">i</span><span class="p">]</span> <span class="o">=</span> <span class="n">a</span>
+                <span class="n">n_pts</span><span class="p">[</span><span class="n">i</span><span class="p">]</span> <span class="o">=</span> <span class="n">a</span><span class="o">.</span><span class="n">shape</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span>
+
+            <span class="bp">self</span><span class="o">.</span><span class="n">stacked</span> <span class="o">=</span> <span class="bp">False</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">n_pts</span> <span class="o">=</span> <span class="n">n_pts</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">features</span> <span class="o">=</span> <span class="n">new_bags</span>
+            <span class="k">try</span><span class="p">:</span>
+                <span class="k">del</span> <span class="bp">self</span><span class="o">.</span><span class="n">_boundaries</span>
+            <span class="k">except</span> <span class="ne">AttributeError</span><span class="p">:</span>
+                <span class="k">pass</span>
+            <span class="k">try</span><span class="p">:</span>
+                <span class="k">del</span> <span class="bp">self</span><span class="o">.</span><span class="n">stacked_features</span>
+            <span class="k">except</span> <span class="ne">AttributeError</span><span class="p">:</span>
+                <span class="k">pass</span>
+
+            <span class="k">if</span> <span class="n">stack</span><span class="p">:</span>
+                <span class="bp">self</span><span class="o">.</span><span class="n">make_stacked</span><span class="p">()</span>
+
+        <span class="c"># handle metadata</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">meta</span> <span class="o">=</span> <span class="p">{}</span>
+        <span class="k">for</span> <span class="n">name</span><span class="p">,</span> <span class="n">val</span> <span class="ow">in</span> <span class="n">iteritems</span><span class="p">(</span><span class="n">meta</span><span class="p">):</span>
+            <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="n">val</span><span class="p">)</span> <span class="o">!=</span> <span class="nb">len</span><span class="p">(</span><span class="n">n_pts</span><span class="p">):</span>
+                <span class="n">msg</span> <span class="o">=</span> <span class="s">&quot;Have {} bags but {} values for {}&quot;</span>
+                <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="n">msg</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="nb">len</span><span class="p">(</span><span class="n">n_pts</span><span class="p">),</span> <span class="nb">len</span><span class="p">(</span><span class="n">val</span><span class="p">),</span> <span class="n">name</span><span class="p">))</span>
+
+            <span class="n">val</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">(</span><span class="n">val</span><span class="p">,</span> <span class="n">copy</span><span class="o">=</span><span class="n">copy</span><span class="p">)</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">meta</span><span class="p">[</span><span class="n">name</span><span class="p">]</span> <span class="o">=</span> <span class="n">val</span>
+            <span class="k">if</span> <span class="nb">hasattr</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">name</span><span class="p">):</span>
+                <span class="n">msg</span> <span class="o">=</span> <span class="s">&quot;Features already has an attribute named &#39;{}&#39;; won&#39;t &quot;</span> \
+                      <span class="s">&quot;be accessible as an attribute&quot;</span>
+                <span class="n">warnings</span><span class="o">.</span><span class="n">warn</span><span class="p">(</span><span class="n">msg</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">name</span><span class="p">))</span>
+            <span class="k">else</span><span class="p">:</span>
+                <span class="nb">setattr</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">name</span><span class="p">,</span> <span class="n">val</span><span class="p">)</span>
 </div>
-<div class="viewcode-block" id="Features.make_stacked"><a class="viewcode-back" href="../../skl_groups/skl_groups.features.Features.html#skl_groups.features.Features.make_stacked">[docs]</a>    def make_stacked(self):
-        "If unstacked, convert to stacked. If stacked, do nothing."
-        if self.stacked:
-            return
+<div class="viewcode-block" id="Features.make_stacked"><a class="viewcode-back" href="../../skl_groups/skl_groups.features.Features.html#skl_groups.features.Features.make_stacked">[docs]</a>    <span class="k">def</span> <span class="nf">make_stacked</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="s">&quot;If unstacked, convert to stacked. If stacked, do nothing.&quot;</span>
+        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">stacked</span><span class="p">:</span>
+            <span class="k">return</span>
 
-        self._boundaries = bounds = np.r_[0, np.cumsum(self.n_pts)]
-        self.stacked_features = stacked = np.vstack(self.features)
-        self.features = [stacked[bounds[i-1]:bounds[i]]
-                         for i in xrange(1, len(bounds))]
-        self.stacked = True
+        <span class="bp">self</span><span class="o">.</span><span class="n">_boundaries</span> <span class="o">=</span> <span class="n">bounds</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">r_</span><span class="p">[</span><span class="mi">0</span><span class="p">,</span> <span class="n">np</span><span class="o">.</span><span class="n">cumsum</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">n_pts</span><span class="p">)]</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">stacked_features</span> <span class="o">=</span> <span class="n">stacked</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">vstack</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">features</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">features</span> <span class="o">=</span> <span class="p">[</span><span class="n">stacked</span><span class="p">[</span><span class="n">bounds</span><span class="p">[</span><span class="n">i</span><span class="o">-</span><span class="mi">1</span><span class="p">]:</span><span class="n">bounds</span><span class="p">[</span><span class="n">i</span><span class="p">]]</span>
+                         <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="nb">xrange</span><span class="p">(</span><span class="mi">1</span><span class="p">,</span> <span class="nb">len</span><span class="p">(</span><span class="n">bounds</span><span class="p">))]</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">stacked</span> <span class="o">=</span> <span class="bp">True</span>
 
-    ############################################################################
-    ## Properties to get at basic metadata
+    <span class="c">############################################################################</span>
+    <span class="c">## Properties to get at basic metadata</span>
 </div>
-    @property
-<div class="viewcode-block" id="Features.total_points"><a class="viewcode-back" href="../../skl_groups/skl_groups.features.Features.html#skl_groups.features.Features.total_points">[docs]</a>    def total_points(self):
-        "The total number of points in all bags."
-        return self.n_pts.sum()
+    <span class="nd">@property</span>
+<div class="viewcode-block" id="Features.total_points"><a class="viewcode-back" href="../../skl_groups/skl_groups.features.Features.html#skl_groups.features.Features.total_points">[docs]</a>    <span class="k">def</span> <span class="nf">total_points</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="s">&quot;The total number of points in all bags.&quot;</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">n_pts</span><span class="o">.</span><span class="n">sum</span><span class="p">()</span>
 </div>
-    @property
-<div class="viewcode-block" id="Features.dim"><a class="viewcode-back" href="../../skl_groups/skl_groups.features.Features.html#skl_groups.features.Features.dim">[docs]</a>    def dim(self):
-        "The dimensionality of the features."
-        return self.features[0].shape[1]
+    <span class="nd">@property</span>
+<div class="viewcode-block" id="Features.dim"><a class="viewcode-back" href="../../skl_groups/skl_groups.features.Features.html#skl_groups.features.Features.dim">[docs]</a>    <span class="k">def</span> <span class="nf">dim</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="s">&quot;The dimensionality of the features.&quot;</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">features</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span><span class="o">.</span><span class="n">shape</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span>
 </div>
-    @property
-<div class="viewcode-block" id="Features.dtype"><a class="viewcode-back" href="../../skl_groups/skl_groups.features.Features.html#skl_groups.features.Features.dtype">[docs]</a>    def dtype(self):
-        "The data type of the feature vectors."
-        return self.features[0].dtype
+    <span class="nd">@property</span>
+<div class="viewcode-block" id="Features.dtype"><a class="viewcode-back" href="../../skl_groups/skl_groups.features.Features.html#skl_groups.features.Features.dtype">[docs]</a>    <span class="k">def</span> <span class="nf">dtype</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="s">&quot;The data type of the feature vectors.&quot;</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">features</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span><span class="o">.</span><span class="n">dtype</span>
 
-    ############################################################################
-    ## Copying / pickling utilities
+    <span class="c">############################################################################</span>
+    <span class="c">## Copying / pickling utilities</span>
 </div>
-<div class="viewcode-block" id="Features.copy"><a class="viewcode-back" href="../../skl_groups/skl_groups.features.Features.html#skl_groups.features.Features.copy">[docs]</a>    def copy(self, stack=False, copy_meta=False, memo=None):
-        '''
-        Copies the Feature object. Makes a copy of the features array.
+<div class="viewcode-block" id="Features.copy"><a class="viewcode-back" href="../../skl_groups/skl_groups.features.Features.html#skl_groups.features.Features.copy">[docs]</a>    <span class="k">def</span> <span class="nf">copy</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">stack</span><span class="o">=</span><span class="bp">False</span><span class="p">,</span> <span class="n">copy_meta</span><span class="o">=</span><span class="bp">False</span><span class="p">,</span> <span class="n">memo</span><span class="o">=</span><span class="bp">None</span><span class="p">):</span>
+        <span class="sd">&#39;&#39;&#39;</span>
+<span class="sd">        Copies the Feature object. Makes a copy of the features array.</span>
 
-        Parameters
-        ----------
-        stack : boolean, optional, default False
-            Whether to stack the copy if this one is unstacked.
+<span class="sd">        Parameters</span>
+<span class="sd">        ----------</span>
+<span class="sd">        stack : boolean, optional, default False</span>
+<span class="sd">            Whether to stack the copy if this one is unstacked.</span>
 
-        copy_meta : boolean, optional, default False
-            Also copy the metadata. If False, metadata in both points to the
-            same object.
-        '''
-        if self.stacked:
-            fs = deepcopy(self.stacked_features, memo)
-            n_pts = self.n_pts.copy()
-        elif stack:
-            fs = np.vstack(self.features)
-            n_pts = self.n_pts.copy()
-        else:
-            fs = deepcopy(self.features, memo)
-            n_pts = None
+<span class="sd">        copy_meta : boolean, optional, default False</span>
+<span class="sd">            Also copy the metadata. If False, metadata in both points to the</span>
+<span class="sd">            same object.</span>
+<span class="sd">        &#39;&#39;&#39;</span>
+        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">stacked</span><span class="p">:</span>
+            <span class="n">fs</span> <span class="o">=</span> <span class="n">deepcopy</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">stacked_features</span><span class="p">,</span> <span class="n">memo</span><span class="p">)</span>
+            <span class="n">n_pts</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">n_pts</span><span class="o">.</span><span class="n">copy</span><span class="p">()</span>
+        <span class="k">elif</span> <span class="n">stack</span><span class="p">:</span>
+            <span class="n">fs</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">vstack</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">features</span><span class="p">)</span>
+            <span class="n">n_pts</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">n_pts</span><span class="o">.</span><span class="n">copy</span><span class="p">()</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="n">fs</span> <span class="o">=</span> <span class="n">deepcopy</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">features</span><span class="p">,</span> <span class="n">memo</span><span class="p">)</span>
+            <span class="n">n_pts</span> <span class="o">=</span> <span class="bp">None</span>
 
-        meta = deepcopy(self.meta, memo) if copy_meta else self.meta
-        return Features(fs, n_pts, copy=False, **meta)
+        <span class="n">meta</span> <span class="o">=</span> <span class="n">deepcopy</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">meta</span><span class="p">,</span> <span class="n">memo</span><span class="p">)</span> <span class="k">if</span> <span class="n">copy_meta</span> <span class="k">else</span> <span class="bp">self</span><span class="o">.</span><span class="n">meta</span>
+        <span class="k">return</span> <span class="n">Features</span><span class="p">(</span><span class="n">fs</span><span class="p">,</span> <span class="n">n_pts</span><span class="p">,</span> <span class="n">copy</span><span class="o">=</span><span class="bp">False</span><span class="p">,</span> <span class="o">**</span><span class="n">meta</span><span class="p">)</span>
 </div>
-    def __copy__(self):
-        return self.copy(stack=False, copy_meta=False)
+    <span class="k">def</span> <span class="nf">__copy__</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">copy</span><span class="p">(</span><span class="n">stack</span><span class="o">=</span><span class="bp">False</span><span class="p">,</span> <span class="n">copy_meta</span><span class="o">=</span><span class="bp">False</span><span class="p">)</span>
 
-    def __deepcopy__(self, memo=None):
-        return self.copy(stack=False, copy_meta=True, memo=memo)
+    <span class="k">def</span> <span class="nf">__deepcopy__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">memo</span><span class="o">=</span><span class="bp">None</span><span class="p">):</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">copy</span><span class="p">(</span><span class="n">stack</span><span class="o">=</span><span class="bp">False</span><span class="p">,</span> <span class="n">copy_meta</span><span class="o">=</span><span class="bp">True</span><span class="p">,</span> <span class="n">memo</span><span class="o">=</span><span class="n">memo</span><span class="p">)</span>
 
-    def __getstate__(self):
-        if self.stacked:
-            return (self.stacked_features, self.n_pts, self.meta)
-        else:
-            return (self.features, None, self.meta)
+    <span class="k">def</span> <span class="nf">__getstate__</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">stacked</span><span class="p">:</span>
+            <span class="k">return</span> <span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">stacked_features</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">n_pts</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">meta</span><span class="p">)</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="k">return</span> <span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">features</span><span class="p">,</span> <span class="bp">None</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">meta</span><span class="p">)</span>
 
-    def __setstate__(self, state):
-        feats, n_pts, meta = state
-        self.__init__(feats, n_pts, **meta)
+    <span class="k">def</span> <span class="nf">__setstate__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">state</span><span class="p">):</span>
+        <span class="n">feats</span><span class="p">,</span> <span class="n">n_pts</span><span class="p">,</span> <span class="n">meta</span> <span class="o">=</span> <span class="n">state</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">__init__</span><span class="p">(</span><span class="n">feats</span><span class="p">,</span> <span class="n">n_pts</span><span class="p">,</span> <span class="o">**</span><span class="n">meta</span><span class="p">)</span>
 
-    ############################################################################ 
-    ## General magic methods for basic behavior
+    <span class="c">############################################################################ </span>
+    <span class="c">## General magic methods for basic behavior</span>
 
-    __hash__ = None
+    <span class="n">__hash__</span> <span class="o">=</span> <span class="bp">None</span>
 
-    def __eq__(self, oth):
-        if self is oth:
-            return True
-        elif isinstance(oth, Features):
-            return (len(self) == len(oth) and
-                    set(self.meta) == set(oth.meta) and
-                    all(np.all(self_b == oth_b)
-                        for self_b, oth_b in zip(self, oth)) and
-                    all(np.all(self.meta[k] == oth.meta[k])
-                        for k in self.meta))
-        elif self.meta:
-            return False
-        else:
-            return (len(self) == len(oth) and 
-                    all(np.all(self_b == oth_b)
-                        for self_b, oth_b in zip(self, oth)))
+    <span class="k">def</span> <span class="nf">__eq__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">oth</span><span class="p">):</span>
+        <span class="k">if</span> <span class="bp">self</span> <span class="ow">is</span> <span class="n">oth</span><span class="p">:</span>
+            <span class="k">return</span> <span class="bp">True</span>
+        <span class="k">elif</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">oth</span><span class="p">,</span> <span class="n">Features</span><span class="p">):</span>
+            <span class="k">return</span> <span class="p">(</span><span class="nb">len</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">==</span> <span class="nb">len</span><span class="p">(</span><span class="n">oth</span><span class="p">)</span> <span class="ow">and</span>
+                    <span class="nb">set</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">meta</span><span class="p">)</span> <span class="o">==</span> <span class="nb">set</span><span class="p">(</span><span class="n">oth</span><span class="o">.</span><span class="n">meta</span><span class="p">)</span> <span class="ow">and</span>
+                    <span class="nb">all</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">all</span><span class="p">(</span><span class="n">self_b</span> <span class="o">==</span> <span class="n">oth_b</span><span class="p">)</span>
+                        <span class="k">for</span> <span class="n">self_b</span><span class="p">,</span> <span class="n">oth_b</span> <span class="ow">in</span> <span class="nb">zip</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">oth</span><span class="p">))</span> <span class="ow">and</span>
+                    <span class="nb">all</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">all</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">meta</span><span class="p">[</span><span class="n">k</span><span class="p">]</span> <span class="o">==</span> <span class="n">oth</span><span class="o">.</span><span class="n">meta</span><span class="p">[</span><span class="n">k</span><span class="p">])</span>
+                        <span class="k">for</span> <span class="n">k</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">meta</span><span class="p">))</span>
+        <span class="k">elif</span> <span class="bp">self</span><span class="o">.</span><span class="n">meta</span><span class="p">:</span>
+            <span class="k">return</span> <span class="bp">False</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="k">return</span> <span class="p">(</span><span class="nb">len</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">==</span> <span class="nb">len</span><span class="p">(</span><span class="n">oth</span><span class="p">)</span> <span class="ow">and</span> 
+                    <span class="nb">all</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">all</span><span class="p">(</span><span class="n">self_b</span> <span class="o">==</span> <span class="n">oth_b</span><span class="p">)</span>
+                        <span class="k">for</span> <span class="n">self_b</span><span class="p">,</span> <span class="n">oth_b</span> <span class="ow">in</span> <span class="nb">zip</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">oth</span><span class="p">)))</span>
 
-    def __ne__(self, oth):
-        return not (self == oth)
+    <span class="k">def</span> <span class="nf">__ne__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">oth</span><span class="p">):</span>
+        <span class="k">return</span> <span class="ow">not</span> <span class="p">(</span><span class="bp">self</span> <span class="o">==</span> <span class="n">oth</span><span class="p">)</span>
 
-    def __repr__(self):
-        s = '&lt;Features: {:,} bags with {} {}-dimensional points ({:,} total)&gt;'
-        min_p = self.n_pts.min()
-        max_p = self.n_pts.max()
-        if min_p == max_p:
-            pts = "{:,}".format(min_p)
-        else:
-            pts = '{:,} to {:,}'.format(min_p, max_p)
-        return s.format(len(self), pts, self.dim, self.total_points)
+    <span class="k">def</span> <span class="nf">__repr__</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="n">s</span> <span class="o">=</span> <span class="s">&#39;&lt;Features: {:,} bags with {} {}-dimensional points ({:,} total)&gt;&#39;</span>
+        <span class="n">min_p</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">n_pts</span><span class="o">.</span><span class="n">min</span><span class="p">()</span>
+        <span class="n">max_p</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">n_pts</span><span class="o">.</span><span class="n">max</span><span class="p">()</span>
+        <span class="k">if</span> <span class="n">min_p</span> <span class="o">==</span> <span class="n">max_p</span><span class="p">:</span>
+            <span class="n">pts</span> <span class="o">=</span> <span class="s">&quot;{:,}&quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">min_p</span><span class="p">)</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="n">pts</span> <span class="o">=</span> <span class="s">&#39;{:,} to {:,}&#39;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">min_p</span><span class="p">,</span> <span class="n">max_p</span><span class="p">)</span>
+        <span class="k">return</span> <span class="n">s</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="nb">len</span><span class="p">(</span><span class="bp">self</span><span class="p">),</span> <span class="n">pts</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">dim</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">total_points</span><span class="p">)</span>
 
-    def __len__(self):
-        return self.n_pts.size
+    <span class="k">def</span> <span class="nf">__len__</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">n_pts</span><span class="o">.</span><span class="n">size</span>
 
-    def __iter__(self):
-        return iter(self.features)
+    <span class="k">def</span> <span class="nf">__iter__</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="k">return</span> <span class="nb">iter</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">features</span><span class="p">)</span>
 
-    def __getitem__(self, key):
-        if (isinstance(key, string_types) or
-                (isinstance(key, tuple) and
-                 any(isinstance(x, string_types) for x in key))):
-            msg = "Features indexing only subsets rows, but got {!r}"
-            raise TypeError(msg.format(key))
+    <span class="k">def</span> <span class="nf">__getitem__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">key</span><span class="p">):</span>
+        <span class="k">if</span> <span class="p">(</span><span class="nb">isinstance</span><span class="p">(</span><span class="n">key</span><span class="p">,</span> <span class="n">string_types</span><span class="p">)</span> <span class="ow">or</span>
+                <span class="p">(</span><span class="nb">isinstance</span><span class="p">(</span><span class="n">key</span><span class="p">,</span> <span class="nb">tuple</span><span class="p">)</span> <span class="ow">and</span>
+                 <span class="nb">any</span><span class="p">(</span><span class="nb">isinstance</span><span class="p">(</span><span class="n">x</span><span class="p">,</span> <span class="n">string_types</span><span class="p">)</span> <span class="k">for</span> <span class="n">x</span> <span class="ow">in</span> <span class="n">key</span><span class="p">))):</span>
+            <span class="n">msg</span> <span class="o">=</span> <span class="s">&quot;Features indexing only subsets rows, but got {!r}&quot;</span>
+            <span class="k">raise</span> <span class="ne">TypeError</span><span class="p">(</span><span class="n">msg</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">key</span><span class="p">))</span>
 
-        if np.isscalar(key):
-            return self.features[key]
-        else:
-            return type(self)(self.features[key], copy=False, stack=False,
-                              **{k: v[key] for k, v in iteritems(self.meta)})
+        <span class="k">if</span> <span class="n">np</span><span class="o">.</span><span class="n">isscalar</span><span class="p">(</span><span class="n">key</span><span class="p">):</span>
+            <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">features</span><span class="p">[</span><span class="n">key</span><span class="p">]</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="k">return</span> <span class="nb">type</span><span class="p">(</span><span class="bp">self</span><span class="p">)(</span><span class="bp">self</span><span class="o">.</span><span class="n">features</span><span class="p">[</span><span class="n">key</span><span class="p">],</span> <span class="n">copy</span><span class="o">=</span><span class="bp">False</span><span class="p">,</span> <span class="n">stack</span><span class="o">=</span><span class="bp">False</span><span class="p">,</span>
+                              <span class="o">**</span><span class="p">{</span><span class="n">k</span><span class="p">:</span> <span class="n">v</span><span class="p">[</span><span class="n">key</span><span class="p">]</span> <span class="k">for</span> <span class="n">k</span><span class="p">,</span> <span class="n">v</span> <span class="ow">in</span> <span class="n">iteritems</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">meta</span><span class="p">)})</span>
 
-    def __add__(self, oth):
-        if isinstance(oth, Features):
-            meta = {k: np.r_[self.meta[k], oth.meta[k]]
-                    for k in self.meta if k in oth.meta}
-            oth_features = oth.features
-        elif isinstance(oth, list):
-            meta = {}
-            oth_features = np.empty(len(oth), object)
-            oth_features[:] = oth
-        else:
-            return NotImplemented
+    <span class="k">def</span> <span class="nf">__add__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">oth</span><span class="p">):</span>
+        <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">oth</span><span class="p">,</span> <span class="n">Features</span><span class="p">):</span>
+            <span class="n">meta</span> <span class="o">=</span> <span class="p">{</span><span class="n">k</span><span class="p">:</span> <span class="n">np</span><span class="o">.</span><span class="n">r_</span><span class="p">[</span><span class="bp">self</span><span class="o">.</span><span class="n">meta</span><span class="p">[</span><span class="n">k</span><span class="p">],</span> <span class="n">oth</span><span class="o">.</span><span class="n">meta</span><span class="p">[</span><span class="n">k</span><span class="p">]]</span>
+                    <span class="k">for</span> <span class="n">k</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">meta</span> <span class="k">if</span> <span class="n">k</span> <span class="ow">in</span> <span class="n">oth</span><span class="o">.</span><span class="n">meta</span><span class="p">}</span>
+            <span class="n">oth_features</span> <span class="o">=</span> <span class="n">oth</span><span class="o">.</span><span class="n">features</span>
+        <span class="k">elif</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">oth</span><span class="p">,</span> <span class="nb">list</span><span class="p">):</span>
+            <span class="n">meta</span> <span class="o">=</span> <span class="p">{}</span>
+            <span class="n">oth_features</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">empty</span><span class="p">(</span><span class="nb">len</span><span class="p">(</span><span class="n">oth</span><span class="p">),</span> <span class="nb">object</span><span class="p">)</span>
+            <span class="n">oth_features</span><span class="p">[:]</span> <span class="o">=</span> <span class="n">oth</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="k">return</span> <span class="bp">NotImplemented</span>
 
-        return Features(np.r_[self.features, oth_features],
-                        stack=False, copy=True, **meta)
+        <span class="k">return</span> <span class="n">Features</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">r_</span><span class="p">[</span><span class="bp">self</span><span class="o">.</span><span class="n">features</span><span class="p">,</span> <span class="n">oth_features</span><span class="p">],</span>
+                        <span class="n">stack</span><span class="o">=</span><span class="bp">False</span><span class="p">,</span> <span class="n">copy</span><span class="o">=</span><span class="bp">True</span><span class="p">,</span> <span class="o">**</span><span class="n">meta</span><span class="p">)</span>
 
-    def __radd__(self, oth):
-        if isinstance(oth, list):
-            oth_features = np.empty(len(oth), object)
-            oth_features[:] = oth
-        else:
-            return NotImplemented
-        return Features(np.r_[oth_features, self.features],
-                        stack=False, copy=True)
+    <span class="k">def</span> <span class="nf">__radd__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">oth</span><span class="p">):</span>
+        <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">oth</span><span class="p">,</span> <span class="nb">list</span><span class="p">):</span>
+            <span class="n">oth_features</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">empty</span><span class="p">(</span><span class="nb">len</span><span class="p">(</span><span class="n">oth</span><span class="p">),</span> <span class="nb">object</span><span class="p">)</span>
+            <span class="n">oth_features</span><span class="p">[:]</span> <span class="o">=</span> <span class="n">oth</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="k">return</span> <span class="bp">NotImplemented</span>
+        <span class="k">return</span> <span class="n">Features</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">r_</span><span class="p">[</span><span class="n">oth_features</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">features</span><span class="p">],</span>
+                        <span class="n">stack</span><span class="o">=</span><span class="bp">False</span><span class="p">,</span> <span class="n">copy</span><span class="o">=</span><span class="bp">True</span><span class="p">)</span>
 
-    ############################################################################
-    ## Others
+    <span class="c">############################################################################</span>
+    <span class="c">## Others</span>
 
-<div class="viewcode-block" id="Features.bare"><a class="viewcode-back" href="../../skl_groups/skl_groups.features.Features.html#skl_groups.features.Features.bare">[docs]</a>    def bare(self):
-        "Make a Features object with no metadata; points to the same features."
-        if not self.meta:
-            return self
-        elif self.stacked:
-            return Features(self.stacked_features, self.n_pts, copy=False)
-        else:
-            return Features(self.features, copy=False)
+<div class="viewcode-block" id="Features.bare"><a class="viewcode-back" href="../../skl_groups/skl_groups.features.Features.html#skl_groups.features.Features.bare">[docs]</a>    <span class="k">def</span> <span class="nf">bare</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="s">&quot;Make a Features object with no metadata; points to the same features.&quot;</span>
+        <span class="k">if</span> <span class="ow">not</span> <span class="bp">self</span><span class="o">.</span><span class="n">meta</span><span class="p">:</span>
+            <span class="k">return</span> <span class="bp">self</span>
+        <span class="k">elif</span> <span class="bp">self</span><span class="o">.</span><span class="n">stacked</span><span class="p">:</span>
+            <span class="k">return</span> <span class="n">Features</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">stacked_features</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">n_pts</span><span class="p">,</span> <span class="n">copy</span><span class="o">=</span><span class="bp">False</span><span class="p">)</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="k">return</span> <span class="n">Features</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">features</span><span class="p">,</span> <span class="n">copy</span><span class="o">=</span><span class="bp">False</span><span class="p">)</span>
 
 </div></div>
-def as_features(X, stack=False, bare=False):
-    '''
-    Returns a version of X as a :class:`Features` object.
+<span class="k">def</span> <span class="nf">as_features</span><span class="p">(</span><span class="n">X</span><span class="p">,</span> <span class="n">stack</span><span class="o">=</span><span class="bp">False</span><span class="p">,</span> <span class="n">bare</span><span class="o">=</span><span class="bp">False</span><span class="p">):</span>
+    <span class="sd">&#39;&#39;&#39;</span>
+<span class="sd">    Returns a version of X as a :class:`Features` object.</span>
 
-    Parameters
-    ----------
-    stack : boolean, default False
-        Make a stacked version of X. Note that if X is a features object,
-        this will stack it in-place, since that's usually what you want.
-        (If not, just use the :class:`Features` constructor instead.)
+<span class="sd">    Parameters</span>
+<span class="sd">    ----------</span>
+<span class="sd">    stack : boolean, default False</span>
+<span class="sd">        Make a stacked version of X. Note that if X is a features object,</span>
+<span class="sd">        this will stack it in-place, since that&#39;s usually what you want.</span>
+<span class="sd">        (If not, just use the :class:`Features` constructor instead.)</span>
 
-    bare : boolean, default False
-        Return a bare version of X (no metadata).
+<span class="sd">    bare : boolean, default False</span>
+<span class="sd">        Return a bare version of X (no metadata).</span>
 
-    Returns
-    -------
-    feats : :class:`Features`
-        A version of X. If X is already a :class:`Features` object, the original
-        X may be returned, depending on the arguments.
-    '''
-    if isinstance(X, Features):
-        if stack:
-            X.make_stacked()
-        return X.bare() if bare else X
-    return Features(X, stack=stack, bare=bare)
-</pre>
+<span class="sd">    Returns</span>
+<span class="sd">    -------</span>
+<span class="sd">    feats : :class:`Features`</span>
+<span class="sd">        A version of X. If X is already a :class:`Features` object, the original</span>
+<span class="sd">        X may be returned, depending on the arguments.</span>
+<span class="sd">    &#39;&#39;&#39;</span>
+    <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">X</span><span class="p">,</span> <span class="n">Features</span><span class="p">):</span>
+        <span class="k">if</span> <span class="n">stack</span><span class="p">:</span>
+            <span class="n">X</span><span class="o">.</span><span class="n">make_stacked</span><span class="p">()</span>
+        <span class="k">return</span> <span class="n">X</span><span class="o">.</span><span class="n">bare</span><span class="p">()</span> <span class="k">if</span> <span class="n">bare</span> <span class="k">else</span> <span class="n">X</span>
+    <span class="k">return</span> <span class="n">Features</span><span class="p">(</span><span class="n">X</span><span class="p">,</span> <span class="n">stack</span><span class="o">=</span><span class="n">stack</span><span class="p">,</span> <span class="n">bare</span><span class="o">=</span><span class="n">bare</span><span class="p">)</span>
+</pre></div>
 
           </div>
           <footer>

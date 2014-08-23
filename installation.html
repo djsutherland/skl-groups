@@ -134,39 +134,44 @@ If you&#8217;re not already attached to a particular install of Python,
 we recommend the <a class="reference external" href="https://store.continuum.io/cshop/anaconda/">Anaconda</a>
 distribution, which makes life easy;
 otherwise, <a class="reference external" href="http://scikit-learn.org/stable/install.html">these instructions</a>
-might be helpful.
-Note that skl-groups is not currently tested on Windows (or FreeBSD, or anything
-other than recent versions of OSX, Arch, and CentOS). If you try it, let us
-know.</p>
+might be helpful.</p>
+<p>skl-groups is currently tested on recent versions of OSX, Arch, and CentOS.
+Notably, it is not tested on Windows, though the author expects that it should
+work. If you try it, let us know.</p>
 <div class="section" id="release-versions">
 <h2>Release versions<a class="headerlink" href="#release-versions" title="Permalink to this headline">¶</a></h2>
 <p>The released version of skl-groups is available via pypi:</p>
-<div class="highlight-python"><pre>$ pip install skl-groups</pre>
+<div class="highlight-python"><div class="highlight"><pre>$ pip install skl-groups
+</pre></div>
 </div>
 <p>or, if you use Anaconda, via my binstar channel:</p>
-<div class="highlight-python"><pre>$ conda install -c https://conda.binstar.org/dougal skl-groups</pre>
+<div class="highlight-python"><div class="highlight"><pre>$ conda install -c https://conda.binstar.org/dougal skl-groups
+</pre></div>
 </div>
-<p>The conda install includes skl-groups-accel, described below.</p>
+<p>The conda install includes skl-groups-accel, described in <a class="reference internal" href="#accel"><em>Accelerated version</em></a>.</p>
 <p>At this point, there&#8217;s nothing special about the releases other than that
 they&#8217;re easier to install.</p>
 <p>Once it&#8217;s installed, you can check that it worked by running the tests:</p>
-<div class="highlight-python"><pre>$ pip install nose testfixtures
-$ nosetests --exe skl-groups</pre>
+<div class="highlight-python"><div class="highlight"><pre>$ pip install nose testfixtures
+$ nosetests --exe skl-groups
+</pre></div>
 </div>
 <p>If you don&#8217;t have FLANN or skl-groups-accel installed (see below),
 some tests will be skipped.</p>
 </div>
 <div class="section" id="development-version">
-<h2>Development version<a class="headerlink" href="#development-version" title="Permalink to this headline">¶</a></h2>
+<span id="dev-version"></span><h2>Development version<a class="headerlink" href="#development-version" title="Permalink to this headline">¶</a></h2>
 <p>You can install a development version by getting the code from
 <a class="reference external" href="https://github.com/dougalsutherland/skl-groups/issues">the repository</a>,
 either with:</p>
-<div class="highlight-python"><pre>$ git clone https://github.com/dougalsutherland/skl-groups.git</pre>
+<div class="highlight-python"><div class="highlight"><pre>$ git clone https://github.com/dougalsutherland/skl-groups.git
+</pre></div>
 </div>
 <p>or by downloading and extracting the latest version
 <a class="reference external" href="https://github.com/dougalsutherland/skl-groups/archive/master.zip">as a ZIP</a>.
 Then just run:</p>
-<div class="highlight-python"><pre>$ python setup.py install</pre>
+<div class="highlight-python"><div class="highlight"><pre>$ python setup.py install
+</pre></div>
 </div>
 <p>to install it. You might need to add <tt class="docutils literal"><span class="pre">--user</span></tt> to install into your home
 directory, or run it with <tt class="docutils literal"><span class="pre">sudo</span></tt>, depending on your setup.</p>
@@ -185,7 +190,8 @@ either the <tt class="docutils literal"><span class="pre">pyflann</span></tt> li
 <p>skl-groups is only tested with FLANN 1.8.4.</p>
 <p><strong>Anaconda:</strong>
 The skl-groups package pulls this in anyway, but:</p>
-<div class="highlight-python"><pre>$ conda install -c http://conda.binstar.org/dougal cyflann</pre>
+<div class="highlight-python"><div class="highlight"><pre>$ conda install -c http://conda.binstar.org/dougal cyflann
+</pre></div>
 </div>
 <p><strong>OS X:</strong>
 FLANN is available from <a class="reference external" href="http://brew.sh/">Homebrew</a>:
@@ -216,30 +222,29 @@ and install the Python bindings and/or run
 where <tt class="docutils literal"><span class="pre">$prefix</span></tt> is whatever <tt class="docutils literal"><span class="pre">CMAKE_INSTALL_PREFIX</span></tt> was (usually <tt class="docutils literal"><span class="pre">/usr/local</span></tt>).</p>
 </div>
 <div class="section" id="accelerated-version">
-<h2>Accelerated version<a class="headerlink" href="#accelerated-version" title="Permalink to this headline">¶</a></h2>
+<span id="accel"></span><h2>Accelerated version<a class="headerlink" href="#accelerated-version" title="Permalink to this headline">¶</a></h2>
 <p>Some algorithms
 (currently just <a class="reference internal" href="skl_groups/skl_groups.divergences.KNNDivergenceEstimator.html#skl_groups.divergences.KNNDivergenceEstimator" title="skl_groups.divergences.KNNDivergenceEstimator"><tt class="xref py py-class docutils literal"><span class="pre">skl_groups.divergences.KNNDivergenceEstimator</span></tt></a>)
-have faster C implementations in the
-<a class="reference external" href="https://github.com/dougalsutherland/skl-groups-accel/">skl-groups-accel</a>
-package, which is kept separate to make the &#8220;base&#8221; skl-groups easier to install.</p>
+have faster C implementations in the skl-groups-accel package,
+which is kept separate to make the &#8220;base&#8221; skl-groups easier to install.</p>
 <p>If you&#8217;re using the conda package, skl-groups-accel is actually included in
 skl-groups, because requirements are so much easier in conda-land, and you
 don&#8217;t have to do anything.</p>
 <p>Otherwise, skl-groups-accel requires
 <a class="reference external" href="https://github.com/dougalsutherland/cyflann/">cyflann</a>
-(pyflann is insufficient – in fact, this code is why cyflann was written)
-and a recent version of <a class="reference external" href="http://cython.org/">cython</a>
+(pyflann is insufficient – in fact, this is cyflann&#8217;s raison d&#8217;etre)
 as well as a functioning C compiler with OpenMP support
 (i.e. gcc, not clang, <a class="reference external" href="http://clang-omp.github.io">for now</a>;
 you may need to <tt class="docutils literal"><span class="pre">export</span> <span class="pre">CC=gcc</span></tt> or similar).</p>
 <p>Once you have that, you can get a release version with:</p>
-<div class="highlight-python"><pre>$ pip install skl-groups-accel</pre>
+<div class="highlight-python"><div class="highlight"><pre>$ pip install skl-groups-accel
+</pre></div>
 </div>
-<p>or install the development version the same way as before, getting the code with:</p>
-<div class="highlight-python"><pre>$ git clone https://github.com/dougalsutherland/skl-groups-accel.git</pre>
+<p>or install from source (the same one as in <a class="reference internal" href="#dev-version"><em>Development version</em></a>) with:</p>
+<div class="highlight-python"><div class="highlight"><pre>$ python setup_accel.py install
+</pre></div>
 </div>
-<p>or <a class="reference external" href="https://github.com/dougalsutherland/skl-groups-accel/archive/master.zip">get the ZIP</a>
-and install it the same way (<em>after</em> installing skl-groups).</p>
+<p>This requires a recent version of <a class="reference external" href="http://cython.org/">Cython</a>.</p>
 </div>
 </div>
 

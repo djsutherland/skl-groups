@@ -129,7 +129,7 @@
 <h1>skl_groups.utils.show_progress<a class="headerlink" href="#skl-groups-utils-show-progress" title="Permalink to this headline">¶</a></h1>
 <dl class="function">
 <dt id="skl_groups.utils.show_progress">
-<tt class="descclassname">skl_groups.utils.</tt><tt class="descname">show_progress</tt><big>(</big><em>name</em><big>)</big><a class="reference internal" href="../_modules/skl_groups/utils.html#show_progress"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#skl_groups.utils.show_progress" title="Permalink to this definition">¶</a></dt>
+<tt class="descclassname">skl_groups.utils.</tt><tt class="descname">show_progress</tt><big>(</big><em>name</em>, <em>**kwargs</em><big>)</big><a class="reference internal" href="../_modules/skl_groups/utils.html#show_progress"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#skl_groups.utils.show_progress" title="Permalink to this definition">¶</a></dt>
 <dd><p>Sets up a <a class="reference internal" href="skl_groups.utils.ProgressBarHandler.html#skl_groups.utils.ProgressBarHandler" title="skl_groups.utils.ProgressBarHandler"><tt class="xref py py-class docutils literal"><span class="pre">ProgressBarHandler</span></tt></a> to handle progess logs for
 a given module.</p>
 <table class="docutils field-list" frame="void" rules="none">
@@ -137,10 +137,14 @@ a given module.</p>
 <col class="field-body" />
 <tbody valign="top">
 <tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><p class="first"><strong>name</strong> : string</p>
-<blockquote class="last">
+<blockquote>
 <div><p>The module name of the progress logger to use. For example,
 <a class="reference internal" href="skl_groups.divergences.KNNDivergenceEstimator.html#skl_groups.divergences.KNNDivergenceEstimator" title="skl_groups.divergences.KNNDivergenceEstimator"><tt class="xref py py-class docutils literal"><span class="pre">skl_groups.divergences.KNNDivergenceEstimator</span></tt></a>
 uses <tt class="docutils literal"><span class="pre">'skl_groups.divergences.knn.progress'</span></tt>.</p>
+</div></blockquote>
+<p><strong>*</strong> : anything</p>
+<blockquote class="last">
+<div><p>Other keyword arguments are passed to the <a class="reference internal" href="skl_groups.utils.ProgressBarHandler.html#skl_groups.utils.ProgressBarHandler" title="skl_groups.utils.ProgressBarHandler"><tt class="xref py py-class docutils literal"><span class="pre">ProgressBarHandler</span></tt></a>.</p>
 </div></blockquote>
 </td>
 </tr>

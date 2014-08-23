@@ -253,8 +253,15 @@ path to the caching directory.</p>
 </tr>
 </tbody>
 </table>
+<div class="admonition seealso">
+<p class="first admonition-title">See also</p>
+<dl class="last docutils">
+<dt><a class="reference internal" href="skl_groups.kernels.PairwisePicker.html#skl_groups.kernels.PairwisePicker" title="skl_groups.kernels.PairwisePicker"><tt class="xref py py-class docutils literal"><span class="pre">skl_groups.kernels.PairwisePicker</span></tt></a></dt>
+<dd>Chooses a particular divergence function / K combination in a pipeline. Doing parameter tuning with <a class="reference internal" href="#skl_groups.divergences.KNNDivergenceEstimator" title="skl_groups.divergences.KNNDivergenceEstimator"><tt class="xref py py-class docutils literal"><span class="pre">KNNDivergenceEstimator</span></tt></a> with a <tt class="xref py py-attr docutils literal"><span class="pre">memory</span></tt> and then <tt class="xref py py-class docutils literal"><span class="pre">PairwisePicker</span></tt> is more efficient than directly tuning over <a class="reference internal" href="#skl_groups.divergences.KNNDivergenceEstimator" title="skl_groups.divergences.KNNDivergenceEstimator"><tt class="xref py py-class docutils literal"><span class="pre">KNNDivergenceEstimator</span></tt></a> arguments.</dd>
+</dl>
+</div>
 <p class="rubric">Notes</p>
-<p>The convergence proof in <a class="reference internal" href="#r6" id="id10">[R6]</a> is incorrect. The estimator seems to work
+<p>The convergence proof in <a class="reference internal" href="#r6" id="id10">[R6]</a> seems incorrect. The estimator seems to work
 well, in practice, though.</p>
 <p>The Jensen-Shannon estimation is performed by using the estimator of
 <a class="reference internal" href="#r8" id="id11">[R8]</a> to get <span class="math">\(H[\frac{1}{2}(X + Y)]\)</span>, by combining the two samples

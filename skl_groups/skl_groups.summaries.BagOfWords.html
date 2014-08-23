@@ -139,7 +139,7 @@
 is tuned correctly, can provide a good single summary vector of the
 distribution of inputs for many types of learning tasks.</p>
 <p>It is often helpful to either take the square root of the output vectors
-or compare them with <a class="reference external" href="http://scikit-learn.org/stable/modules/generated/sklearn.metrics.pairwise.chi2_kernel.html#sklearn.metrics.pairwise.chi2_kernel" title="(in scikit-learn v0.14)"><tt class="xref py py-func docutils literal"><span class="pre">sklearn.metrics.pairwise.chi2_kernel()</span></tt></a>, which
+or compare them with <a class="reference external" href="http://scikit-learn.org/stable/modules/generated/sklearn.metrics.pairwise.chi2_kernel.html#sklearn.metrics.pairwise.chi2_kernel" title="(in scikit-learn v0.15.1)"><tt class="xref py py-func docutils literal"><span class="pre">sklearn.metrics.pairwise.chi2_kernel()</span></tt></a>, which
 have similar effects and both approximate a more realistic non-iid model
 <a class="reference internal" href="#r9" id="id1">[R9]</a>.</p>
 <table class="docutils field-list" frame="void" rules="none">
@@ -148,8 +148,8 @@ have similar effects and both approximate a more realistic non-iid model
 <tbody valign="top">
 <tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><p class="first"><strong>kmeans</strong> : KMeans estimator</p>
 <blockquote class="last">
-<div><p>Object to run k-means with; <a class="reference external" href="http://scikit-learn.org/stable/modules/generated/sklearn.cluster.KMeans.html#sklearn.cluster.KMeans" title="(in scikit-learn v0.14)"><tt class="xref py py-class docutils literal"><span class="pre">sklearn.cluster.KMeans</span></tt></a> or
-<a class="reference external" href="http://scikit-learn.org/stable/modules/generated/sklearn.cluster.MiniBatchKMeans.html#sklearn.cluster.MiniBatchKMeans" title="(in scikit-learn v0.14)"><tt class="xref py py-class docutils literal"><span class="pre">sklearn.cluster.MiniBatchKMeans</span></tt></a> are most likely.
+<div><p>Object to run k-means with; <a class="reference external" href="http://scikit-learn.org/stable/modules/generated/sklearn.cluster.KMeans.html#sklearn.cluster.KMeans" title="(in scikit-learn v0.15.1)"><tt class="xref py py-class docutils literal"><span class="pre">sklearn.cluster.KMeans</span></tt></a> or
+<a class="reference external" href="http://scikit-learn.org/stable/modules/generated/sklearn.cluster.MiniBatchKMeans.html#sklearn.cluster.MiniBatchKMeans" title="(in scikit-learn v0.15.1)"><tt class="xref py py-class docutils literal"><span class="pre">sklearn.cluster.MiniBatchKMeans</span></tt></a> are most likely.
 Compared to a standard clustering setup, you want a much higher
 <tt class="docutils literal"><span class="pre">n_clusters</span></tt> (depending on the size and dimensionality, between maybe
 tens and thousands), lowish <tt class="docutils literal"><span class="pre">max_iter</span></tt> (maybe 100; we don&#8217;t care so
