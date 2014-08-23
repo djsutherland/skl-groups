@@ -1,5 +1,4 @@
-This package contains Cython extensions for the
-`skl-groups <https://github.com/dougalsutherland/skl-groups/>`_ package.
+The ``skl_groups_accel`` package contains Cython extensions for skl-groups.
 Its purpose is to make skl-groups proper easier to install by not requiring
 a compiler or having FLANN installed / etc.
 
@@ -10,11 +9,7 @@ of ``skl_groups.divergences.knn.KNNDivergenceEstimator``.
 Installation
 ------------
 
-This code is written and tested for Python 2.7, 3.3, and 3.4. 3.2 probably
-works. It is also only tested on OS X and Linux, though it's not known not to
-work on other platforms; let me know if you try it.
-
-The easy way to install is::
+The easy way is::
 
     $ conda install -c https://conda.binstar.org/dougal skl-groups
 
@@ -25,13 +20,12 @@ Otherwise, first install skl-groups and
 You'll also need a compiler with OpenMP support,
 so gcc (not llvm-gcc) instead of clang
 (`for now <https://clang-omp.github.io/>`_).
-On OSX, do ``brew install gcc`` and then set ``CC=gcc-4.8``;
+On OSX, do ``brew install gcc`` and then set ``CC=gcc-4.9``;
 Linux users probably have gcc installed,
 but make sure to set ``CC`` if you default to clang.
 Then you can::
 
     $ pip install skl-groups-accel
 
-or, from a source checkout,
-``python setup.py install`` or ``pip install .`` or whatever.
+or, from a source checkout, ``python setup_accel.py install`` or whatever.
 If you're installing from a source checkout you need a recent version of Cython.

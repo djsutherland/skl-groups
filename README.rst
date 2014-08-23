@@ -37,7 +37,11 @@ you'll need to install either
 `cyflann <https://github.com/dougalsutherland/cyflann/>`_
 or the regular pyflann bindings to FLANN,
 and you'll want a version of FLANN with OpenMP support.
-A faster version of the kNN estimator is enabled by the
-`skl-groups-accel <https://github.com/dougalsutherland/skl-groups-accel>`_
-package (also in pip), which requires cyflann
-and a working C compiler with OpenMP support (i.e. gcc).
+
+A much faster version of the kNN estimator is enabled by the
+skl-groups-accel package, which you can get via::
+
+    $ pip install skl-groups
+
+It requires cyflann and a working C compiler with OpenMP support
+(i.e. gcc, not clang).
