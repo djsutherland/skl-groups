@@ -3,7 +3,7 @@
 set -e
 
 source activate without-flann
-pass=nosetests --exe skl-groups
+nosetests --exe skl-groups
 source deactivate
 
 for env in with-pyflann with-cyflann with-accel; do
