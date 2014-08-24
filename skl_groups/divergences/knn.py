@@ -15,8 +15,10 @@ from sklearn.externals.six.moves import map, zip, xrange
 
 try:
     from cyflann import FLANNIndex, FLANNParameters
+    have_cyflann = True
 except ImportError:
     from pyflann import FLANN as FLANNIndex, FLANNParameters
+    have_cyflann = False
 
 from ..features import as_features
 from ..utils import identity, ProgressLogger, as_integer_type
@@ -161,6 +163,8 @@ class KNNDivergenceEstimator(BaseEstimator, TransformerMixin):
         Used to cache the indices and the output of :meth:`transform`.
         By default, no caching is done. If a string is given, it is the
         path to the caching directory.
+        Note that memory is only available if using cyflann, since pyflann
+        indices are not pickleable.
 
     Attributes
     ----------
@@ -248,6 +252,19 @@ class KNNDivergenceEstimator(BaseEstimator, TransformerMixin):
             return cpu_count()
         return self.n_jobs
 
+    def _get_memory(self):
+        memory = self.memory
+        if isinstance(memory, string_types):
+            memory = Memory(cachedir=memory, verbose=0)
+
+        if memory.cachedir is None and not have_cyflann:
+            msg = ("KNNDivergenceEstimator can't use a memory if using "
+                   "pyflann; install cyflann instead. Not caching anything.")
+            warnings.warn(msg)
+            return Memory(cachedir=None, verbose=0)
+
+        return memory
+
     def _flann_args(self, X=None):
         "The dictionary of arguments to give to FLANN."
         args = {'cores': self._n_jobs}
@@ -303,10 +320,7 @@ class KNNDivergenceEstimator(BaseEstimator, TransformerMixin):
             msg = "asked for K = {}, but there's a bag with only {} points"
             raise ValueError(msg.format(max_K, X.n_pts.min()))
 
-        memory = self.memory
-        if isinstance(memory, string_types):
-            memory = Memory(cachedir=memory, verbose=0)
-
+        memory = self._get_memory()
         self.indices_ = id = memory.cache(_build_indices)(X, self._flann_args())
         if get_rhos:
             self.rhos_ = _get_rhos(X, id, Ks, max_K, save_all_Ks, self.min_dist)
@@ -342,13 +356,11 @@ class KNNDivergenceEstimator(BaseEstimator, TransformerMixin):
             msg = "incompatible dimensions: fit with {}, transform with {}"
             raise ValueError(msg.format(Y.dim, X.dim))
 
-        memory = self.memory
-        if isinstance(memory, string_types):
-            memory = Memory(cachedir=memory, verbose=0)
+        memory = self._get_memory()
 
         # ignore Y_indices to avoid slow pickling of them
-        # NOTE: if the indices are approximate, then might not get the same
-        #       results!
+        # XXX: if the indices are approximate, then might not get the same
+        #      results!
         est = memory.cache(_est_divs, ignore=['n_jobs', 'Y_indices', 'Y_rhos'])
         output, self.rhos_ = est(
             X, Y, self.indices_, getattr(self, 'rhos_', None),
