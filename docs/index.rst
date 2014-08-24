@@ -38,6 +38,7 @@ Contents
    logging
    reference
    todo
+   about
 
 There's also an :ref:`genindex`.
 
