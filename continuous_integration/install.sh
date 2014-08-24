@@ -2,14 +2,15 @@
 # the Travis "install" step: see http://docs.travis-ci.com/ and ../.travis.yml
 set -e
 
-if [[ "$TRAVIS_OS_NAME" == "linux" ]]; then
+os=$(uname)
+if [[ "$os" == "Linux" ]]; then
     wget http://repo.continuum.io/miniconda/Miniconda-3.6.0-Linux-x86_64.sh \
         -O miniconda.sh
-elif [[ "$TRAVIS_OS_NAME" == "osx" ]]; then
+elif [[ "$os" == "Darwin" ]]; then
     wget http://repo.continuum.io/miniconda/Miniconda-3.6.0-MacOSX-x86_64.sh \
         -O miniconda.sh
 else
-    echo "unknown os $TRAVIS_OS_NAME"
+    echo "unknown os '$os'"
     exit 1
 fi
 chmod +x miniconda.sh
