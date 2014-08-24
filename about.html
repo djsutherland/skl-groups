@@ -7,7 +7,7 @@
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   
-  <title>Progress logging / etc &mdash; skl-groups 0.1.0-dev documentation</title>
+  <title>About &mdash; skl-groups 0.1.0-dev documentation</title>
   
 
   
@@ -29,10 +29,9 @@
 
   
         <link rel="author" title="About these documents"
-              href="about.html"/>
+              href="#"/>
     <link rel="top" title="skl-groups 0.1.0-dev documentation" href="index.html"/>
-        <link rel="next" title="API reference" href="reference.html"/>
-        <link rel="prev" title="Quick tutorial" href="tutorial.html"/> 
+        <link rel="prev" title="Planned improvements" href="todo.html"/> 
 
   
   <script src="https://cdnjs.cloudflare.com/ajax/libs/modernizr/2.6.2/modernizr.min.js"></script>
@@ -78,7 +77,7 @@
 <li class="toctree-l2"><a class="reference internal" href="tutorial.html#l2-density-transformer">L2 density transformer</a></li>
 </ul>
 </li>
-<li class="toctree-l1 current"><a class="current reference internal" href="">Progress logging / etc</a></li>
+<li class="toctree-l1"><a class="reference internal" href="logging.html">Progress logging / etc</a></li>
 <li class="toctree-l1"><a class="reference internal" href="reference.html">API reference</a><ul>
 <li class="toctree-l2"><a class="reference internal" href="reference.html#features-representation">Features representation</a></li>
 <li class="toctree-l2"><a class="reference internal" href="reference.html#preprocessing">Preprocessing</a></li>
@@ -90,8 +89,8 @@
 </ul>
 </li>
 <li class="toctree-l1"><a class="reference internal" href="todo.html">Planned improvements</a></li>
-<li class="toctree-l1"><a class="reference internal" href="about.html">About</a></li>
-<li class="toctree-l1"><a class="reference internal" href="about.html#license">License</a></li>
+<li class="toctree-l1 current"><a class="current reference internal" href="">About</a></li>
+<li class="toctree-l1"><a class="reference internal" href="#license">License</a></li>
 </ul>
 
         
@@ -115,10 +114,10 @@
   <ul class="wy-breadcrumbs">
     <li><a href="index.html">Docs</a> &raquo;</li>
       
-    <li>Progress logging / etc</li>
+    <li>About</li>
       <li class="wy-breadcrumbs-aside">
         
-          <a href="_sources/logging.txt" rel="nofollow"> View page source</a>
+          <a href="_sources/about.txt" rel="nofollow"> View page source</a>
         
       </li>
   </ul>
@@ -126,31 +125,48 @@
 </div>
           <div role="main">
             
-  <div class="section" id="progress-logging-etc">
-<span id="logging"></span><h1>Progress logging / etc<a class="headerlink" href="#progress-logging-etc" title="Permalink to this headline">¶</a></h1>
-<p>Some components of skl-groups use the standard Python <a class="reference external" href="http://docs.python.org/3/library/logging.html#module-logging" title="(in Python v3.4)"><tt class="xref py py-mod docutils literal"><span class="pre">logging</span></tt></a> mechanism.
-If you want to see this kind of output, you can turn on the logging system.
-For example:</p>
-<div class="highlight-python"><div class="highlight"><pre><span class="kn">import</span> <span class="nn">logging</span>
-<span class="n">logger</span> <span class="o">=</span> <span class="n">logging</span><span class="o">.</span><span class="n">getLogger</span><span class="p">(</span><span class="s">&#39;skl_groups&#39;</span><span class="p">)</span>
-<span class="n">logger</span><span class="o">.</span><span class="n">setLevel</span><span class="p">(</span><span class="s">&#39;INFO&#39;</span><span class="p">)</span>
-<span class="n">logger</span><span class="o">.</span><span class="n">addHandler</span><span class="p">(</span><span class="n">logging</span><span class="o">.</span><span class="n">StreamHandler</span><span class="p">())</span>
-</pre></div>
+  <div class="section" id="about">
+<h1>About<a class="headerlink" href="#about" title="Permalink to this headline">¶</a></h1>
+<p>skl-groups is developed primarily by
+<a class="reference external" href="https://cs.cmu.edu/~dsutherl/">Dougal J. Sutherland</a>
+as part of his PhD research with
+<a class="reference external" href="https://cs.cmu.edu/~schneide/">Jeff Schneider</a>
+at Carnegie Mellon.</p>
+<p>Development is funded in part by the
+DARPA <a class="reference external" href="http://www.darpa.mil/Our_Work/I2O/Programs/XDATA.aspx">XDATA</a> program,
+and the project is a part of the
+<a class="reference external" href="http://www.darpa.mil/opencatalog/XDATA.html">XDATA open catalog</a>.</p>
 </div>
-<p>This will show certain steps of the progress output in some potentially slow
-algorithms, e.g. <a class="reference internal" href="skl_groups/skl_groups.divergences.KNNDivergenceEstimator.html#skl_groups.divergences.KNNDivergenceEstimator" title="skl_groups.divergences.KNNDivergenceEstimator"><tt class="xref py py-class docutils literal"><span class="pre">divergences.KNNDivergenceEstimator</span></tt></a>. There are also
-some warnings given in certain situations.</p>
-<p>Some algorithms (currently only <a class="reference internal" href="skl_groups/skl_groups.divergences.KNNDivergenceEstimator.html#skl_groups.divergences.KNNDivergenceEstimator" title="skl_groups.divergences.KNNDivergenceEstimator"><tt class="xref py py-class docutils literal"><span class="pre">divergences.KNNDivergenceEstimator</span></tt></a>)
-also have a special &#8220;progress&#8221; logger, which doesn&#8217;t propagate up to standard
-handlers because it outputs a line at each step through the algorithm.
-<a class="reference internal" href="skl_groups/skl_groups.utils.show_progress.html#skl_groups.utils.show_progress" title="skl_groups.utils.show_progress"><tt class="xref py py-func docutils literal"><span class="pre">utils.show_progress()</span></tt></a> will set up a
-<a class="reference internal" href="skl_groups/skl_groups.utils.ProgressBarHandler.html#skl_groups.utils.ProgressBarHandler" title="skl_groups.utils.ProgressBarHandler"><tt class="xref py py-class docutils literal"><span class="pre">utils.ProgressBarHandler</span></tt></a>, which uses the <tt class="docutils literal"><span class="pre">progressbar</span></tt> library
-(<a class="reference external" href="https://github.com/dougalsutherland/python-progressbar">recommended fork</a>)
-to print out pretty console progressbars with ETAs and such:</p>
-<div class="highlight-python"><div class="highlight"><pre><span class="kn">from</span> <span class="nn">skl_groups.utils</span> <span class="kn">import</span> <span class="n">show_progress</span>
-<span class="n">show_progress</span><span class="p">(</span><span class="s">&#39;skl_groups.divergences.knn.progress&#39;</span><span class="p">)</span>
-</pre></div>
-</div>
+<div class="section" id="license">
+<h1>License<a class="headerlink" href="#license" title="Permalink to this headline">¶</a></h1>
+<p>skl-groups is released under the 3-clause BSD license:</p>
+<p>Copyright (c) 2013-2014, Dougal J. Sutherland (<a class="reference external" href="mailto:dsutherl&#37;&#52;&#48;cs&#46;cmu&#46;edu">dsutherl<span>&#64;</span>cs<span>&#46;</span>cmu<span>&#46;</span>edu</a>).
+All rights reserved.</p>
+<p>Redistribution and use in source and binary forms, with or without
+modification, are permitted provided that the following conditions are met:</p>
+<blockquote>
+<div><ul class="simple">
+<li>Redistributions of source code must retain the above copyright
+notice, this list of conditions and the following disclaimer.</li>
+<li>Redistributions in binary form must reproduce the above copyright
+notice, this list of conditions and the following disclaimer in the
+documentation and/or other materials provided with the distribution.</li>
+<li>Neither the name of Carnegie Mellon University nor the
+names of the contributors may be used to endorse or promote products
+derived from this software without specific prior written permission.</li>
+</ul>
+</div></blockquote>
+<p>THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS &#8220;AS IS&#8221;
+AND ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE
+IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE
+ARE DISCLAIMED. IN NO EVENT SHALL THE COPYRIGHT HOLDER OR CONTRIBUTORS BE
+LIABLE FOR ANY DIRECT, INDIRECT, INCIDENTAL, SPECIAL, EXEMPLARY, OR
+CONSEQUENTIAL DAMAGES (INCLUDING, BUT NOT LIMITED TO, PROCUREMENT OF
+SUBSTITUTE GOODS OR SERVICES; LOSS OF USE, DATA, OR PROFITS; OR BUSINESS
+INTERRUPTION) HOWEVER CAUSED AND ON ANY THEORY OF LIABILITY, WHETHER IN
+CONTRACT, STRICT LIABILITY, OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE)
+ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
+POSSIBILITY OF SUCH DAMAGE.</p>
 </div>
 
 
@@ -159,10 +175,8 @@ to print out pretty console progressbars with ETAs and such:</p>
   
     <div class="rst-footer-buttons" role="navigation" aria-label="footer navigation">
       
-        <a href="reference.html" class="btn btn-neutral float-right" title="API reference"/>Next <span class="fa fa-arrow-circle-right"></span></a>
       
-      
-        <a href="tutorial.html" class="btn btn-neutral" title="Quick tutorial"><span class="fa fa-arrow-circle-left"></span> Previous</a>
+        <a href="todo.html" class="btn btn-neutral" title="Planned improvements"><span class="fa fa-arrow-circle-left"></span> Previous</a>
       
     </div>
   
