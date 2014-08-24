@@ -26,8 +26,9 @@ PKGS="$PKGS scikit-learn=$SKLEARN_VERSION"
 conda create --yes -n without-flann -c https://conda.binstar.org/dougal \
     $PKGS
 
-conda create --yes -n with-pyflann -c https://conda.binstar.org/dougal \
-    $PKGS pyflann=$PYFLANN_VERSION
+# temporarily don't do with-pyflann (#24)
+# conda create --yes -n with-pyflann -c https://conda.binstar.org/dougal \
+#     $PKGS pyflann=$PYFLANN_VERSION
 
 conda create --yes -n with-cyflann -c https://conda.binstar.org/dougal \
     $PKGS cyflann=$CYFLANN_VERSION
@@ -36,19 +37,13 @@ conda create --yes -n with-accel -c https://conda.binstar.org/dougal \
     $PKGS cyflann=$CYFLANN_VERSION
 
 
-source activate without-flann
-python setup.py install
-source deactivate
-
-source activate with-pyflann
-python setup.py install
-source deactivate
-
-source activate with-cyflann
-python setup.py install
-source deactivate
+# temporarily don't do with-pyflann (#24)
+for env in without-flann with-cyflann with-accel; do
+    source activate $env
+    python setup.py install
+    source deactivate
+done
 
 source activate with-accel
-python setup.py install
 python setup_accel.py install
 source deactivate

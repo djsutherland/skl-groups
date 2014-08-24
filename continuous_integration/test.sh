@@ -8,7 +8,8 @@ source activate without-flann
 nosetests --exe skl_groups
 source deactivate
 
-for env in with-pyflann with-cyflann with-accel; do
+# temporarily don't do with-pyflann (#24)
+for env in with-cyflann with-accel; do
     source activate $env
     nosetests --exe skl_groups.tests.test_divs_knn
     source deactivate
