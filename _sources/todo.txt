@@ -18,8 +18,8 @@ Here are some of the things we plan to improve:
   then :class:`sklearn.svm.SVC`,
   with appropriate parameter tuning and so on.
   (A replacement for :class:`sdm.SDC` and friends.)
-* Add more algorithms, in particular the mean-map kernel, new KDE-based
-  divergence estimators with finite-sample convergence guarantees, and
+* Add more algorithms, in particular new KDE-based
+  divergence estimators with finite-sample convergence guarantees and
   Fisher vectors.
 * Command-line helpers to perform common tasks.
 * Better user documentation.
