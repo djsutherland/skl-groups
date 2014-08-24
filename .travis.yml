@@ -1,0 +1,18 @@
+language: c # work around travis issue on OSX
+            # https://github.com/travis-ci/travis-ci/issues/2312
+os:
+  - linux
+  - osx
+compiler:
+  - gcc
+env:
+  # TODO: 
+  matrix:
+    - PYTHON_VERSION="2.7"
+      NUMPY_VERSION="1.8.1" SCIPY_VERSION="0.14.0" SKLEARN_VERSION="0.15.0"
+      PYFLANN_VERSION="1.8.5dev" CYFLANN_VERSION="0.1.23"
+    - PYTHON_VERSION="3.4"
+      NUMPY_VERSION="1.8.1" SCIPY_VERSION="0.14.0" SKLEARN_VERSION="0.15.0"
+      PYFLANN_VERSION="1.8.5dev" CYFLANN_VERSION="0.1.23"
+install: source continuous_integration/install.sh
+script: bash continuous_integration/test_script.sh
