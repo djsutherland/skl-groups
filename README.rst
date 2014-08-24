@@ -1,3 +1,8 @@
+|Travis|_
+
+.. |Travis| image:: https://api.travis-ci.org/dougalsutherland/skl-groups.png?branch=master
+.. _Travis: https://travis-ci.org/dougalsutherland/skl-groups
+
 skl-groups
 ==========
 
