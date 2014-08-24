@@ -20,7 +20,6 @@ if __name__ == '__main__':
     _this_dir = os.path.dirname(os.path.abspath(__file__))
     sys.path.insert(0, os.path.dirname(os.path.dirname(_this_dir)))
 
-from skl_groups.divergences import KNNDivergenceEstimator
 from skl_groups.features import Features
 
 
@@ -33,12 +32,15 @@ except ImportError:
     except ImportError:
         have_flann = False
 
-try:
-    import skl_groups_accel.knn_divs
-except ImportError:
-    have_accel = False
-else:
-    have_accel = True
+if have_flann:
+    from skl_groups.divergences import KNNDivergenceEstimator
+
+    try:
+        import skl_groups_accel.knn_divs
+    except ImportError:
+        have_accel = False
+    else:
+        have_accel = True
 
 
 ################################################################################
