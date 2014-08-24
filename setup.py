@@ -5,6 +5,8 @@ try:
 except ImportError:
     from distutils.core import setup
 
+import versiontools_support
+
 DESCRIPTION = "Addon to scikit-learn for handling set-based data."
 with open('README.rst') as f:
     LONG_DESCRIPTION = f.read()
@@ -29,13 +31,10 @@ CLASSIFIERS = [
     "Topic :: Scientific/Engineering :: Information Analysis",
 ]
 
-import skl_groups
-VERSION = skl_groups.__version__
-
 
 setup(
     name=NAME,
-    version=VERSION,
+    version=':versiontools:skl_groups',
     description=DESCRIPTION,
     long_description=LONG_DESCRIPTION,
     author=AUTHOR,

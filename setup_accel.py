@@ -7,6 +7,8 @@ try:
 except ImportError:
     from distutils.core import setup
 
+import versiontools_support
+
 DESCRIPTION = "Compiled components to speed up skl-groups."
 with open('README.rst') as f:
     LONG_DESCRIPTION = f.read()
@@ -30,20 +32,6 @@ CLASSIFIERS = [
     "Topic :: Scientific/Engineering :: Image Recognition",
     "Topic :: Scientific/Engineering :: Information Analysis",
 ]
-
-import sys
-if sys.version_info[0] < 3:
-    import __builtin__ as builtins
-else:
-    import builtins
-
-# Hack: set a global variable to tell the main __init__ not to load components
-# that aren't built yet.
-builtins.__SKL_GROUPS_ACCEL_SETUP__ = True
-
-
-import skl_groups_accel
-VERSION = skl_groups_accel.__version__
 
 
 def cython_ext(extension, **kw):
@@ -93,7 +81,7 @@ ext_modules = [
 
 setup(
     name=NAME,
-    version=VERSION,
+    version=':versiontools:skl_groups_accel',
     description=DESCRIPTION,
     long_description=LONG_DESCRIPTION,
     author=AUTHOR,
