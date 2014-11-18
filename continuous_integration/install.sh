@@ -21,7 +21,7 @@ conda update --yes --quiet conda
 
 PKGS="python=$PYTHON_VERSION pip nose setuptools testfixtures cython"
 PKGS="$PKGS numpy=$NUMPY_VERSION scipy=$SCIPY_VERSION"
-PKGS="$PKGS scikit-learn=$SKLEARN_VERSION versiontools gitpython"
+PKGS="$PKGS scikit-learn=$SKLEARN_VERSION versiontools"
 
 conda create --yes -n without-flann -c https://conda.binstar.org/dougal \
     $PKGS
