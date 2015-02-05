@@ -399,7 +399,7 @@ def _estimate_cross_divs(X_features, X_indices, X_rhos,
             index_array[n_X + j] = (<FLANNIndex> Y_indices[j])._this
 
         with nogil:
-            for job_i in prange(n_to_do, num_threads=n_jobs, schedule='guided'):
+            for job_i in prange(n_to_do, num_threads=n_jobs, schedule='static'):
                 tid = threadid()
                 is_sym = job_i // (n_X * n_Y)
                 i = (job_i % (n_X * n_Y)) // n_Y
