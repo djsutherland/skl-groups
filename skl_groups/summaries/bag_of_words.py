@@ -3,6 +3,7 @@ from copy import copy
 import numpy as np
 from sklearn.base import BaseEstimator, TransformerMixin
 from sklearn.externals.six.moves import xrange
+from sklearn.utils.validation import check_is_fitted
 
 from ..features import as_features
 
@@ -55,7 +56,7 @@ class BagOfWords(BaseEstimator, TransformerMixin):
     def _check_fitted(self):
         if not hasattr(self, "kmeans_fit_"):
             raise AttributeError("Model has not been trained yet.")
-        self.kmeans_fit_._check_fitted()
+        check_is_fitted(self.kmeans_fit_, 'cluster_centers_')
 
     @property
     def n_codewords(self):
