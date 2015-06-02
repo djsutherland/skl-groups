@@ -4,7 +4,7 @@ from sklearn.base import BaseEstimator, TransformerMixin
 from sklearn.externals.joblib import Memory
 from sklearn.externals.six import string_types, with_metaclass
 from sklearn.externals.six.moves import xrange
-from sklearn.utils import array2d
+from sklearn.utils import check_array
 
 def get_memory(memory):
     if isinstance(memory, string_types):
@@ -161,7 +161,7 @@ class RBFize(BaseEstimator, TransformerMixin):
             The raw pairwise distances.
         '''
 
-        X = array2d(X)
+        X = check_array(X)
         if self.scale_by_median:
             self.median_ = np.median(X[np.triu_indices_from(X)],
                                      overwrite_input=True)
@@ -183,7 +183,7 @@ class RBFize(BaseEstimator, TransformerMixin):
         X_rbf : array of same shape as X
             The distances in X passed through the RBF kernel.
         '''
-        X = array2d(X)
+        X = check_array(X)
         X_rbf = np.empty_like(X) if self.copy else X
 
         if not self.squared:
