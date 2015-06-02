@@ -103,9 +103,15 @@ class L2DensityTransformer(BaseEstimator, TransformerMixin):
 
     @property
     def dim_(self):
-        "The dimension of the transformed vectors, once fitted."
+        "The dimension of the inputs, once fitted."
         self._check_fitted()
         return self.inds_.shape[1]
+
+    @property
+    def out_dim_(self):
+        "The dimension of the output vectors, once fitted."
+        self._check_fitted()
+        return self.inds_.shape[0]
 
     def fit(self, X, y=None):
         '''
