@@ -1,3 +1,5 @@
+from __future__ import division
+
 import numpy as np
 import scipy.linalg
 from sklearn.base import BaseEstimator, TransformerMixin
@@ -123,7 +125,7 @@ class RBFize(BaseEstimator, TransformerMixin):
         see also :attr:`scale_by_median`.
 
     scale_by_median : boolean, optional, default False
-        If True, actually use the median input distance times :attr:`gamma`.
+        If True, divide :attr:`gamma` by the median input distance.
 
     squared : boolean, optional, default False
         Whether the inputs are treated as distances or squared distances.
@@ -189,7 +191,7 @@ class RBFize(BaseEstimator, TransformerMixin):
         if not self.squared:
             np.power(X, 2, out=X_rbf)
 
-        gamma = self.gamma * (self.median_ if self.scale_by_median else 1)
+        gamma = self.gamma / (self.median_ if self.scale_by_median else 1)
         np.multiply(X if self.squared else X_rbf, -gamma, out=X_rbf)
 
         np.exp(X_rbf, out=X_rbf)
