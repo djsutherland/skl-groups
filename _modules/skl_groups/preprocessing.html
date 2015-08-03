@@ -14,7 +14,7 @@
   
 
   
-  <link href='https://fonts.googleapis.com/css?family=Lato:400,700|Roboto+Slab:400,700|Inconsolata:400,700' rel='stylesheet' type='text/css'>
+  <link href='https://fonts.googleapis.com/css?family=Lato:400,700,400italic,700italic|Roboto+Slab:400,700|Inconsolata:400,700&subset=latin,cyrillic' rel='stylesheet' type='text/css'>
 
   
   
@@ -25,6 +25,8 @@
   
   
     <link rel="stylesheet" href="../../_static/css/theme.css" type="text/css" />
+  
+
   
 
   
@@ -45,9 +47,12 @@
     
     <nav data-toggle="wy-nav-shift" class="wy-nav-side">
       <div class="wy-side-nav-search">
-        <a href="../../index.html" class="fa fa-home"> skl-groups</a>
-        <div role="search">
-  <form id ="rtd-search-form" class="wy-form" action="../../search.html" method="get">
+        
+          <a href="../../index.html" class="fa fa-home"> skl-groups</a>
+        
+        
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="../../search.html" method="get">
     <input type="text" name="q" placeholder="Search docs" />
     <input type="hidden" name="check_keywords" value="yes" />
     <input type="hidden" name="area" value="default" />
@@ -57,8 +62,9 @@
 
       <div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="main navigation">
         
-        
-            <ul>
+          
+          
+              <ul>
 <li class="toctree-l1"><a class="reference internal" href="../../index.html">Overview</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../../who.html">Who this package is for</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../../installation.html">Installation</a><ul>
@@ -93,6 +99,7 @@
 <li class="toctree-l1"><a class="reference internal" href="../../about.html#license">License</a></li>
 </ul>
 
+          
         
       </div>
       &nbsp;
@@ -123,14 +130,14 @@
   </ul>
   <hr/>
 </div>
-          <div role="main">
+          <div role="main" class="document">
             
   <h1>Source code for skl_groups.preprocessing</h1><div class="highlight"><pre>
 <span class="kn">import</span> <span class="nn">numpy</span> <span class="kn">as</span> <span class="nn">np</span>
 <span class="kn">from</span> <span class="nn">sklearn.base</span> <span class="kn">import</span> <span class="n">BaseEstimator</span><span class="p">,</span> <span class="n">TransformerMixin</span>
 <span class="kn">from</span> <span class="nn">sklearn.decomposition</span> <span class="kn">import</span> <span class="n">PCA</span><span class="p">,</span> <span class="n">RandomizedPCA</span>
 <span class="kn">from</span> <span class="nn">sklearn.preprocessing</span> <span class="kn">import</span> <span class="n">StandardScaler</span><span class="p">,</span> <span class="n">Normalizer</span>
-<span class="kn">from</span> <span class="nn">sklearn.utils</span> <span class="kn">import</span> <span class="n">check_arrays</span><span class="p">,</span> <span class="n">warn_if_not_float</span>
+<span class="kn">from</span> <span class="nn">sklearn.utils</span> <span class="kn">import</span> <span class="n">check_array</span><span class="p">,</span> <span class="n">warn_if_not_float</span>
 
 <span class="kn">from</span> <span class="nn">.features</span> <span class="kn">import</span> <span class="n">Features</span><span class="p">,</span> <span class="n">as_features</span>
 
@@ -330,7 +337,7 @@
 <span class="sd">            The data used to compute the per-feature minimum and maximum</span>
 <span class="sd">            used for later scaling along the features axis.</span>
 <span class="sd">        &quot;&quot;&quot;</span>
-        <span class="n">X</span> <span class="o">=</span> <span class="n">check_arrays</span><span class="p">(</span><span class="n">X</span><span class="p">,</span> <span class="n">sparse_format</span><span class="o">=</span><span class="s">&quot;dense&quot;</span><span class="p">,</span> <span class="n">copy</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">copy</span><span class="p">)[</span><span class="mi">0</span><span class="p">]</span>
+        <span class="n">X</span> <span class="o">=</span> <span class="n">check_array</span><span class="p">(</span><span class="n">X</span><span class="p">,</span> <span class="n">copy</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">copy</span><span class="p">)</span>
         <span class="n">warn_if_not_float</span><span class="p">(</span><span class="n">X</span><span class="p">,</span> <span class="n">estimator</span><span class="o">=</span><span class="bp">self</span><span class="p">)</span>
 
         <span class="n">feature_range</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">feature_range</span>
@@ -369,7 +376,7 @@
 <span class="sd">        X : array-like with shape [n_samples, n_features]</span>
 <span class="sd">            Input data that will be transformed.</span>
 <span class="sd">        &quot;&quot;&quot;</span>
-        <span class="n">X</span> <span class="o">=</span> <span class="n">check_arrays</span><span class="p">(</span><span class="n">X</span><span class="p">,</span> <span class="n">sparse_format</span><span class="o">=</span><span class="s">&quot;dense&quot;</span><span class="p">,</span> <span class="n">copy</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">copy</span><span class="p">)[</span><span class="mi">0</span><span class="p">]</span>
+        <span class="n">X</span> <span class="o">=</span> <span class="n">check_array</span><span class="p">(</span><span class="n">X</span><span class="p">,</span> <span class="n">copy</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">copy</span><span class="p">)</span>
         <span class="n">X</span> <span class="o">*=</span> <span class="bp">self</span><span class="o">.</span><span class="n">scale_</span>
         <span class="n">X</span> <span class="o">+=</span> <span class="bp">self</span><span class="o">.</span><span class="n">min_</span>
         <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">truncate</span><span class="p">:</span>
@@ -388,7 +395,7 @@
 <span class="sd">        X : array-like with shape [n_samples, n_features]</span>
 <span class="sd">            Input data that will be transformed.</span>
 <span class="sd">        &quot;&quot;&quot;</span>
-        <span class="n">X</span> <span class="o">=</span> <span class="n">check_arrays</span><span class="p">(</span><span class="n">X</span><span class="p">,</span> <span class="n">sparse_format</span><span class="o">=</span><span class="s">&quot;dense&quot;</span><span class="p">,</span> <span class="n">copy</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">copy</span><span class="p">)[</span><span class="mi">0</span><span class="p">]</span>
+        <span class="n">X</span> <span class="o">=</span> <span class="n">check_array</span><span class="p">(</span><span class="n">X</span><span class="p">,</span> <span class="n">copy</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">copy</span><span class="p">)</span>
         <span class="n">X</span> <span class="o">-=</span> <span class="bp">self</span><span class="o">.</span><span class="n">min_</span>
         <span class="n">X</span> <span class="o">/=</span> <span class="bp">self</span><span class="o">.</span><span class="n">scale_</span>
         <span class="k">return</span> <span class="n">X</span>
@@ -498,7 +505,8 @@
     </p>
   </div>
 
-  <a href="https://github.com/snide/sphinx_rtd_theme">Sphinx theme</a> provided by <a href="https://readthedocs.org">Read the Docs</a>
+  Built with <a href="http://sphinx-doc.org/">Sphinx</a> using a <a href="https://github.com/snide/sphinx_rtd_theme">theme</a> provided by <a href="https://readthedocs.org">Read the Docs</a>.
+  
 </footer>
         </div>
       </div>

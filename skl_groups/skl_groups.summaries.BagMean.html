@@ -14,7 +14,7 @@
   
 
   
-  <link href='https://fonts.googleapis.com/css?family=Lato:400,700|Roboto+Slab:400,700|Inconsolata:400,700' rel='stylesheet' type='text/css'>
+  <link href='https://fonts.googleapis.com/css?family=Lato:400,700,400italic,700italic|Roboto+Slab:400,700|Inconsolata:400,700&subset=latin,cyrillic' rel='stylesheet' type='text/css'>
 
   
   
@@ -25,6 +25,8 @@
   
   
     <link rel="stylesheet" href="../_static/css/theme.css" type="text/css" />
+  
+
   
 
   
@@ -47,9 +49,12 @@
     
     <nav data-toggle="wy-nav-shift" class="wy-nav-side">
       <div class="wy-side-nav-search">
-        <a href="../index.html" class="fa fa-home"> skl-groups</a>
-        <div role="search">
-  <form id ="rtd-search-form" class="wy-form" action="../search.html" method="get">
+        
+          <a href="../index.html" class="fa fa-home"> skl-groups</a>
+        
+        
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="../search.html" method="get">
     <input type="text" name="q" placeholder="Search docs" />
     <input type="hidden" name="check_keywords" value="yes" />
     <input type="hidden" name="area" value="default" />
@@ -59,8 +64,9 @@
 
       <div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="main navigation">
         
-        
-            <ul class="current">
+          
+          
+              <ul class="current">
 <li class="toctree-l1"><a class="reference internal" href="../index.html">Overview</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../who.html">Who this package is for</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../installation.html">Installation</a><ul>
@@ -95,6 +101,7 @@
 <li class="toctree-l1"><a class="reference internal" href="../about.html#license">License</a></li>
 </ul>
 
+          
         
       </div>
       &nbsp;
@@ -127,7 +134,7 @@
   </ul>
   <hr/>
 </div>
-          <div role="main">
+          <div role="main" class="document">
             
   <div class="section" id="skl-groups-summaries-bagmean">
 <h1>skl_groups.summaries.BagMean<a class="headerlink" href="#skl-groups-summaries-bagmean" title="Permalink to this headline">¶</a></h1>
@@ -141,7 +148,7 @@ the mean of each entry.</p>
 embedding, you can compute an explicit embedding of
 <a class="reference internal" href="skl_groups.kernels.MeanMapKernel.html#skl_groups.kernels.MeanMapKernel" title="skl_groups.kernels.MeanMapKernel"><tt class="xref py py-class docutils literal"><span class="pre">skl_groups.kernels.MeanMapKernel</span></tt></a> by first doing the kernel
 embedding and then taking the mean.
-Using <a class="reference external" href="http://scikit-learn.org/stable/modules/generated/sklearn.kernel_approximation.RBFSampler.html#sklearn.kernel_approximation.RBFSampler" title="(in scikit-learn v0.15.1)"><tt class="xref py py-class docutils literal"><span class="pre">sklearn.kernel_approximation.RBFSampler</span></tt></a>:</p>
+Using <a class="reference external" href="http://scikit-learn.org/stable/modules/generated/sklearn.kernel_approximation.RBFSampler.html#sklearn.kernel_approximation.RBFSampler" title="(in scikit-learn v0.16.dev0)"><tt class="xref py py-class docutils literal"><span class="pre">sklearn.kernel_approximation.RBFSampler</span></tt></a>:</p>
 <div class="highlight-python"><div class="highlight"><pre><span class="n">rbf_mmk</span> <span class="o">=</span> <span class="n">Pipeline</span><span class="p">([</span>
     <span class="p">(</span><span class="s">&#39;rbf&#39;</span><span class="p">,</span> <span class="n">BagPreprocesser</span><span class="p">(</span><span class="n">RBFSampler</span><span class="p">(</span><span class="n">gamma</span><span class="o">=</span><span class="n">g</span><span class="p">,</span> <span class="n">n_components</span><span class="o">=</span><span class="mi">100</span><span class="p">))),</span>
     <span class="p">(</span><span class="s">&#39;mean&#39;</span><span class="p">,</span> <span class="n">BagMean</span><span class="p">()),</span>
@@ -220,7 +227,7 @@ Using <a class="reference external" href="http://scikit-learn.org/stable/modules
   
     <div class="rst-footer-buttons" role="navigation" aria-label="footer navigation">
       
-        <a href="skl_groups.summaries.BagOfWords.html" class="btn btn-neutral float-right" title="skl_groups.summaries.BagOfWords"/>Next <span class="fa fa-arrow-circle-right"></span></a>
+        <a href="skl_groups.summaries.BagOfWords.html" class="btn btn-neutral float-right" title="skl_groups.summaries.BagOfWords">Next <span class="fa fa-arrow-circle-right"></span></a>
       
       
         <a href="skl_groups.preprocessing.BagStandardizer.html" class="btn btn-neutral" title="skl_groups.preprocessing.BagStandardizer"><span class="fa fa-arrow-circle-left"></span> Previous</a>
@@ -236,7 +243,8 @@ Using <a class="reference external" href="http://scikit-learn.org/stable/modules
     </p>
   </div>
 
-  <a href="https://github.com/snide/sphinx_rtd_theme">Sphinx theme</a> provided by <a href="https://readthedocs.org">Read the Docs</a>
+  Built with <a href="http://sphinx-doc.org/">Sphinx</a> using a <a href="https://github.com/snide/sphinx_rtd_theme">theme</a> provided by <a href="https://readthedocs.org">Read the Docs</a>.
+  
 </footer>
         </div>
       </div>

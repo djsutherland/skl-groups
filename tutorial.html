@@ -14,7 +14,7 @@
   
 
   
-  <link href='https://fonts.googleapis.com/css?family=Lato:400,700|Roboto+Slab:400,700|Inconsolata:400,700' rel='stylesheet' type='text/css'>
+  <link href='https://fonts.googleapis.com/css?family=Lato:400,700,400italic,700italic|Roboto+Slab:400,700|Inconsolata:400,700&subset=latin,cyrillic' rel='stylesheet' type='text/css'>
 
   
   
@@ -25,6 +25,8 @@
   
   
     <link rel="stylesheet" href="_static/css/theme.css" type="text/css" />
+  
+
   
 
   
@@ -46,9 +48,12 @@
     
     <nav data-toggle="wy-nav-shift" class="wy-nav-side">
       <div class="wy-side-nav-search">
-        <a href="index.html" class="fa fa-home"> skl-groups</a>
-        <div role="search">
-  <form id ="rtd-search-form" class="wy-form" action="search.html" method="get">
+        
+          <a href="index.html" class="fa fa-home"> skl-groups</a>
+        
+        
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="search.html" method="get">
     <input type="text" name="q" placeholder="Search docs" />
     <input type="hidden" name="check_keywords" value="yes" />
     <input type="hidden" name="area" value="default" />
@@ -58,8 +63,9 @@
 
       <div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="main navigation">
         
-        
-            <ul class="current">
+          
+          
+              <ul class="current">
 <li class="toctree-l1"><a class="reference internal" href="index.html">Overview</a></li>
 <li class="toctree-l1"><a class="reference internal" href="who.html">Who this package is for</a></li>
 <li class="toctree-l1"><a class="reference internal" href="installation.html">Installation</a><ul>
@@ -94,6 +100,7 @@
 <li class="toctree-l1"><a class="reference internal" href="about.html#license">License</a></li>
 </ul>
 
+          
         
       </div>
       &nbsp;
@@ -124,7 +131,7 @@
   </ul>
   <hr/>
 </div>
-          <div role="main">
+          <div role="main" class="document">
             
   <div class="section" id="quick-tutorial">
 <h1>Quick tutorial<a class="headerlink" href="#quick-tutorial" title="Permalink to this headline">¶</a></h1>
@@ -165,7 +172,7 @@ How can we get that answer with machine learning?</p>
 <p>First, how do we even represent the data?</p>
 <p>In scikit-learn, where objects are represented by feature vectors,
 most learning methods take in a 2d array
-(<a class="reference external" href="http://docs.scipy.org/doc/numpy/reference/generated/numpy.ndarray.html#numpy.ndarray" title="(in NumPy v1.8)"><tt class="xref py py-class docutils literal"><span class="pre">numpy.ndarray</span></tt></a> or sometimes <a class="reference external" href="http://docs.scipy.org/doc/scipy/reference/sparse.html#module-scipy.sparse" title="(in SciPy v0.14.0)"><tt class="xref py py-mod docutils literal"><span class="pre">scipy.sparse</span></tt></a>)
+(<a class="reference external" href="http://docs.scipy.org/doc/numpy/reference/generated/numpy.ndarray.html#numpy.ndarray" title="(in NumPy v1.9)"><tt class="xref py py-class docutils literal"><span class="pre">numpy.ndarray</span></tt></a> or sometimes <a class="reference external" href="http://docs.scipy.org/doc/scipy/reference/sparse.html#module-scipy.sparse" title="(in SciPy v0.16.0)"><tt class="xref py py-mod docutils literal"><span class="pre">scipy.sparse</span></tt></a>)
 of shape <tt class="docutils literal"><span class="pre">(n,</span> <span class="pre">n_features)</span></tt>
 where each of the <tt class="docutils literal"><span class="pre">n</span></tt> rows represents a different vector.</p>
 <p>In skl-groups, each object is instead a set of vectors.
@@ -227,7 +234,7 @@ Alternatively, we can make a <a class="reference internal" href="skl_groups/skl_
 <p>Perhaps the most obvious way to summarize a set of vectors is their mean,
 which we can get with <a class="reference internal" href="skl_groups/skl_groups.summaries.BagMean.html#skl_groups.summaries.BagMean" title="skl_groups.summaries.BagMean"><tt class="xref py py-class docutils literal"><span class="pre">summaries.BagMean</span></tt></a>.
 BagMean will turn a list of features into a single array,
-which we can then plug into our favorite <a class="reference external" href="http://scikit-learn.org/stable/supervised_learning.html#supervised-learning" title="(in scikit-learn v0.15.1)"><em class="xref std std-ref">sklearn classifier</em></a> (or regressor, clusterer, whatever):</p>
+which we can then plug into our favorite <a class="reference external" href="http://scikit-learn.org/stable/supervised_learning.html#supervised-learning" title="(in scikit-learn v0.16.dev0)"><em class="xref std std-ref">sklearn classifier</em></a> (or regressor, clusterer, whatever):</p>
 <div class="highlight-python"><div class="highlight"><pre><span class="gp">&gt;&gt;&gt; </span><span class="kn">from</span> <span class="nn">skl_groups.summaries</span> <span class="kn">import</span> <span class="n">BagMean</span>
 <span class="gp">&gt;&gt;&gt; </span><span class="n">BagMean</span><span class="p">()</span><span class="o">.</span><span class="n">fit_transform</span><span class="p">(</span><span class="n">feats</span><span class="p">)</span><span class="o">.</span><span class="n">round</span><span class="p">(</span><span class="mi">2</span><span class="p">)</span>
 <span class="go">array([[-0.02,  0.02],</span>
@@ -264,15 +271,15 @@ but it&#8217;d be easy enough to implement yourself by tweaking the source of Ba
 <p>In natural language processing,
 a common way to get a basic understanding of document is to simply
 take the counts of each word used in a document, and stack those into a vector
-(see <a class="reference external" href="http://scikit-learn.org/stable/modules/feature_extraction.html#text-feature-extraction" title="(in scikit-learn v0.15.1)"><em class="xref std std-ref">the sklearn docs</em></a>).
+(see <a class="reference external" href="http://scikit-learn.org/stable/modules/feature_extraction.html#text-feature-extraction" title="(in scikit-learn v0.16.dev0)"><em class="xref std std-ref">the sklearn docs</em></a>).
 Computer vision researchers perform an analogous process with arbitrary feature vectors:
 &#8220;quantize&#8221; the inputs into a set of <em>codewords</em>,
 i.e. points where you can reasonably replace each of the input vectors with a
 codeword without losing too much information,
 and then represent each set by the count of each codeword.</p>
 <p>We can perform this in skl_groups with the <a class="reference internal" href="skl_groups/skl_groups.summaries.BagOfWords.html#skl_groups.summaries.BagOfWords" title="skl_groups.summaries.BagOfWords"><tt class="xref py py-class docutils literal"><span class="pre">summaries.BagOfWords</span></tt></a> estimator,
-which relies on k-means <a class="reference external" href="http://scikit-learn.org/stable/modules/clustering.html#clustering" title="(in scikit-learn v0.15.1)"><em class="xref std std-ref">clustering</em></a> to choose the codewords.
-Here we use <a class="reference external" href="http://scikit-learn.org/stable/modules/generated/sklearn.cluster.KMeans.html#sklearn.cluster.KMeans" title="(in scikit-learn v0.15.1)"><tt class="xref py py-class docutils literal"><span class="pre">sklearn.cluster.KMeans</span></tt></a> to do it:</p>
+which relies on k-means <a class="reference external" href="http://scikit-learn.org/stable/modules/clustering.html#clustering" title="(in scikit-learn v0.16.dev0)"><em class="xref std std-ref">clustering</em></a> to choose the codewords.
+Here we use <a class="reference external" href="http://scikit-learn.org/stable/modules/generated/sklearn.cluster.KMeans.html#sklearn.cluster.KMeans" title="(in scikit-learn v0.16.dev0)"><tt class="xref py py-class docutils literal"><span class="pre">sklearn.cluster.KMeans</span></tt></a> to do it:</p>
 <div class="highlight-python"><div class="highlight"><pre><span class="gp">&gt;&gt;&gt; </span><span class="kn">from</span> <span class="nn">sklearn.cluster</span> <span class="kn">import</span> <span class="n">KMeans</span>
 <span class="gp">&gt;&gt;&gt; </span><span class="kn">from</span> <span class="nn">skl_groups.summaries</span> <span class="kn">import</span> <span class="n">BagOfWords</span>
 <span class="gp">&gt;&gt;&gt; </span><span class="n">bow</span> <span class="o">=</span> <span class="n">BagOfWords</span><span class="p">(</span><span class="n">KMeans</span><span class="p">(</span><span class="n">n_clusters</span><span class="o">=</span><span class="mi">6</span><span class="p">,</span> <span class="n">max_iter</span><span class="o">=</span><span class="mi">100</span><span class="p">,</span> <span class="n">n_init</span><span class="o">=</span><span class="mi">2</span><span class="p">))</span>
@@ -304,7 +311,7 @@ And we can solve our prediction problem:</p>
 <p>The transformed features are six-dimensional, so we can&#8217;t just plot them directly.
 But we can plot a low-dimensional embedding where distances between the points
 approximately correspond to distances in the high-dimensional space with
-<a class="reference external" href="http://scikit-learn.org/stable/modules/generated/sklearn.manifold.LocallyLinearEmbedding.html#sklearn.manifold.LocallyLinearEmbedding" title="(in scikit-learn v0.15.1)"><tt class="xref py py-class docutils literal"><span class="pre">sklearn.manifold.LocallyLinearEmbedding</span></tt></a>:</p>
+<a class="reference external" href="http://scikit-learn.org/stable/modules/generated/sklearn.manifold.LocallyLinearEmbedding.html#sklearn.manifold.LocallyLinearEmbedding" title="(in scikit-learn v0.16.dev0)"><tt class="xref py py-class docutils literal"><span class="pre">sklearn.manifold.LocallyLinearEmbedding</span></tt></a>:</p>
 <p>(<a class="reference external" href=".//tutorial-4.py">Source code</a>, <a class="reference external" href=".//tutorial-4.png">png</a>, <a class="reference external" href=".//tutorial-4.hires.png">hires.png</a>, <a class="reference external" href=".//tutorial-4.pdf">pdf</a>)</p>
 <div class="figure">
 <img alt="_images/tutorial-4.png" src="_images/tutorial-4.png" />
@@ -315,7 +322,7 @@ approximately correspond to distances in the high-dimensional space with
 <p>There&#8217;s a wide class of machine learning algorithms which can run based only
 on a particular kind of similarity function between objects,
 known as <a class="reference external" href="https://en.wikipedia.org/wiki/Kernel_method">kernel methods</a>.
-The best-known of these is the support vector machine (<a class="reference external" href="http://scikit-learn.org/stable/modules/svm.html#svm" title="(in scikit-learn v0.15.1)"><em class="xref std std-ref">SVM</em></a>),
+The best-known of these is the support vector machine (<a class="reference external" href="http://scikit-learn.org/stable/modules/svm.html#svm" title="(in scikit-learn v0.16.dev0)"><em class="xref std std-ref">SVM</em></a>),
 but there are many others as well.
 So, if we can come up with a <em>kernel</em> between sets,
 we can run our SVMs or other kernel methods directly on the input sets.</p>
@@ -334,7 +341,7 @@ Some of the options for these distances are:</p>
 <p>We can estimate all of these distances with
 <a class="reference internal" href="skl_groups/skl_groups.divergences.KNNDivergenceEstimator.html#skl_groups.divergences.KNNDivergenceEstimator" title="skl_groups.divergences.KNNDivergenceEstimator"><tt class="xref py py-class docutils literal"><span class="pre">divergences.KNNDivergenceEstimator</span></tt></a>.
 To turn these distances into a kernel,
-we can put it in a <a class="reference external" href="http://scikit-learn.org/stable/modules/generated/sklearn.pipeline.Pipeline.html#sklearn.pipeline.Pipeline" title="(in scikit-learn v0.15.1)"><tt class="xref py py-class docutils literal"><span class="pre">sklearn.pipeline.Pipeline</span></tt></a> with
+we can put it in a <a class="reference external" href="http://scikit-learn.org/stable/modules/generated/sklearn.pipeline.Pipeline.html#sklearn.pipeline.Pipeline" title="(in scikit-learn v0.16.dev0)"><tt class="xref py py-class docutils literal"><span class="pre">sklearn.pipeline.Pipeline</span></tt></a> with
 <a class="reference internal" href="skl_groups/skl_groups.kernels.PairwisePicker.html#skl_groups.kernels.PairwisePicker" title="skl_groups.kernels.PairwisePicker"><tt class="xref py py-class docutils literal"><span class="pre">kernels.PairwisePicker</span></tt></a>,
 <a class="reference internal" href="skl_groups/skl_groups.kernels.Symmetrize.html#skl_groups.kernels.Symmetrize" title="skl_groups.kernels.Symmetrize"><tt class="xref py py-class docutils literal"><span class="pre">kernels.Symmetrize</span></tt></a>,
 <a class="reference internal" href="skl_groups/skl_groups.kernels.RBFize.html#skl_groups.kernels.RBFize" title="skl_groups.kernels.RBFize"><tt class="xref py py-class docutils literal"><span class="pre">kernels.RBFize</span></tt></a>,
@@ -356,8 +363,8 @@ and then put it in an SVM:</p>
 </pre></div>
 </div>
 <p>In practice, you definitely want to try tuning the various parameters
-with <a class="reference external" href="http://scikit-learn.org/stable/modules/generated/sklearn.grid_search.GridSearchCV.html#sklearn.grid_search.GridSearchCV" title="(in scikit-learn v0.15.1)"><tt class="xref py py-class docutils literal"><span class="pre">sklearn.grid_search.GridSearchCV</span></tt></a> or similar.
-<a class="reference internal" href="skl_groups/skl_groups.kernels.RBFize.html#skl_groups.kernels.RBFize" title="skl_groups.kernels.RBFize"><tt class="xref py py-class docutils literal"><span class="pre">kernels.RBFize</span></tt></a>&#8216;s <tt class="docutils literal"><span class="pre">gamma</span></tt> and <a class="reference external" href="http://scikit-learn.org/stable/modules/generated/sklearn.svm.SVC.html#sklearn.svm.SVC" title="(in scikit-learn v0.15.1)"><tt class="xref py py-class docutils literal"><span class="pre">sklearn.svm.SVC</span></tt></a>&#8216;s <tt class="docutils literal"><span class="pre">C</span></tt> need it for sure,
+with <a class="reference external" href="http://scikit-learn.org/stable/modules/generated/sklearn.grid_search.GridSearchCV.html#sklearn.grid_search.GridSearchCV" title="(in scikit-learn v0.16.dev0)"><tt class="xref py py-class docutils literal"><span class="pre">sklearn.grid_search.GridSearchCV</span></tt></a> or similar.
+<a class="reference internal" href="skl_groups/skl_groups.kernels.RBFize.html#skl_groups.kernels.RBFize" title="skl_groups.kernels.RBFize"><tt class="xref py py-class docutils literal"><span class="pre">kernels.RBFize</span></tt></a>&#8216;s <tt class="docutils literal"><span class="pre">gamma</span></tt> and <a class="reference external" href="http://scikit-learn.org/stable/modules/generated/sklearn.svm.SVC.html#sklearn.svm.SVC" title="(in scikit-learn v0.16.dev0)"><tt class="xref py py-class docutils literal"><span class="pre">sklearn.svm.SVC</span></tt></a>&#8216;s <tt class="docutils literal"><span class="pre">C</span></tt> need it for sure,
 probably also the <tt class="docutils literal"><span class="pre">Ks</span></tt> and <tt class="docutils literal"><span class="pre">div_funcs</span></tt> in <a class="reference internal" href="skl_groups/skl_groups.divergences.KNNDivergenceEstimator.html#skl_groups.divergences.KNNDivergenceEstimator" title="skl_groups.divergences.KNNDivergenceEstimator"><tt class="xref py py-class docutils literal"><span class="pre">divergences.KNNDivergenceEstimator</span></tt></a>)
 (possibly by passing lists there and tuning over different indices
 in <a class="reference internal" href="skl_groups/skl_groups.kernels.PairwisePicker.html#skl_groups.kernels.PairwisePicker" title="skl_groups.kernels.PairwisePicker"><tt class="xref py py-class docutils literal"><span class="pre">kernels.PairwisePicker</span></tt></a>).
@@ -421,7 +428,7 @@ We can again plot a two-dimensional approximation:</p>
   
     <div class="rst-footer-buttons" role="navigation" aria-label="footer navigation">
       
-        <a href="logging.html" class="btn btn-neutral float-right" title="Progress logging / etc"/>Next <span class="fa fa-arrow-circle-right"></span></a>
+        <a href="logging.html" class="btn btn-neutral float-right" title="Progress logging / etc">Next <span class="fa fa-arrow-circle-right"></span></a>
       
       
         <a href="installation.html" class="btn btn-neutral" title="Installation"><span class="fa fa-arrow-circle-left"></span> Previous</a>
@@ -437,7 +444,8 @@ We can again plot a two-dimensional approximation:</p>
     </p>
   </div>
 
-  <a href="https://github.com/snide/sphinx_rtd_theme">Sphinx theme</a> provided by <a href="https://readthedocs.org">Read the Docs</a>
+  Built with <a href="http://sphinx-doc.org/">Sphinx</a> using a <a href="https://github.com/snide/sphinx_rtd_theme">theme</a> provided by <a href="https://readthedocs.org">Read the Docs</a>.
+  
 </footer>
         </div>
       </div>

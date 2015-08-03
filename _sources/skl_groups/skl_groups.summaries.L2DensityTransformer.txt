@@ -29,5 +29,6 @@ skl_groups.summaries.L2DensityTransformer
    .. autosummary::
    
       ~L2DensityTransformer.dim_
+      ~L2DensityTransformer.out_dim_
    
    

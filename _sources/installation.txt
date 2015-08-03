@@ -25,9 +25,9 @@ The released version of skl-groups is available via pypi::
 
     $ pip install skl-groups
 
-or, if you use Anaconda, via my binstar channel::
+or, if you use Anaconda::
 
-    $ conda install -c https://conda.binstar.org/dougal skl-groups
+    $ conda install -c dougal -c r skl-groups
 
 The conda install includes skl-groups-accel, described in :ref:`accel`.
 
@@ -83,7 +83,7 @@ skl-groups is only tested with FLANN 1.8.4.
 **Anaconda:**
 The skl-groups package pulls this in anyway, but::
 
-    $ conda install -c http://conda.binstar.org/dougal cyflann
+    $ conda install -c dougal cyflann
 
 
 **OS X:**
