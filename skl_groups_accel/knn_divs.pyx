@@ -207,8 +207,8 @@ def _estimate_cross_divs(X_features, X_indices, X_rhos,
     cdef bint is_sym
 
     cdef int[::1] Ks = np.asarray(the_Ks, dtype=np.int32)
-    cdef int n_X = len(X_features)
-    cdef int n_Y = len(Y_features)
+    cdef long n_X = len(X_features)
+    cdef long n_Y = len(Y_features)
     cdef int n_Ks = Ks.size
     cdef int dim = X_features.dim
     cdef float min_sq_dist = min_dist * min_dist
@@ -399,7 +399,8 @@ def _estimate_cross_divs(X_features, X_indices, X_rhos,
             index_array[n_X + j] = (<FLANNIndex> Y_indices[j])._this
 
         with nogil:
-            for job_i in prange(n_to_do, num_threads=n_jobs, schedule='static'):
+            for job_i in prange(n_to_do, num_threads=n_jobs,
+                                schedule='static', chunksize=20):
                 tid = threadid()
                 is_sym = job_i // (n_X * n_Y)
                 i = (job_i % (n_X * n_Y)) // n_Y
