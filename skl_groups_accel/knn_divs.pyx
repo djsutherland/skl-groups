@@ -198,7 +198,7 @@ def _estimate_cross_divs(X_features, X_indices, X_rhos,
                          Y_features, Y_indices, Y_rhos,
                          funcs, the_Ks, int max_K, bint save_all_Ks,
                          int n_output, do_sym, bint to_self,
-                         log_progress, int n_jobs, float min_dist, bint clamp):
+                         log_progress, long n_jobs, float min_dist, bint clamp):
     
     cdef int a, i, j, k, i_start, i_end, num_i, j_start, j_end, num_j
     cdef int num_p, num_q
