@@ -4,7 +4,7 @@ cimport cython
 from cython cimport view
 from cython.parallel import prange, threadid
 from libc.stdlib cimport malloc, free
-from libc.math cimport log, sqrt, fmax
+from libc.math cimport exp, log, sqrt, fmax
 from cpython.exc cimport PyErr_CheckSignals
 
 from functools import partial
@@ -27,6 +27,7 @@ from skl_groups.divergences._knn import (_linear as py_linear,
 cdef float fnan = float("NaN")
 cdef float finf = float("inf")
 
+
 @cython.boundscheck(False)
 @cython.wraparound(False)
 @cython.cdivision(True)
@@ -37,17 +38,23 @@ cdef void _linear(const float[::1] Bs, int dim, int num_q,
     cdef int i, j
     cdef int num_p = nus.shape[0]
     cdef int num_Ks = results.shape[0]
-    cdef float mean
+    cdef float logsumexp, min_nu, max_
     cdef float mdim = -dim
 
     for j in range(num_Ks):
-        mean = 0
+        min_nu = finf
         for i in range(num_p):
-            mean += (nus[i, j] ** mdim) / num_p
-        mean *= Bs[j] / num_q
-        if clamp and mean < 0:
-            mean = 0
-        results[j] = mean
+            if nus[i, j] < min_nu:
+                min_nu = nus[i, j]
+        max_ = log(min_nu) * mdim
+
+        logsumexp = 0
+        for i in range(num_p):
+            logsumexp += exp(log(nus[i, j]) * mdim - max_)
+        logsumexp = log(logsumexp)
+        logsumexp += max_
+        logsumexp += log(Bs[j]) - log(num_q) - log(num_p)
+        results[j] = exp(logsumexp)
 
 
 @cython.boundscheck(False)
@@ -102,6 +109,7 @@ cdef void _alpha_div(const float[::1] omas, const float[:, ::1] Bs,
             ratio = rhos[k, j] / nus[k, j]
             for i in range(num_alphas):
                 results[poses[i], j] += ratio ** (dim * omas[i]) / num_p
+    # TODO: do this in logspace...
 
     for i in range(num_alphas):
         factor = nump1_q ** omas[i]

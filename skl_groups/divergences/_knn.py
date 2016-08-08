@@ -1,6 +1,7 @@
 from __future__ import division
 
 import numpy as np
+from scipy.misc import logsumexp
 from sklearn.externals.six import iteritems
 from sklearn.externals.six.moves import xrange, zip
 
@@ -8,7 +9,11 @@ from sklearn.externals.six.moves import xrange, zip
 def _linear(Bs, dim, num_q, rhos, nus, clamp=True):
     # and the rest of the estimator is
     #   B / m * mean(nu ^ -dim)
-    est = Bs / num_q * np.mean(nus ** (-dim), axis=0)
+    # = B / m * exp(logsumexp(-dim * log(nus))) / n
+    # = exp(logsumexp(-dim * log(nus)) + log(B) - log(m) - log(n))
+    est = np.exp(
+        logsumexp(-dim * np.log(nus), axis=0)
+        + np.log(Bs) - np.log(nus.shape[0] * num_q))
     if clamp:
         np.maximum(est, 0, out=est)
     return est
@@ -47,15 +52,19 @@ def _alpha_div(omas, Bs, dim, num_q, rhos, nus, clamp=True):
     #   rho^(- dim * est alpha) nu^(- dim * est beta)
     #   = (rho / nu) ^ (dim * (1 - alpha))
     # do some reshaping trickery to get broadcasting right
-    estimates = (rhos / nus)[:, np.newaxis, :]
-    estimates = estimates ** (dim * omas.reshape(1, -1, 1))
-    estimates = np.mean(estimates, axis=0)  # shape (n_alphas, n_Ks)
+    estimates = np.log(rhos)[:, np.newaxis, :]
+    estimates -= np.log(nus)[:, np.newaxis, :]
+    estimates = estimates * (dim * omas.reshape(1, -1, 1))
+    estimates = logsumexp(estimates, axis=0)
 
-    estimates *= Bs
+    # turn the sum into a mean, multiply by Bs
+    estimates += np.log(Bs / N)
 
     # factors based on the sizes:
     #   1 / [ (n-1)^(est alpha) * m^(est beta) ] = ((n-1) / m) ^ (1 - alpha)
-    estimates *= ((N - 1) / num_q) ** omas
+    estimates += omas * np.log((N - 1) / num_q)
+
+    np.exp(estimates, out=estimates)
 
     if clamp:
         np.maximum(estimates, 0, out=estimates)
