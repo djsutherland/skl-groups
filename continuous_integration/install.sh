@@ -4,17 +4,17 @@ set -e
 
 os=$(uname)
 if [[ "$os" == "Linux" ]]; then
-    wget http://repo.continuum.io/miniconda/Miniconda2-latest-Linux-x86_64.sh \
+    wget https://repo.continuum.io/miniconda/Miniconda2-latest-Linux-x86_64.sh \
         -O miniconda.sh
 elif [[ "$os" == "Darwin" ]]; then
-    wget http://repo.continuum.io/miniconda/Miniconda2-latest-MacOSX-x86_64.sh \
+    wget https://repo.continuum.io/miniconda/Miniconda2-latest-MacOSX-x86_64.sh \
         -O miniconda.sh
 else
     echo "unknown os '$os'"
     exit 1
 fi
 chmod +x miniconda.sh
-./miniconda.sh -b
+./miniconda.sh -b -p $HOME/miniconda
 export PATH="$HOME/miniconda/bin:$PATH"
 
 conda update --yes --quiet conda
