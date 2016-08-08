@@ -570,7 +570,8 @@ class ShiftPSD(BaseEstimator, TransformerMixin):
         if self.copy:
             X = X.copy()
 
-        if self.shift_ != 0 and X is self.train_ or np.all(X == self.train_):
+        if self.shift_ != 0 and X is self.train_ or (
+                X.shape == self.train_.shape and np.allclose(X, self.train_)):
             X[xrange(n), xrange(n)] += self.shift_
         return X
 
