@@ -198,7 +198,7 @@ def _estimate_cross_divs(X_features, X_indices, X_rhos,
                          Y_features, Y_indices, Y_rhos,
                          funcs, the_Ks, int max_K, bint save_all_Ks,
                          int n_output, do_sym, bint to_self,
-                         log_progress, int n_jobs, float min_dist, bint clamp):
+                         log_progress, long n_jobs, float min_dist, bint clamp):
     
     cdef int a, i, j, k, i_start, i_end, num_i, j_start, j_end, num_j
     cdef int num_p, num_q
@@ -207,8 +207,8 @@ def _estimate_cross_divs(X_features, X_indices, X_rhos,
     cdef bint is_sym
 
     cdef int[::1] Ks = np.asarray(the_Ks, dtype=np.int32)
-    cdef int n_X = len(X_features)
-    cdef int n_Y = len(Y_features)
+    cdef long n_X = len(X_features)
+    cdef long n_Y = len(Y_features)
     cdef int n_Ks = Ks.size
     cdef int dim = X_features.dim
     cdef float min_sq_dist = min_dist * min_dist
@@ -283,7 +283,7 @@ def _estimate_cross_divs(X_features, X_indices, X_rhos,
 
     for func, info in funcs.iteritems():
         assert isinstance(func, partial)
-        assert func.keywords is None
+        assert not func.keywords
         real_func = func.func
 
         if real_func is py_linear:
@@ -399,7 +399,8 @@ def _estimate_cross_divs(X_features, X_indices, X_rhos,
             index_array[n_X + j] = (<FLANNIndex> Y_indices[j])._this
 
         with nogil:
-            for job_i in prange(n_to_do, num_threads=n_jobs, schedule='static'):
+            for job_i in prange(n_to_do, num_threads=n_jobs,
+                                schedule='static', chunksize=20):
                 tid = threadid()
                 is_sym = job_i // (n_X * n_Y)
                 i = (job_i % (n_X * n_Y)) // n_Y

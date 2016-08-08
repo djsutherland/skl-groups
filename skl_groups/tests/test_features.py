@@ -18,7 +18,7 @@ if __name__ == '__main__':
 from skl_groups.features import Features
 
 
-wrong_type = partial(assert_raises, TypeError)
+wrong_type = partial(assert_raises, (TypeError, IndexError))
 
 
 ################################################################################
