@@ -84,7 +84,7 @@ def _jensen_shannon_core(Ks, dim, min_i, digamma_vals, num_q, rhos, nus, clamp=T
     est = np.zeros(Ks.size)
 
     max_k = rhos.shape[1]
-    combo = np.empty(max_k * 2, dtype=[('dist', np.float32), ('weight', float)])
+    combo = np.empty(max_k * 2, dtype=[('dist', rhos.dtype), ('weight', float)])
     # could vectorize this loop if searchsorted worked axis-wise
     for rho, nu, in zip(rhos, nus):
         combo['dist'][:max_k] = rho
@@ -108,7 +108,8 @@ def _estimate_cross_divs(X_features, X_indices, X_rhos,
                          Y_features, Y_indices, Y_rhos,
                          funcs, Ks, max_K, save_all_Ks,
                          n_output, do_sym, to_self,
-                         log_progress, n_jobs, min_dist, clamp):
+                         log_progress, n_jobs, min_dist, clamp,
+                         dtype=np.float32):
     n_X = len(X_indices)
     n_Y = len(Y_features)
 
@@ -117,7 +118,7 @@ def _estimate_cross_divs(X_features, X_indices, X_rhos,
     n_Ks = len(Ks)
 
     outputs = np.empty([n_output, n_Ks, n_X, n_Y, 2 if do_sym else 1],
-                       dtype=np.float32)
+                       dtype=dtype)
     outputs.fill(np.nan)
 
     # Keep track of whether each function needs rho_sub or just rho

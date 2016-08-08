@@ -162,6 +162,9 @@ class KNNDivergenceEstimator(BaseEstimator, TransformerMixin):
         By default, no caching is done. If a string is given, it is the
         path to the caching directory.
 
+    dtype : np.float32 (default) or np.float64
+        What data type to compute the results in.
+
     Attributes
     ----------
 
@@ -219,7 +222,8 @@ class KNNDivergenceEstimator(BaseEstimator, TransformerMixin):
     def __init__(self, div_funcs=('kl',), Ks=(3,), do_sym=False, n_jobs=1,
                  clamp=True, min_dist=1e-3,
                  flann_algorithm='auto', flann_args=None, version='best',
-                 memory=Memory(cachedir=None, verbose=0)):
+                 memory=Memory(cachedir=None, verbose=0),
+                 dtype=np.float32):
         self.div_funcs = div_funcs
         self.Ks = Ks
         self.do_sym = do_sym
@@ -230,6 +234,7 @@ class KNNDivergenceEstimator(BaseEstimator, TransformerMixin):
         self.flann_args = flann_args
         self.version = version
         self.memory = memory
+        self.dtype = dtype
 
     def _get_Ks(self):
         "Ks as an array and type-checked."
@@ -354,7 +359,7 @@ class KNNDivergenceEstimator(BaseEstimator, TransformerMixin):
             X, Y, self.indices_, getattr(self, 'rhos_', None),
             self.div_funcs, Ks,
             self.do_sym, self.clamp, self.version, self.min_dist,
-            self._flann_args(), self._n_jobs)
+            self._flann_args(), self._n_jobs, self.dtype)
         return output
 
 
@@ -408,6 +413,7 @@ def _build_indices(X, flann_args):
     for i, bag in enumerate(plog(X, name="index building")):
         indices[i] = idx = FLANNIndex(**flann_args)
         idx.build_index(bag)
+        # TODO: handle dtype
     return indices
 
 
@@ -433,7 +439,8 @@ def _get_rhos(X, indices, Ks, max_K, save_all_Ks, min_dist):
 
 
 def _est_divs(X, Y, Y_indices, Y_rhos, div_funcs, Ks,
-              do_sym, clamp, version, min_dist, flann_args, n_jobs):
+              do_sym, clamp, version, min_dist, flann_args, n_jobs,
+              dtype=np.float32):
 
     funcs, metas, n_meta_only, max_K, save_all_Ks, version = _choose_funcs(
         div_funcs, Ks, X.dim, X.n_pts, Y.n_pts, version)
@@ -480,7 +487,7 @@ def _est_divs(X, Y, Y_indices, Y_rhos, div_funcs, Ks,
                  funcs, Ks, max_K, save_all_Ks, len(div_funcs) + n_meta_only,
                  do_sym, to_self,
                  ProgressLogger(progress_logger, name="cross-divergences"),
-                 n_jobs, min_dist, clamp)
+                 n_jobs, min_dist, clamp, dtype)
 
     logger.info("Computing meta-divergences...")
 
@@ -839,11 +846,11 @@ def l2(Ks, dim, X_rhos, Y_rhos, required, clamp=True, to_self=False):
     linears = required
     assert linears.shape == (1, Ks.size, n_X, n_Y, 2)
 
-    X_quadratics = np.empty((Ks.size, n_X), dtype=np.float32)
+    X_quadratics = np.empty((Ks.size, n_X), dtype=linears.dtype)
     for i, rho in enumerate(X_rhos):
         X_quadratics[:, i] = quadratic(Ks, dim, rho)
 
-    Y_quadratics = np.empty((Ks.size, n_Y), dtype=np.float32)
+    Y_quadratics = np.empty((Ks.size, n_Y), dtype=linears.dtype)
     for j, rho in enumerate(Y_rhos):
         Y_quadratics[:, j] = quadratic(Ks, dim, rho)
 
@@ -954,13 +961,13 @@ def jensen_shannon(Ks, dim, X_rhos, Y_rhos, required,
     assert cores.shape == (1, Ks.size, n_X, n_Y, 2)
 
     # X_bits[k, i] is log(n-1) + mean_X( d * log rho_M(X_i) )  for X[i], M=Ks[k]
-    X_bits = np.empty((Ks.size, n_X), dtype=np.float32)
+    X_bits = np.empty((Ks.size, n_X), dtype=cores.dtype)
     for i, rho in enumerate(X_rhos):
         X_bits[:, i] = dim * np.mean(np.log(rho), axis=0)
     X_bits += np.log(X_ns - 1)[np.newaxis, :]
 
     # Y_bits[k, j] is log(n-1) + mean_Y( d * log rho_M(Y_i) )  for Y[j], M=Ks[k]
-    Y_bits = np.empty((Ks.size, n_Y), dtype=np.float32)
+    Y_bits = np.empty((Ks.size, n_Y), dtype=cores.dtype)
     for j, rho in enumerate(Y_rhos):
         Y_bits[:, j] = dim * np.mean(np.log(rho), axis=0)
     Y_bits += np.log(Y_ns - 1)[np.newaxis, :]

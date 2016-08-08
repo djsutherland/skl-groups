@@ -62,24 +62,37 @@ def test_knn_version_consistency():
         get_est = partial(KNNDivergenceEstimator, div_funcs=div_funcs, Ks=Ks)
         results = {}
         for version in ('fast', 'slow', 'best'):
-            est = get_est(version=version)
-            results[version] = res = est.fit_transform(bags)
-            assert res.shape == (len(div_funcs), len(Ks), n, n)
-            assert np.all(np.isfinite(res))
+            for dtype in (np.float32, np.float64):
+                est = get_est(version=version, dtype=dtype)
+                results[version, dtype] = res = est.fit_transform(bags)
+                assert res.shape == (len(div_funcs), len(Ks), n, n)
+                assert np.all(np.isfinite(res))
 
-        for df, fast, slow in zip(div_funcs, results['fast'], results['slow']):
-            assert_array_almost_equal(
-                fast, slow, decimal=1 if df == 'js' else 5,
-                err_msg="({}, dim {})".format(df, dim))
-            # TODO: debug JS differences
+        for dt in (np.float32, np.float64):
+            f = results['fast', dt]
+            s = results['slow', dt]
+            for df, fast, slow in zip(div_funcs, f, s):
+                assert_array_almost_equal(
+                    fast, slow, decimal=1 if df == 'js' else 5,
+                    err_msg="({}, dim {})".format(df, dim))
+                # TODO: debug JS differences
 
-        est = get_est(version='fast', n_jobs=-1)
-        res = est.fit_transform(bags)
-        assert np.all(results['fast'] == res)
+            est = get_est(version='fast', n_jobs=-1)
+            res = est.fit_transform(bags)
+            assert_array_almost_equal(f, res, decimal=6)
 
-        est = get_est(version='slow', n_jobs=-1)
-        res = est.fit_transform(bags)
-        assert np.all(results['slow'] == res)
+            est = get_est(version='slow', n_jobs=-1)
+            res = est.fit_transform(bags)
+            assert_array_almost_equal(s, res, decimal=6)
+
+        assert_array_almost_equal(
+            results['fast', np.float32],
+            results['fast', np.float64].astype(np.float32),
+            decimal=5)
+        assert_array_almost_equal(
+            results['slow', np.float32],
+            results['slow', np.float64].astype(np.float32),
+            decimal=5)
 
 
 def test_knn_sanity_slow():

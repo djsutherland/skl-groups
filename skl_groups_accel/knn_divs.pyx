@@ -1,5 +1,6 @@
 from __future__ import division
 
+import cython
 cimport cython
 from cython cimport view
 from cython.parallel import prange, threadid
@@ -26,19 +27,23 @@ from skl_groups.divergences._knn import (_linear as py_linear,
 
 cdef float fnan = float("NaN")
 cdef float finf = float("inf")
+ctypedef fused out_type:
+    cython.float
+    cython.double
+
 
 @cython.boundscheck(False)
 @cython.wraparound(False)
 @cython.cdivision(True)
-cdef void _linear(const float[::1] Bs, int dim, int num_q,
+cdef void _linear(const out_type[::1] Bs, int dim, int num_q,
                   const float[:, ::1] nus, bint clamp,
-                  float[:] results) nogil:
+                  out_type[:] results) nogil:
     #   B / m * mean(nu ^ -dim)
     cdef int i, j
     cdef int num_p = nus.shape[0]
     cdef int num_Ks = results.shape[0]
-    cdef float mean
-    cdef float mdim = -dim
+    cdef out_type mean
+    cdef out_type mdim = -dim
 
     for j in range(num_Ks):
         mean = 0
@@ -55,15 +60,15 @@ cdef void _linear(const float[::1] Bs, int dim, int num_q,
 @cython.cdivision(True)
 cdef void kl(int dim, int num_q,
              const float[:, ::1] rhos, const float[:, ::1] nus, bint clamp,
-             float[:] results) nogil:
+             out_type[:] results) nogil:
     # dim * mean(log(nus) - log(rhos), axis=0) + log(num_q / (num_p - 1))
 
     cdef int i, j
     cdef int num_p = rhos.shape[0]
     cdef int num_Ks = results.shape[0]
-    cdef float mean
+    cdef out_type mean
 
-    cdef float cons = log(num_q / (<float> (num_p - 1)))
+    cdef out_type cons = log(num_q / (<out_type> (num_p - 1)))
 
     for j in range(num_Ks):
         mean = 0
@@ -78,17 +83,17 @@ cdef void kl(int dim, int num_q,
 @cython.boundscheck(False)
 @cython.wraparound(False)
 @cython.cdivision(True)
-cdef void _alpha_div(const float[::1] omas, const float[:, ::1] Bs,
+cdef void _alpha_div(const out_type[::1] omas, const out_type[:, ::1] Bs,
                      int dim, int num_q,
                      const float[:, ::1] rhos, const float[:, ::1] nus,
                      bint clamp,
-                     const int[::1] poses, float[:, :] results) nogil:
+                     const int[::1] poses, out_type[:, :] results) nogil:
     cdef int i, j, k
     cdef int num_alphas = omas.shape[0]
     cdef int num_p = rhos.shape[0]
     cdef int num_Ks = rhos.shape[1]
-    cdef float ratio, factor
-    cdef float nump1_q = (<float>(num_p - 1)) / num_q
+    cdef out_type ratio, factor
+    cdef out_type nump1_q = (<out_type>(num_p - 1)) / num_q
 
     for i in range(num_alphas):
         for j in range(num_Ks):
@@ -115,12 +120,12 @@ cdef void _alpha_div(const float[::1] omas, const float[:, ::1] Bs,
 @cython.wraparound(False)
 @cython.cdivision(True)
 cdef void _jensen_shannon_core(const int[::1] Ks, int dim,
-                               int min_i, const float[::1] digamma_vals,
+                               int min_i, const out_type[::1] digamma_vals,
                                int num_q,
                                const float[:, ::1] rhos,
                                const float[:, ::1] nus,
                                const int[::1] Ks_order, float min_sq_dist,
-                               float[:] alphas_tmp, float[:] results) nogil:
+                               out_type[:] alphas_tmp, out_type[:] results) nogil:
     # NOTE: rhos contains all the neighbors up to max_K
     # NOTE: nus here is the "dists_out" array, which is a squared distance
     #       that hasn't been thresholded by min_dist
@@ -191,14 +196,41 @@ cdef void _jensen_shannon_core(const int[::1] Ks, int dim,
 
 ################################################################################
 
-@cython.boundscheck(False)
-@cython.wraparound(False)
-@cython.cdivision(True)
 def _estimate_cross_divs(X_features, X_indices, X_rhos,
                          Y_features, Y_indices, Y_rhos,
                          funcs, the_Ks, int max_K, bint save_all_Ks,
                          int n_output, do_sym, bint to_self,
-                         log_progress, long n_jobs, float min_dist, bint clamp):
+                         log_progress, long n_jobs, float min_dist, bint clamp,
+                         dtype):
+    args = (X_features, X_indices, X_rhos,
+            Y_features, Y_indices, Y_rhos,
+            funcs, the_Ks, max_K, save_all_Ks,
+            n_output, do_sym, to_self,
+            log_progress, n_jobs, min_dist, clamp,
+            dtype)
+
+    # TODO: handle dtype...
+    if dtype == np.float32:
+        args += (<float> 0,)
+        return _estimate_cross_divs_t[float](*args)
+    elif dtype == np.float64:
+        args += (<double> 0,)
+        return _estimate_cross_divs_t[double](*args)
+    else:
+        raise TypeError("invalid dtype {}".format(dtype))
+
+@cython.boundscheck(False)
+@cython.wraparound(False)
+@cython.cdivision(True)
+cdef _estimate_cross_divs_t(
+        X_features, X_indices, X_rhos,
+        Y_features, Y_indices, Y_rhos,
+        funcs, the_Ks, int max_K, bint save_all_Ks,
+        int n_output, do_sym, bint to_self,
+        log_progress, long n_jobs, float min_dist, bint clamp,
+        out_dtype, out_type out_type_selector):
+    # NOTE: for now, we do all NN searches in float32
+    # out_type is only for estimator outputs
     
     cdef int a, i, j, k, i_start, i_end, num_i, j_start, j_end, num_j
     cdef int num_p, num_q
@@ -211,7 +243,7 @@ def _estimate_cross_divs(X_features, X_indices, X_rhos,
     cdef long n_Y = len(Y_features)
     cdef int n_Ks = Ks.size
     cdef int dim = X_features.dim
-    cdef float min_sq_dist = min_dist * min_dist
+    cdef out_type min_sq_dist = min_dist * min_dist
     cdef bint X_is_Y = X_features == Y_features
 
     # for now, require everything to be stacked so we can get at it without GIL
@@ -263,7 +295,7 @@ def _estimate_cross_divs(X_features, X_indices, X_rhos,
     ### Figure out which functions we have
 
     cdef bint do_linear = False
-    cdef float[::1] linear_Bs
+    cdef out_type[::1] linear_Bs
     cdef int linear_pos
 
     cdef bint do_kl = False
@@ -271,13 +303,13 @@ def _estimate_cross_divs(X_features, X_indices, X_rhos,
 
     cdef bint do_alpha = False
     cdef int alpha_num_alphas
-    cdef float[::1] alpha_omas
-    cdef float[:, ::1] alpha_Bs
+    cdef out_type[::1] alpha_omas
+    cdef out_type[:, ::1] alpha_Bs
     cdef int[::1] alpha_pos
 
     cdef bint do_js = False
     cdef int js_min_i
-    cdef float[::1] js_digamma_vals
+    cdef out_type[::1] js_digamma_vals
     cdef int[::1] js_Ks_order
     cdef int js_pos
 
@@ -292,7 +324,7 @@ def _estimate_cross_divs(X_features, X_indices, X_rhos,
             Bs, the_dim = func.args
 
             assert Bs.shape == (n_Ks,)
-            linear_Bs = np.asarray(Bs, dtype=np.float32)
+            linear_Bs = np.asarray(Bs, dtype=out_dtype)
 
             assert the_dim == dim
 
@@ -316,11 +348,11 @@ def _estimate_cross_divs(X_features, X_indices, X_rhos,
             do_alpha = True
             omas, Bs, the_dim = func.args
 
-            alpha_omas = np.asarray(omas.ravel(), dtype=np.float32)
+            alpha_omas = np.asarray(omas.ravel(), dtype=out_dtype)
             alpha_num_alphas = alpha_omas.size
 
             assert Bs.shape == (alpha_num_alphas, n_Ks)
-            alpha_Bs = np.asarray(Bs, dtype=np.float32)
+            alpha_Bs = np.asarray(Bs, dtype=out_dtype)
 
             assert the_dim == dim
 
@@ -337,7 +369,7 @@ def _estimate_cross_divs(X_features, X_indices, X_rhos,
             assert np.all(the_Ks == Ks)
             assert the_dim == dim
             assert the_digamma_vals.ndim == 1
-            js_digamma_vals = np.asarray(the_digamma_vals, dtype=np.float32)
+            js_digamma_vals = np.asarray(the_digamma_vals, dtype=out_dtype)
 
             js_Ks_order = np.argsort(Ks).astype(np.int32)
 
@@ -358,8 +390,8 @@ def _estimate_cross_divs(X_features, X_indices, X_rhos,
     params.cores = 1
 
     # the results variable
-    cdef float[:, :, :, :, ::1] outputs = np.empty(
-        (n_output, n_Ks, n_X, n_Y, 2 if do_any_sym else 1), dtype=np.float32)
+    cdef out_type[:, :, :, :, ::1] outputs = np.empty(
+        (n_output, n_Ks, n_X, n_Y, 2 if do_any_sym else 1), dtype=out_dtype)
     outputs[:, :, :, :, :] = fnan
 
     # work buffer for each thread; first axis for the thread
@@ -372,7 +404,7 @@ def _estimate_cross_divs(X_features, X_indices, X_rhos,
         np.empty((n_jobs, max_pts, max_K), dtype=np.float32)
     cdef float[:, :, ::1] neighbors = \
         np.empty((n_jobs, max_pts, n_Ks), dtype=np.float32)
-    cdef float[:, ::1] alphas_tmp = np.empty((n_jobs, n_Ks), dtype=np.float32)
+    cdef out_type[:, ::1] alphas_tmp = np.empty((n_jobs, n_Ks), dtype=out_dtype)
     cdef int tid
     cdef long job_i
     cdef long n_to_do = n_X * n_Y * (2 if do_any_sym and not to_self else 1)
@@ -418,7 +450,7 @@ def _estimate_cross_divs(X_features, X_indices, X_rhos,
 
                 if to_self and i == j:
                     if do_linear:
-                        _linear(linear_Bs, dim, num_i,
+                        _linear[out_type](linear_Bs, dim, num_i,
                                 X_rhos_stacked[i_start:i_end], clamp,
                                 outputs[linear_pos, :, i, j, 0])
 
@@ -462,14 +494,15 @@ def _estimate_cross_divs(X_features, X_indices, X_rhos,
                         for k in range(n_Ks):
                             neighbors[tid, a, k] = fmax(
                                 min_dist, sqrt(dists_out[tid, a, Ks[k] - 1]))
+                            # FIXME out_type?
 
                     if do_linear:
-                        _linear(linear_Bs, dim, num_q,
+                        _linear[out_type](linear_Bs, dim, num_q,
                                 neighbors[tid, :num_p, :], clamp,
                                 outputs[linear_pos, :, i, j, is_sym])
 
                     if do_kl:
-                        kl(dim, num_q,
+                        kl[out_type](dim, num_q,
                            Y_rhos_stacked[j_start:j_end] if is_sym
                                else X_rhos_stacked[i_start:i_end],
                            neighbors[tid, :num_p, :],
@@ -477,7 +510,7 @@ def _estimate_cross_divs(X_features, X_indices, X_rhos,
                            outputs[kl_pos, :, i, j, is_sym])
 
                     if do_alpha:
-                        _alpha_div(alpha_omas, alpha_Bs, dim, num_q,
+                        _alpha_div[out_type](alpha_omas, alpha_Bs, dim, num_q,
                                    Y_rhos_stacked[j_start:j_end] if is_sym
                                        else X_rhos_stacked[i_start:i_end],
                                    neighbors[tid, :num_p, :],
@@ -485,7 +518,7 @@ def _estimate_cross_divs(X_features, X_indices, X_rhos,
                                    alpha_pos, outputs[:, :, i, j, is_sym])
 
                     if do_js:
-                        _jensen_shannon_core(
+                        _jensen_shannon_core[out_type](
                             Ks, dim, js_min_i, js_digamma_vals, num_q,
                             all_Y_rhos_stacked[j_start:j_end] if is_sym
                                 else all_X_rhos_stacked[i_start:i_end],
