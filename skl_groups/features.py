@@ -334,7 +334,7 @@ class Features(object):
 
     def __getitem__(self, key):
         if (isinstance(key, string_types) or
-                (isinstance(key, tuple) and
+                (isinstance(key, (tuple, list)) and
                  any(isinstance(x, string_types) for x in key))):
             msg = "Features indexing only subsets rows, but got {!r}"
             raise TypeError(msg.format(key))
