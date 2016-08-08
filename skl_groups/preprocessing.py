@@ -2,7 +2,7 @@ import numpy as np
 from sklearn.base import BaseEstimator, TransformerMixin
 from sklearn.decomposition import PCA, RandomizedPCA
 from sklearn.preprocessing import StandardScaler, Normalizer
-from sklearn.utils import check_array, warn_if_not_float
+from sklearn.utils import check_array
 
 from .features import Features, as_features
 
@@ -202,8 +202,8 @@ class MinMaxScaler(BaseEstimator, TransformerMixin):
             The data used to compute the per-feature minimum and maximum
             used for later scaling along the features axis.
         """
-        X = check_array(X, copy=self.copy)
-        warn_if_not_float(X, estimator=self)
+        X = check_array(X, copy=self.copy,
+                        dtype=[np.float64, np.float32, np.float16, np.float128])
 
         feature_range = self.feature_range
         if feature_range[0] >= feature_range[1]:

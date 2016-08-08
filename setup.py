@@ -52,7 +52,7 @@ setup(
         'skl_groups.summaries',
         'skl_groups.tests',
     ],
-    install_requires=['scikit-learn >= 0.16'],
+    install_requires=['scikit-learn >= 0.17'],
     extras_require={
         'knn_divs': ['cyflann >= 0.1.15'],
     },
