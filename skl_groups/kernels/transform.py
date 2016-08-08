@@ -125,7 +125,7 @@ class RBFize(BaseEstimator, TransformerMixin):
         see also :attr:`scale_by_median`.
 
     scale_by_median : boolean, optional, default False
-        If True, divide :attr:`gamma` by the median input distance.
+        If True, scale :attr:`gamma` by the squared median input distance.
 
     squared : boolean, optional, default False
         Whether the inputs are treated as distances or squared distances.
@@ -165,7 +165,7 @@ class RBFize(BaseEstimator, TransformerMixin):
 
         X = check_array(X)
         if self.scale_by_median:
-            self.median_ = np.median(X[np.triu_indices_from(X)],
+            self.median_ = np.median(X[np.triu_indices_from(X, k=1)],
                                      overwrite_input=True)
         elif hasattr(self, 'median_'):
             del self.median_
@@ -188,11 +188,17 @@ class RBFize(BaseEstimator, TransformerMixin):
         X = check_array(X)
         X_rbf = np.empty_like(X) if self.copy else X
 
+        X_in = X
         if not self.squared:
-            np.power(X, 2, out=X_rbf)
+            np.power(X_in, 2, out=X_rbf)
+            X_in = X_rbf
 
-        gamma = self.gamma / (self.median_ if self.scale_by_median else 1)
-        np.multiply(X if self.squared else X_rbf, -gamma, out=X_rbf)
+        if self.scale_by_median:
+            scale = self.median_ if self.squared else self.median_ ** 2
+            gamma = self.gamma * scale
+        else:
+            gamma = self.gamma
+        np.multiply(X_in, -gamma, out=X_rbf)
 
         np.exp(X_rbf, out=X_rbf)
         return X_rbf

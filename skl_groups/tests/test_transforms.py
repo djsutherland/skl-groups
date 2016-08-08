@@ -49,7 +49,7 @@ def test_symmetrize():
 def test_rbfize():
     X = np.random.normal(size=(20, 4))
     dists = euclidean_distances(X)
-    median = np.median(dists[np.triu_indices_from(dists)])
+    median = np.median(dists[np.triu_indices_from(dists, k=1)])
 
     rbf = RBFize(gamma=.25)
     res = rbf.fit_transform(dists)
@@ -63,7 +63,12 @@ def test_rbfize():
     rbf = RBFize(gamma=4, scale_by_median=True)
     res = rbf.fit_transform(dists)
     assert np.allclose(rbf.median_, median)
-    assert np.allclose(res, np.exp((-4 * median) * dists ** 2))
+    assert np.allclose(res, np.exp((-4 * median**2) * dists ** 2))
+
+    rbf = RBFize(gamma=4, scale_by_median=True, squared=True)
+    res = rbf.fit_transform(dists)
+    assert np.allclose(rbf.median_, median)
+    assert np.allclose(res, np.exp((-4 * median) * dists))
 
 
 
